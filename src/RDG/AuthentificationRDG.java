@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import DBUtils.IPersistable;
+import Tools.IPersistable;
 import Entity.Authentification;
 
 public class AuthentificationRDG implements IPersistable<Authentification, String>{

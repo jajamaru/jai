@@ -8,8 +8,8 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
-import DBUtils.DBUtils;
 import RDG.QCMRdg;
+import Tools.DBUtils;
 
 public class QCMCompletedTest {
 	

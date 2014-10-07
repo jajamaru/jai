@@ -8,19 +8,18 @@ public class User {
 	private String name;
 	private String firstName;
 	private Date birthday;
-	private String profession;
 	
 	private Authentification auth;
 	
-	public User(Integer id, String name, String firstName, Date birthday,
-			String profession, Authentification auth) {
+	public User(Integer id, String name, String firstName, Date birthday, Authentification auth) {
 		this.id = id;
 		this.name = name;
 		this.firstName = firstName;
 		this.birthday = birthday;
-		this.profession = profession;
 		this.auth = auth;
 	}
+	
+	public User() {}
 	
 	public Integer getId() {
 		return id;
@@ -45,12 +44,6 @@ public class User {
 	}
 	public void setBirthday(Date bornday) {
 		this.birthday = bornday;
-	}
-	public String getProfession() {
-		return profession;
-	}
-	public void setProfession(String profession) {
-		this.profession = profession;
 	}
 
 	public Authentification getAuth() {

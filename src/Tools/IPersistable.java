@@ -1,4 +1,4 @@
-package DBUtils;
+package Tools;
 
 import java.sql.SQLException;
 

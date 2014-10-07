@@ -1,15 +1,19 @@
 package Entity;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class QCM {
 	
 	private Integer id;
 	private String title;
-	private int duration; //En second
+	
+	private Map<Integer, Question> questions;
 	
 	public QCM(String title, int duration) {
 		this.id = null;
 		this.title = title;
-		this.duration = duration;
+		this.questions = new HashMap<Integer, Question>();
 	}
 
 	public Integer getId() {
@@ -28,12 +32,19 @@ public class QCM {
 		this.title = title;
 	}
 
-	public int getDuration() {
-		return duration;
+	public Map<Integer, Question> getQuestions() {
+		return questions;
 	}
-
-	public void setDuration(int duration) {
-		this.duration = duration;
-	}	
-
+	
+	public Question getQuestion(Integer id) {
+		return questions.get(id);
+	}
+	
+	public void addQuestion(Question question) {
+		questions.put(question.getId(), question);
+	}
+	
+	public void removeQuestion(Question question) {
+		questions.remove(question);
+	}
 }

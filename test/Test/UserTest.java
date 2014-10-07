@@ -8,9 +8,9 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
-import DBUtils.DBUtils;
 import RDG.AuthentificationRDG;
 import RDG.UserRDG;
+import Tools.DBUtils;
 
 public class UserTest {
 	

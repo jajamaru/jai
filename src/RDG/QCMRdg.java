@@ -3,7 +3,7 @@ package RDG;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import DBUtils.IPersistableWithId;
+import Tools.IPersistableWithId;
 import Entity.QCM;
 
 public class QCMRdg implements IPersistableWithId<QCM>{

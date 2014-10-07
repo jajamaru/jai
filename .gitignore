@@ -1,0 +1,12 @@
+*~
+*.[ca]
+tmp
+pid
+log
+.classpath
+.settings
+.project
+bin
+jai
+*.log
+romain_huret_jai

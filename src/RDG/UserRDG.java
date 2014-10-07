@@ -5,7 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import DBUtils.IPersistableWithId;
+import Tools.IPersistableWithId;
 import Entity.Authentification;
 import Entity.User;
 
@@ -55,7 +55,6 @@ public class UserRDG implements IPersistableWithId<User>{
 			statement.setString(1, obj.getName());
 			statement.setString(2, obj.getFirstName());
 			statement.setDate(3, obj.getBirthday());
-			statement.setString(4, obj.getProfession());
 			statement.executeUpdate();
 		} catch(Exception e) {
 			this.connection.rollback();
@@ -93,7 +92,7 @@ public class UserRDG implements IPersistableWithId<User>{
 		//On recherche le login et mot de passe associée
 		auth = this.authRDG.retrieve(set.getString(6));
 		//On créer l'utilisateur
-		user = new User(id, set.getString(2), set.getString(3), set.getDate(4), set.getString(5), auth);
+		user = new User(id, set.getString(2), set.getString(3), set.getDate(4), auth);
 		return user;
 	}
 
@@ -102,7 +101,6 @@ public class UserRDG implements IPersistableWithId<User>{
 		statement.setString(1, obj.getName());
 		statement.setString(2, obj.getFirstName());
 		statement.setDate(3, obj.getBirthday());
-		statement.setString(4, obj.getProfession());
 		statement.executeUpdate();
 		ResultSet generatedKeys = statement.getGeneratedKeys();
 		if(!generatedKeys.next()) throw new IllegalStateException("no generated keys");
