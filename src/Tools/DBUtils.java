@@ -10,18 +10,15 @@ public class DBUtils {
 	public static final String CONNECTION_REQUEST = "jdbc:derby:romain_huret_jai;create=true";
 	
 	public static final String[] CREATE_TABLE_STATEMENTS = new String[] {
-		"create table Authentification (login VARCHAR(255) not null, password VARCHAR(255) not null, primary key(login))",
-		"create table Answer (id integer not null generated always as identity, description VARCHAR(1024), answer VARCHAR(255) not null, isTrue boolean default false, cpt integer, primary key(id))",
+		"create table Answer (id integer not null generated always as identity, description VARCHAR(1024), isTrue boolean default false, cpt integer, primary key(id))",
 		"create table Question (id integer not null generated always as identity, description VARCHAR(2048) not null, idAnswer integer, primary key(id), foreign key(idAnswer) references Answer(id))",
 		"create table Qcm (id integer not null generated always as identity, title VARCHAR(255) not null, idQuestion integer, primary key(id), foreign key(idQuestion) references Question(id))",
-		"create table User (id integer not null generated always as identity, name VARCHAR(255) not null, firstname VARCHAR(255) not null, birthday DATE not null, login VARCHAR(255) not null, primary key(id), foreign key(login) references Authentification(login))",
-		"create table Qcmresult (id integer not null generated always as identity, userId integer not null, QCMId integer not null, date DATE not null, nbParticipants integer not null, successRate decimal(4,2) not null, duration integer, primary key(id), foreign key(userID) references User(id), foreign key(QCMId) references Qcm(id))"
+		"create table Qcmresult (id integer not null generated always as identity, QCMId integer not null, date DATE not null, nbParticipants integer not null, successRate decimal(4,2) not null, duration integer, primary key(id), foreign key(QCMId) references Qcm(id))"
 		};
 	
 	public static final String[] DROP_TABLE_STATEMENTS = new String[] {
-		"drop table Qcmresult", "drop table User",
-		"drop table Qcm","drop table Question","drop table Answer",
-		"drop table Authentification"
+		"drop table Qcmresult", "drop table Qcm",
+		"drop table Question","drop table Answer"
 		};
 	
 	public static Connection getConnection() throws SQLException {

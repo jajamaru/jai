@@ -11,7 +11,7 @@ import org.junit.BeforeClass;
 import RDG.QCMRdg;
 import Tools.DBUtils;
 
-public class QCMCompletedTest {
+public class QCMResultTest {
 	
 	private static Connection connection;
 	private static QCMRdg qcmRdg;

@@ -3,27 +3,25 @@ package Entity;
 
 public class Answer {
 	
-	private int id;
+	private Integer id;
 	private String desc;
-	private String answer;
 	private boolean isTrue;
 	private int cpt;
 	
 	public Answer() {}
 	
-	public Answer(int id, String desc, String answer, boolean isTrue, int cpt) {
+	public Answer(Integer id, String desc, boolean isTrue, int cpt) {
 		this.id = id;
 		this.desc = desc;
-		this.answer = answer;
 		this.isTrue = isTrue;
 		this.cpt = cpt;
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -33,14 +31,6 @@ public class Answer {
 
 	public void setDesc(String desc) {
 		this.desc = desc;
-	}
-
-	public String getAnswer() {
-		return answer;
-	}
-
-	public void setAnswer(String answer) {
-		this.answer = answer;
 	}
 
 	public boolean isTrue() {

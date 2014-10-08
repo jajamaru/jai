@@ -1,5 +1,6 @@
 package Entity;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,12 +9,12 @@ public class Question {
 	private Integer id;
 	private String desc;
 	
-	private Map<Integer, Answer> answers;
+	private Map<Boolean, Answer> answers;
 
 	public Question(Integer id, String desc) {
 		this.id = id;
 		this.desc = desc;
-		this.answers = new HashMap<Integer, Answer>();
+		this.answers = new HashMap<Boolean, Answer>();
 	}
 	
 	public Question() {
@@ -21,26 +22,29 @@ public class Question {
 	}
 	
 	public void addAnswer(Answer answer) {
-		answers.put(answer.getId(), answer);
+		answers.put(answer.isTrue(), answer);
 	}
 	
 	public void removeAnswer(Answer answer) {
 		answers.remove(answer);
 	}
 	
-	public Answer getAnswer(Integer id) {
-		return answers.get(id);
+	public Collection<Answer> getAnswers() {
+		return answers.values();
 	}
 	
-	public Map<Integer, Answer> getAnswers() {
-		return answers;
+	public void setAnswers(Collection<Answer> answers) {
+		answers.clear();
+		for(Answer a : answers) {
+			addAnswer(a);
+		}
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
