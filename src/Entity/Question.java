@@ -1,40 +1,42 @@
 package Entity;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 public class Question {
 	
 	private Integer id;
 	private String desc;
 	
-	private Map<Boolean, Answer> answers;
+	private List<Answer> answers;
 
 	public Question(Integer id, String desc) {
 		this.id = id;
 		this.desc = desc;
-		this.answers = new HashMap<Boolean, Answer>();
+		this.answers = new ArrayList<Answer>();
 	}
 	
 	public Question() {
-		this(null, null);
+		this.id = null;
+		this.desc = null;
+		this.answers = new ArrayList<Answer>();
 	}
 	
 	public void addAnswer(Answer answer) {
-		answers.put(answer.isTrue(), answer);
+		answers.add(answer);
 	}
 	
 	public void removeAnswer(Answer answer) {
 		answers.remove(answer);
 	}
 	
-	public Collection<Answer> getAnswers() {
-		return answers.values();
+	public List<Answer> getAnswers() {
+		return answers;
 	}
 	
-	public void setAnswers(Collection<Answer> answers) {
-		answers.clear();
+	public void setAnswers(List<Answer> answers) {
+		this.answers.clear();
 		for(Answer a : answers) {
 			addAnswer(a);
 		}

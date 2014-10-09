@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import Entity.Answer;
 import Entity.Question;
@@ -37,7 +38,14 @@ public class QuestionRdg implements IPersistableWithId<Question>{
 		}
 		try {
 			this.connection.setAutoCommit(false);
-			persistAnswers(obj.getAnswers());
+			assert obj.getAnswers().size() > 0;
+			try {	
+				persistAnswers(obj.getAnswers());
+			} catch(IllegalArgumentException e) {
+				this.connection.rollback();
+				this.connection.setAutoCommit(true);
+				throw e;
+			}
 			PreparedStatement statement = this.connection.prepareStatement(REQUEST_PERSIST, Statement.RETURN_GENERATED_KEYS);
 			statement.setString(1, obj.getDesc());
 			statement.executeUpdate();
@@ -117,9 +125,13 @@ public class QuestionRdg implements IPersistableWithId<Question>{
 	}
 	
 	private void persistAnswers(Collection<Answer> answers) throws SQLException {
+		boolean good = false;
+		if(answers.isEmpty()) throw new IllegalArgumentException("Aucunes réponses liées !");
 		for(Answer a : answers) {
+			if(a.isTrue())  good = true;
 			answerRdg.persist(a);
 		}
+		if(!good) throw new IllegalArgumentException("Aucunes réponses mises à vrai");
 	}
 	
 	private void updateAnswers(Collection<Answer> answers) throws SQLException {
@@ -134,8 +146,8 @@ public class QuestionRdg implements IPersistableWithId<Question>{
 		}
 	}
 	
-	private Collection<Answer> retrieveAnswers(Integer id) throws SQLException {
-		Collection<Answer> answers = new ArrayList<Answer>();
+	private List<Answer> retrieveAnswers(Integer id) throws SQLException {
+		List<Answer> answers = new ArrayList<Answer>();
 		PreparedStatement statement = this.connection.prepareStatement(REQUEST_RETRIEVE_ANSWERS);
 		statement.setInt(1, id);
 		ResultSet set = statement.executeQuery();

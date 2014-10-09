@@ -23,12 +23,12 @@ public class AnswerTest {
 	@BeforeClass
 	public static void setUpOnce() throws SQLException {
 		connection = DBUtils.getConnection();
+		answerRdg = new AnswerRdg(connection);
 	}
 	
 	@Before
 	public void setUp() throws SQLException {
 		DBUtils.resetDatabase(connection);
-		answerRdg = new AnswerRdg(connection);
 	}
 	
 	@After
