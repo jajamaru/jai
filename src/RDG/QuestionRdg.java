@@ -38,20 +38,22 @@ public class QuestionRdg implements IPersistableWithId<Question>{
 		}
 		try {
 			this.connection.setAutoCommit(false);
-			assert obj.getAnswers().size() > 0;
-			try {	
-				persistAnswers(obj.getAnswers());
-			} catch(IllegalArgumentException e) {
-				this.connection.rollback();
-				this.connection.setAutoCommit(true);
-				throw e;
-			}
+			//On persiste les réponses
+			persistAnswers(obj.getAnswers());
+			//On persiste la question
 			PreparedStatement statement = this.connection.prepareStatement(REQUEST_PERSIST, Statement.RETURN_GENERATED_KEYS);
 			statement.setString(1, obj.getDesc());
 			statement.executeUpdate();
-			ResultSet generatedKeys = statement.getGeneratedKeys();
-			if(!generatedKeys.next()) throw new IllegalStateException("no generated keys");
-			obj.setId(generatedKeys.getInt(1));
+			//On vérifie qu'un id est générer pour la question
+			checkGeneratedKey(statement, obj);
+		} catch(IllegalStateException e) {
+			this.connection.rollback();
+			this.connection.setAutoCommit(true);
+			throw e;
+		} catch(IllegalArgumentException e) {
+			this.connection.rollback();
+			this.connection.setAutoCommit(true);
+			throw e;
 		} catch(Exception e) {
 			this.connection.rollback();
 			this.connection.setAutoCommit(true);
@@ -71,6 +73,7 @@ public class QuestionRdg implements IPersistableWithId<Question>{
 			updateAnswers(obj.getAnswers());
 			PreparedStatement statement = this.connection.prepareStatement(REQUEST_UPDATE);
 			statement.setString(1, obj.getDesc());
+			statement.setInt(2, obj.getId());
 			statement.executeUpdate();
 		} catch(Exception e) {
 			this.connection.rollback();
@@ -120,18 +123,31 @@ public class QuestionRdg implements IPersistableWithId<Question>{
 	
 	public void increaseAnswer(Answer answer) throws SQLException {
 		Integer cpt = answer.getCpt();
-		answer.setCpt(cpt++);
+		answer.setCpt(++cpt);
 		answerRdg.update(answer);
 	}
 	
-	private void persistAnswers(Collection<Answer> answers) throws SQLException {
+	/**
+	 * Check the generated key of question object
+	 * @param statement
+	 * @param obj
+	 * @throws SQLException
+	 * @throws IllegalStateException
+	 */
+	private void checkGeneratedKey(PreparedStatement statement, Question obj) throws SQLException, IllegalStateException {
+		ResultSet generatedKeys = statement.getGeneratedKeys();
+		if(!generatedKeys.next()) throw new IllegalStateException("no generated keys");
+		obj.setId(generatedKeys.getInt(1));
+	}
+	
+	private void persistAnswers(Collection<Answer> answers) throws SQLException, IllegalArgumentException {
 		boolean good = false;
 		if(answers.isEmpty()) throw new IllegalArgumentException("Aucunes réponses liées !");
+		for(Answer a : answers) if(a.isTrue())  good = true;
+		if(!good) throw new IllegalArgumentException("Aucunes réponses mises à vrai");
 		for(Answer a : answers) {
-			if(a.isTrue())  good = true;
 			answerRdg.persist(a);
 		}
-		if(!good) throw new IllegalArgumentException("Aucunes réponses mises à vrai");
 	}
 	
 	private void updateAnswers(Collection<Answer> answers) throws SQLException {

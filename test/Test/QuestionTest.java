@@ -1,13 +1,10 @@
 package Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -134,6 +131,19 @@ public class QuestionTest {
 		question.setDesc("Qui es-tu ?");
 		question.setAnswers(answers);
 		questionRdg.persist(question);
+	}
+	
+	@Test
+	public void testIncreaseAnswer() throws SQLException {
+		Question question = new Question();
+		question.setDesc("Qui es-tu ?");
+		question.setAnswers(answers);
+		questionRdg.persist(question);
+		
+		Answer answer = question.getAnswers().get(0);
+		questionRdg.increaseAnswer(answer);
+		
+		assertEquals(1, answerRdg.retrieve(answer.getId()).getCpt());
 	}
 
 }
