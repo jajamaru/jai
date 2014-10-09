@@ -1,5 +1,6 @@
 package Entity;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,9 +11,13 @@ public class QCM {
 	
 	private Map<Integer, Question> questions;
 	
-	public QCM(String title, int duration) {
+	public QCM(String title) {
 		this.id = null;
 		this.title = title;
+		this.questions = new HashMap<Integer, Question>();
+	}
+	
+	public QCM() {
 		this.questions = new HashMap<Integer, Question>();
 	}
 
@@ -32,8 +37,15 @@ public class QCM {
 		this.title = title;
 	}
 
-	public Map<Integer, Question> getQuestions() {
-		return questions;
+	public Collection<Question> getQuestions() {
+		return questions.values();
+	}
+	
+	public void setQuestions(Collection<Question> questions) {
+		this.questions.clear();
+		for(Question q : questions) {
+			this.questions.put(q.getId(), q);
+		}
 	}
 	
 	public Question getQuestion(Integer id) {
