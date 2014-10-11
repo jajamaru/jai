@@ -8,6 +8,7 @@ public class Question {
 	
 	private Integer id;
 	private String desc;
+	private Integer idQcm;
 	
 	private List<Answer> answers;
 
@@ -23,19 +24,31 @@ public class Question {
 		this.answers = new ArrayList<Answer>();
 	}
 	
+	public void getAnswer(int position) {
+		this.answers.get(position);
+	}
+	
 	public void addAnswer(Answer answer) {
-		answers.add(answer);
+		if(this.answers.contains(answer))
+			updateAnswer(answer);
+		else
+			this.answers.add(answer);
 	}
 	
 	public void removeAnswer(Answer answer) {
-		answers.remove(answer);
+		this.answers.remove(answer);
 	}
 	
-	public List<Answer> getAnswers() {
+	private void updateAnswer(Answer answer) {
+		this.answers.remove(answer);
+		this.answers.add(answer);
+	}
+	
+	public Collection<Answer> getAnswers() {
 		return answers;
 	}
 	
-	public void setAnswers(List<Answer> answers) {
+	public void setAnswers(Collection<Answer> answers) {
 		this.answers.clear();
 		for(Answer a : answers) {
 			addAnswer(a);
@@ -57,5 +70,14 @@ public class Question {
 	public void setDesc(String desc) {
 		this.desc = desc;
 	}
+
+	public Integer getIdQcm() {
+		return idQcm;
+	}
+
+	public void setIdQcm(Integer idQcm) {
+		this.idQcm = idQcm;
+	}
+	
 
 }

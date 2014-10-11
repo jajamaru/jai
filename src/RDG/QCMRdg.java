@@ -16,7 +16,7 @@ public class QCMRdg implements IPersistableWithId<QCM>{
 	
 	public static final String REQUEST_PERSIST = "insert into Qcm(title) values(?)";
 	public static final String REQUEST_RETRIEVE = "select * from Qcm where Qcm.id = ?";
-	public static final String REQUEST_RETRIEVE_QUESTIONS = "select idQuestion from Qcm where Qcm.id = ?";
+	public static final String REQUEST_RETRIEVE_QUESTIONS = "select * from Question where idQcm = ?";
 	public static final String REQUEST_UPDATE = "update Qcm set title = ? where Qcm.id = ?";
 	public static final String REQUEST_DELETE = "delete from Qcm where Qcm.id = ?";
 	
@@ -35,13 +35,14 @@ public class QCMRdg implements IPersistableWithId<QCM>{
 			update(obj);
 			return;
 		}
-		try {
-			this.connection.setAutoCommit(false);
-			persistQuestions(obj.getQuestions());
+		this.connection.setAutoCommit(false);
+		try {	
 			PreparedStatement statement = this.connection.prepareStatement(REQUEST_PERSIST, Statement.RETURN_GENERATED_KEYS);
 			statement.setString(1, obj.getTitle());
 			statement.executeUpdate();
 			checkGeneratedKey(statement, obj);
+			persistQuestions(obj);
+			this.connection.setAutoCommit(true);
 		} catch(IllegalArgumentException e) {
 			this.connection.rollback();
 			this.connection.setAutoCommit(true);
@@ -64,13 +65,14 @@ public class QCMRdg implements IPersistableWithId<QCM>{
 			persist(obj);
 			return;
 		}
+		this.connection.setAutoCommit(false);
 		try {
-			this.connection.setAutoCommit(false);
 			updateQuestions(obj.getQuestions());
 			PreparedStatement statement = this.connection.prepareStatement(REQUEST_UPDATE);
 			statement.setString(1, obj.getTitle());
 			statement.setInt(2, obj.getId());
 			statement.executeUpdate();
+			this.connection.setAutoCommit(true);
 		} catch(Exception e) {
 			this.connection.rollback();
 			this.connection.setAutoCommit(true);
@@ -81,12 +83,13 @@ public class QCMRdg implements IPersistableWithId<QCM>{
 	@Override
 	public void delete(QCM obj) throws SQLException {
 		// TODO Auto-generated method stub
+		this.connection.setAutoCommit(false);
 		try {
-			this.connection.setAutoCommit(false);
 			deleteQuestions(obj.getQuestions());
 			PreparedStatement statement = this.connection.prepareStatement(REQUEST_DELETE);
 			statement.setInt(1, obj.getId());
 			statement.executeUpdate();
+			this.connection.setAutoCommit(true);
 		} catch(Exception e) {
 			this.connection.rollback();
 			this.connection.setAutoCommit(true);
@@ -98,8 +101,8 @@ public class QCMRdg implements IPersistableWithId<QCM>{
 	public QCM retrieve(Integer id) throws SQLException {
 		// TODO Auto-generated method stub
 		QCM qcm = null;
+		this.connection.setAutoCommit(false);
 		try {
-			this.connection.setAutoCommit(false);
 			PreparedStatement statement = this.connection.prepareStatement(REQUEST_RETRIEVE);
 			statement.setInt(1, id);
 			ResultSet set = statement.executeQuery();
@@ -109,6 +112,7 @@ public class QCMRdg implements IPersistableWithId<QCM>{
 				qcm.setTitle(set.getString(2));
 				qcm.setQuestions(retrieveQuestions(id));
 			}
+			this.connection.setAutoCommit(true);
 		} catch(Exception e) {
 			this.connection.rollback();
 			this.connection.setAutoCommit(true);
@@ -117,8 +121,10 @@ public class QCMRdg implements IPersistableWithId<QCM>{
 		return qcm;
 	}
 	
-	private void persistQuestions(Collection<Question> questions) throws SQLException {
+	private void persistQuestions(QCM obj) throws SQLException {
+		Collection<Question> questions = obj.getQuestions();
 		for(Question q : questions) {
+			q.setIdQcm(obj.getId());
 			questionRdg.persist(q);
 		}
 	}
@@ -141,6 +147,7 @@ public class QCMRdg implements IPersistableWithId<QCM>{
 		statement.setInt(1, id);
 		ResultSet set = statement.executeQuery();
 		while(set.next()) {
+			System.out.println("Question récupérée !");
 			questions.add(questionRdg.retrieve(set.getInt(1)));
 		}
 		return questions;

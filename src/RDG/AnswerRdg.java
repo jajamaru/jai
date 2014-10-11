@@ -11,7 +11,7 @@ import Tools.IPersistableWithId;
 
 public class AnswerRdg implements IPersistableWithId<Answer>{
 
-	public static final String REQUEST_PERSIST = "insert into Answer(description, isTrue, cpt) values(?,?,?)";
+	public static final String REQUEST_PERSIST = "insert into Answer(description, isTrue, cpt, idQuestion) values(?,?,?,?)";
 	public static final String REQUEST_RETRIEVE = "select * from Answer where Answer.id = ?";
 	public static final String REQUEST_UPDATE = "update Answer set description = ?, isTrue = ?, cpt = ? where Answer.id = ?";
 	public static final String REQUEST_DELETE = "delete from Answer where Answer.id = ?";
@@ -33,6 +33,7 @@ public class AnswerRdg implements IPersistableWithId<Answer>{
 		statement.setString(1, obj.getDesc());
 		statement.setBoolean(2, obj.isTrue());
 		statement.setInt(3, obj.getCpt());
+		statement.setInt(4, obj.getIdQuestion());
 		statement.executeUpdate();
 		ResultSet generatedKeys = statement.getGeneratedKeys();
 		if(!generatedKeys.next()) throw new IllegalStateException("no generated keys");

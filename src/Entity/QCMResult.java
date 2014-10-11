@@ -5,16 +5,17 @@ import java.sql.Date;
 public class QCMResult {
 	
 	private Integer id;
-	private QCM qcm;
+	private Integer idQcm;
 	private Date date;
 	private int nbParticipants;
-	private float successRate;
+	private double successRate;
 	private int duration; //en second
 	
-	public QCMResult(Integer id, QCM qcm, Date date, int nbParticipants,
+	public QCMResult() {}
+	
+	public QCMResult(Integer id, Date date, int nbParticipants,
 			float successRate, int duration) {
 		this.id = id;
-		this.qcm = qcm;
 		this.date = date;
 		this.nbParticipants = nbParticipants;
 		this.successRate = successRate;
@@ -27,14 +28,6 @@ public class QCMResult {
 
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	public QCM getQcm() {
-		return qcm;
-	}
-
-	public void setQcm(QCM qcm) {
-		this.qcm = qcm;
 	}
 
 	public Date getDate() {
@@ -53,11 +46,11 @@ public class QCMResult {
 		this.nbParticipants = nbParticipants;
 	}
 
-	public float getSuccessRate() {
+	public double getSuccessRate() {
 		return successRate;
 	}
 
-	public void setSuccessRate(float successRate) {
+	public void setSuccessRate(double successRate) {
 		this.successRate = successRate;
 	}
 
@@ -68,5 +61,15 @@ public class QCMResult {
 	public void setDuration(int duration) {
 		this.duration = duration;
 	}
+
+	public Integer getIdQcm() {
+		return idQcm;
+	}
+
+	public void setIdQcm(Integer idqcm) {
+		idQcm = idqcm;
+	}
+	
+	
 	
 }

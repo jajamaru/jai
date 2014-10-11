@@ -1,24 +1,24 @@
 package Entity;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 public class QCM {
 	
 	private Integer id;
 	private String title;
 	
-	private Map<Integer, Question> questions;
+	private List<Question> questions;
 	
 	public QCM(String title) {
 		this.id = null;
 		this.title = title;
-		this.questions = new HashMap<Integer, Question>();
+		this.questions = new ArrayList<Question>();
 	}
 	
 	public QCM() {
-		this.questions = new HashMap<Integer, Question>();
+		this.questions = new ArrayList<Question>();
 	}
 
 	public Integer getId() {
@@ -38,13 +38,13 @@ public class QCM {
 	}
 
 	public Collection<Question> getQuestions() {
-		return questions.values();
+		return questions;
 	}
 	
 	public void setQuestions(Collection<Question> questions) {
 		this.questions.clear();
 		for(Question q : questions) {
-			this.questions.put(q.getId(), q);
+			addQuestion(q);
 		}
 	}
 	
@@ -53,10 +53,18 @@ public class QCM {
 	}
 	
 	public void addQuestion(Question question) {
-		questions.put(question.getId(), question);
+		if(questions.contains(question)) 
+			updateQuestion(question);
+		else
+			questions.add(question);
 	}
 	
 	public void removeQuestion(Question question) {
 		questions.remove(question);
+	}
+	
+	private void updateQuestion(Question question) {
+		this.questions.remove(question);
+		this.questions.add(question);
 	}
 }

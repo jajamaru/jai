@@ -1,9 +1,15 @@
 package Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -11,7 +17,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import Entity.Answer;
 import Entity.QCM;
+import Entity.Question;
 import RDG.QCMRdg;
 import RDG.QuestionRdg;
 import Tools.DBUtils;
@@ -22,22 +30,40 @@ public class QCMTest {
 	private static QCMRdg QCMRdg;
 	private static QuestionRdg questionRdg;
 	
+	private static List<Question> questions;
+	
 	
 	@BeforeClass
 	public static void setUpOnce() throws SQLException {
 		connection = DBUtils.getConnection();
 		QCMRdg = new QCMRdg(connection);
 		questionRdg = new QuestionRdg(connection);
+		questions = new ArrayList<Question>();
 	}
 	
 	@Before
 	public void setUp() throws SQLException {
 		DBUtils.resetDatabase(connection);
+		List<Answer> answers = new ArrayList<Answer>();
+		Answer answer = new Answer();
+		answer.setCpt(0);
+		answer.setDesc("A");
+		answer.setTrue(true);
+		answers.add(answer);
+		answer = new Answer();
+		answer.setCpt(0);
+		answer.setDesc("B");
+		answer.setTrue(false);
+		Question question = new Question();
+		question.setDesc("Qui es-tu ?");
+		question.setAnswers(answers);
+		questions.add(question);
 	}
 	
 	@After
 	public void tearDown() throws SQLException {
 		DBUtils.resetDatabase(connection);
+		questions.clear();
 	}
 	@AfterClass
 	public static void tearDownOnce() throws SQLException {
@@ -46,22 +72,57 @@ public class QCMTest {
 	
 	@Test
 	public void testRetrieve() throws SQLException {
-		
+		QCM qcm = new QCM();
+		qcm.setQuestions(questions);
+		qcm.setTitle("Mon qcm");
+		QCMRdg.persist(qcm);
+		Integer id = qcm.getId();
+		qcm = QCMRdg.retrieve(id);
+		assertNotNull(qcm);
+		assertEquals(1, qcm.getQuestions().size());
 	}
 	
 	@Test
 	public void testPersist() throws SQLException {
-		
+		QCM qcm = new QCM();
+		qcm.setQuestions(questions);
+		qcm.setTitle("Mon qcm");
+		QCMRdg.persist(qcm);
+		assertNotNull(qcm.getId());
+		Iterator<Question> it = qcm.getQuestions().iterator();
+		while(it.hasNext()) {
+			Question q = it.next();
+			assertNotNull(q.getId());
+		}
 	}
 	
 	@Test
 	public void testUpdate() throws SQLException {
-		
+		QCM qcm = new QCM();
+		qcm.setQuestions(questions);
+		qcm.setTitle("Mon qcm");
+		QCMRdg.persist(qcm);
+		qcm.setTitle("qcm");
+		QCMRdg.update(qcm);
+		assertEquals("qcm", QCMRdg.retrieve(qcm.getId()).getTitle());
+		assertEquals(1, qcm.getQuestions().size());
 	}
 	
 	@Test
 	public void testDelete() throws SQLException {
-		
+		QCM qcm = new QCM();
+		qcm.setQuestions(questions);
+		qcm.setTitle("Mon qcm");
+		QCMRdg.persist(qcm);
+		Integer id = qcm.getId();
+		Collection<Question> questions = qcm.getQuestions();
+		QCMRdg.delete(qcm);
+		assertNull(QCMRdg.retrieve(id));
+		Iterator<Question> it = questions.iterator();
+		while(it.hasNext()) {
+			Question q = it.next();
+			assertNull(questionRdg.retrieve(q.getId()));
+		}
 	}
 	
 	@Test
@@ -69,9 +130,39 @@ public class QCMTest {
 		assertNull(QCMRdg.retrieve(0));
 	}
 	
-	@Test(expected=IllegalArgumentException.class)
-	public void testAtLeastOneQuestion() throws SQLException {
-		
+	@Test
+	public void testAddQuestion() {
+		QCM qcm = new QCM();
+		qcm.setTitle("Ceci est un qcm");
+		Question question = new Question();
+		assertEquals(0, qcm.getQuestions().size());
+		qcm.addQuestion(question);
+		assertEquals(1, qcm.getQuestions().size());
+	}
+	
+	@Test
+	public void testRemoveQuestion() {
+		QCM qcm = new QCM();
+		qcm.setTitle("Ceci est un qcm");
+		Question question = new Question();
+		assertEquals(0, qcm.getQuestions().size());
+		qcm.addQuestion(question);
+		assertEquals(1, qcm.getQuestions().size());
+		qcm.removeQuestion(question);
+		assertEquals(0, qcm.getQuestions().size());
+	}
+	
+	@Test
+	public void testUpdateQuestion() {
+		QCM qcm = new QCM();
+		qcm.setTitle("Ceci est un qcm");
+		Question question = new Question();
+		assertEquals(0, qcm.getQuestions().size());
+		qcm.addQuestion(question);
+		assertEquals(1, qcm.getQuestions().size());
+		question.setDesc("Ceci est une question");
+		qcm.addQuestion(question);
+		assertEquals(1, qcm.getQuestions().size());
 	}
 
 }

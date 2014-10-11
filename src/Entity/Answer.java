@@ -7,6 +7,7 @@ public class Answer {
 	private String desc;
 	private boolean isTrue;
 	private int cpt;
+	private Integer idQuestion;
 	
 	public Answer() {}
 	
@@ -48,7 +49,13 @@ public class Answer {
 	public void setCpt(int cpt) {
 		this.cpt = cpt;
 	}
-	
 
+	public Integer getIdQuestion() {
+		return idQuestion;
+	}
+
+	public void setIdQuestion(Integer idQuestion) {
+		this.idQuestion = idQuestion;
+	}
 
 }

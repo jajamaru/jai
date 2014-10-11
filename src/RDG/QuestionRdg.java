@@ -15,9 +15,9 @@ import Tools.IPersistableWithId;
 
 public class QuestionRdg implements IPersistableWithId<Question>{
 	
-	public static final String REQUEST_PERSIST = "insert into Question(description) values(?)";
+	public static final String REQUEST_PERSIST = "insert into Question(description, idQcm) values(?,?)";
 	public static final String REQUEST_RETRIEVE = "select * from Question where Question.id = ?";
-	public static final String REQUEST_RETRIEVE_ANSWERS = "select idAnswer from Question where Question.id = ?";
+	public static final String REQUEST_RETRIEVE_ANSWERS = "select * from Answer where idQuestion = ?";
 	public static final String REQUEST_UPDATE = "update Question set description = ? where Question.id = ?";
 	public static final String REQUEST_DELETE = "delete from Question where Question.id = ?";
 	
@@ -36,21 +36,19 @@ public class QuestionRdg implements IPersistableWithId<Question>{
 			update(obj);
 			return;
 		}
+		this.connection.setAutoCommit(false);	
 		try {
-			this.connection.setAutoCommit(false);
-			//On persiste les réponses
-			persistAnswers(obj.getAnswers());
 			//On persiste la question
 			PreparedStatement statement = this.connection.prepareStatement(REQUEST_PERSIST, Statement.RETURN_GENERATED_KEYS);
 			statement.setString(1, obj.getDesc());
+			statement.setInt(2, obj.getIdQcm());
 			statement.executeUpdate();
 			//On vérifie qu'un id est générer pour la question
 			checkGeneratedKey(statement, obj);
+			//On persiste les réponses
+			persistAnswers(obj);
+			this.connection.setAutoCommit(true);	
 		} catch(IllegalStateException e) {
-			this.connection.rollback();
-			this.connection.setAutoCommit(true);
-			throw e;
-		} catch(IllegalArgumentException e) {
 			this.connection.rollback();
 			this.connection.setAutoCommit(true);
 			throw e;
@@ -68,13 +66,14 @@ public class QuestionRdg implements IPersistableWithId<Question>{
 			persist(obj);
 			return;
 		}
-		try {
-			this.connection.setAutoCommit(false);
+		this.connection.setAutoCommit(false);
+		try {		
 			updateAnswers(obj.getAnswers());
 			PreparedStatement statement = this.connection.prepareStatement(REQUEST_UPDATE);
 			statement.setString(1, obj.getDesc());
 			statement.setInt(2, obj.getId());
 			statement.executeUpdate();
+			this.connection.setAutoCommit(true);
 		} catch(Exception e) {
 			this.connection.rollback();
 			this.connection.setAutoCommit(true);
@@ -85,12 +84,13 @@ public class QuestionRdg implements IPersistableWithId<Question>{
 	@Override
 	public void delete(Question obj) throws SQLException {
 		// TODO Auto-generated method stub
+		this.connection.setAutoCommit(false);
 		try {
-			this.connection.setAutoCommit(false);
 			deleteAnswers(obj.getAnswers());
 			PreparedStatement statement = this.connection.prepareStatement(REQUEST_DELETE);
 			statement.setInt(1, obj.getId());
 			statement.executeUpdate();
+			this.connection.setAutoCommit(false);
 		} catch(Exception e) {
 			this.connection.rollback();
 			this.connection.setAutoCommit(true);
@@ -102,8 +102,8 @@ public class QuestionRdg implements IPersistableWithId<Question>{
 	public Question retrieve(Integer id) throws SQLException {
 		// TODO Auto-generated method stub
 		Question question = null;
+		this.connection.setAutoCommit(false);
 		try {
-			this.connection.setAutoCommit(false);
 			PreparedStatement statement = this.connection.prepareStatement(REQUEST_RETRIEVE);
 			statement.setInt(1, id);
 			ResultSet set = statement.executeQuery();
@@ -113,6 +113,7 @@ public class QuestionRdg implements IPersistableWithId<Question>{
 				question.setDesc(set.getString(2));
 				question.setAnswers(retrieveAnswers(id));
 			}
+			this.connection.setAutoCommit(true);
 		} catch(Exception e) {
 			this.connection.rollback();
 			this.connection.setAutoCommit(true);
@@ -140,12 +141,11 @@ public class QuestionRdg implements IPersistableWithId<Question>{
 		obj.setId(generatedKeys.getInt(1));
 	}
 	
-	private void persistAnswers(Collection<Answer> answers) throws SQLException, IllegalArgumentException {
-		boolean good = false;
-		if(answers.isEmpty()) throw new IllegalArgumentException("Aucunes réponses liées !");
-		for(Answer a : answers) if(a.isTrue())  good = true;
-		if(!good) throw new IllegalArgumentException("Aucunes réponses mises à vrai");
+	private void persistAnswers(Question obj) throws SQLException {
+		Collection<Answer> answers = obj.getAnswers();
+		Integer idQuestion = obj.getId();
 		for(Answer a : answers) {
+			a.setIdQuestion(idQuestion);
 			answerRdg.persist(a);
 		}
 	}
