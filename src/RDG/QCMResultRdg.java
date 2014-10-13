@@ -1,4 +1,4 @@
-package RDG;
+package rdg;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -7,8 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import Entity.QCMResult;
-import Tools.IPersistableWithId;
+import tools.IPersistableWithId;
+import entity.QCMResult;
 
 public class QCMResultRdg implements IPersistableWithId<QCMResult>{
 	

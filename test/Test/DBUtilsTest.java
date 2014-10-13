@@ -1,4 +1,4 @@
-package Test;
+package test;
 
 import static org.junit.Assert.fail;
 
@@ -7,7 +7,7 @@ import java.sql.SQLException;
 
 import org.junit.Test;
 
-import Tools.DBUtils;
+import tools.DBUtils;
 
 public class DBUtilsTest {
 	

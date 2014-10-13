@@ -1,4 +1,4 @@
-package Test;
+package test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -13,11 +13,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import Entity.QCM;
-import Entity.QCMResult;
-import RDG.QCMRdg;
-import RDG.QCMResultRdg;
-import Tools.DBUtils;
+import entity.QCM;
+import entity.QCMResult;
+import rdg.QCMRdg;
+import rdg.QCMResultRdg;
+import tools.DBUtils;
 
 public class QCMResultTest {
 	

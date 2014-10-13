@@ -1,4 +1,4 @@
-package RDG;
+package rdg;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import Entity.Answer;
-import Entity.Question;
-import Tools.IPersistableWithId;
+import tools.IPersistableWithId;
+import entity.Answer;
+import entity.Question;
 
 public class QuestionRdg implements IPersistableWithId<Question>{
 	

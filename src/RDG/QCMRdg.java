@@ -1,4 +1,4 @@
-package RDG;
+package rdg;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,9 +8,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import Entity.QCM;
-import Entity.Question;
-import Tools.IPersistableWithId;
+import tools.IPersistableWithId;
+import entity.QCM;
+import entity.Question;
 
 public class QCMRdg implements IPersistableWithId<QCM>{
 	

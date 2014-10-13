@@ -1,4 +1,4 @@
-package Test;
+package test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -13,13 +13,13 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import Entity.Answer;
-import Entity.QCM;
-import Entity.Question;
-import RDG.AnswerRdg;
-import RDG.QCMRdg;
-import RDG.QuestionRdg;
-import Tools.DBUtils;
+import entity.Answer;
+import entity.QCM;
+import entity.Question;
+import rdg.AnswerRdg;
+import rdg.QCMRdg;
+import rdg.QuestionRdg;
+import tools.DBUtils;
 
 public class AnswerTest {
 	
