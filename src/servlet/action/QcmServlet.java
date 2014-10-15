@@ -8,17 +8,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class DeleteServlet
+ * Servlet implementation class SelectServlet
  */
-@WebServlet("/action/delete")
-public class DeleteServlet extends HttpServlet {
+@WebServlet("/action/qcm/*")
+public class QcmServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
+
     /**
-     * @see HttpServlet#HttpServlet()
+     * Default constructor. 
      */
-    public DeleteServlet() {
-        super();
+    public QcmServlet() {
         // TODO Auto-generated constructor stub
     }
 

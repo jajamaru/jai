@@ -8,16 +8,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class SelectServlet
+ * Servlet implementation class UpdateServlet
  */
-@WebServlet("/action/select")
-public class SelectServlet extends HttpServlet {
+@WebServlet("/action/result")
+public class QcmResultServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
+       
     /**
-     * Default constructor. 
+     * @see HttpServlet#HttpServlet()
      */
-    public SelectServlet() {
+    public QcmResultServlet() {
+        super();
         // TODO Auto-generated constructor stub
     }
 
