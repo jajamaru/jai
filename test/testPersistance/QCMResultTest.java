@@ -1,23 +1,27 @@
-package test;
+package testPersistance;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.SQLException;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import entity.QCM;
-import entity.QCMResult;
 import rdg.QCMRdg;
 import rdg.QCMResultRdg;
 import tools.DBUtils;
+import entity.QCM;
+import entity.QCMResult;
 
 public class QCMResultTest {
 	
@@ -95,6 +99,23 @@ public class QCMResultTest {
 	@Test
 	public void testDoesNotExist() throws SQLException {
 		assertNull(qcmResultRdg.retrieve(0));
+	}
+	
+	@Test
+	public void testJson() throws JSONException {
+		QCMResult result = new QCMResult();
+		result.setNbParticipants(20);
+		result.setDuration(60*5);
+		result.setSuccessRate(80.0f);
+		result.setIdQcm(qcm.getId());
+		
+		final long time = System.currentTimeMillis();
+		Date date = new Date(time);
+		assertEquals(date.getTime(), time);
+		
+		JSONObject json = result.getJson();
+		System.out.println(json.toString());
+		assertTrue(result.equals(QCMResult.retrieveObject(json)));
 	}
 
 }

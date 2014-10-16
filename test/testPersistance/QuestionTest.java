@@ -1,8 +1,6 @@
-package test;
+package testPersistance;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -11,19 +9,21 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import entity.Answer;
-import entity.QCM;
-import entity.Question;
 import rdg.AnswerRdg;
 import rdg.QCMRdg;
 import rdg.QuestionRdg;
 import tools.DBUtils;
+import entity.Answer;
+import entity.QCM;
+import entity.Question;
 
 public class QuestionTest {
 	
@@ -166,6 +166,27 @@ public class QuestionTest {
 		assertEquals(1, question.getAnswers().size());
 		question.removeAnswer(answer);
 		assertEquals(0, question.getAnswers().size());
+	}
+	
+	@Test
+	public void testJson() throws JSONException {
+		Question question = new Question();
+		question.setDesc("question");
+		question.setIdQcm(qcm.getId());
+		Answer answer = new Answer();
+		answer.setCpt(0);
+		answer.setDesc("A");
+		answer.setTrue(true);
+		question.addAnswer(answer);
+		answer = new Answer();
+		answer.setCpt(0);
+		answer.setDesc("B");
+		answer.setTrue(false);
+		question.addAnswer(answer);
+		
+		JSONObject json = question.getJson();
+		System.out.println(json.toString());
+		assertTrue(question.equals(Question.retrieveObject(json)));
 	}
 
 }

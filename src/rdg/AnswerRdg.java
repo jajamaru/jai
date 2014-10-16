@@ -6,6 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import tools.IPersistableWithId;
 import entity.Answer;
 
@@ -77,4 +80,5 @@ public class AnswerRdg implements IPersistableWithId<Answer>{
 		answer.setCpt(set.getInt(4));
 		return answer;
 	}
+	
 }

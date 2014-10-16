@@ -1,8 +1,6 @@
-package test;
+package testPersistance;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -11,18 +9,20 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import entity.Answer;
-import entity.QCM;
-import entity.Question;
 import rdg.QCMRdg;
 import rdg.QuestionRdg;
 import tools.DBUtils;
+import entity.Answer;
+import entity.QCM;
+import entity.Question;
 
 public class QCMTest {
 	
@@ -163,6 +163,17 @@ public class QCMTest {
 		question.setDesc("Ceci est une question");
 		qcm.addQuestion(question);
 		assertEquals(1, qcm.getQuestions().size());
+	}
+	
+	@Test
+	public void testJson() throws JSONException {
+		QCM qcm = new QCM();
+		qcm.setQuestions(questions);
+		qcm.setTitle("Mon qcm");
+		
+		JSONObject json = qcm.getJson();
+		System.out.println(json.toString());
+		assertTrue(qcm.equals(QCM.retrieveObject(json)));
 	}
 
 }

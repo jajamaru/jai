@@ -1,4 +1,4 @@
-package test;
+package testPersistance;
 
 import static org.junit.Assert.fail;
 

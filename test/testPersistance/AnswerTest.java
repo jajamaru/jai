@@ -1,25 +1,25 @@
-package test;
+package testPersistance;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import entity.Answer;
-import entity.QCM;
-import entity.Question;
 import rdg.AnswerRdg;
 import rdg.QCMRdg;
 import rdg.QuestionRdg;
 import tools.DBUtils;
+import entity.Answer;
+import entity.QCM;
+import entity.Question;
 
 public class AnswerTest {
 	
@@ -118,6 +118,18 @@ public class AnswerTest {
 	@Test
 	public void testDoesNotExist() throws SQLException {
 		assertNull(answerRdg.retrieve(0));
+	}
+	
+	@Test
+	public void testJson() throws JSONException {
+		Answer answer = new Answer();
+		answer.setDesc("La réponse A !");
+		answer.setCpt(0);
+		answer.setTrue(true);
+		answer.setIdQuestion(question.getId());
+		JSONObject json = answer.getJson();
+		assertEquals("{\"answer\":{\"idQuestion\":1,\"desc\":\"La réponse A !\",\"cpt\":0,\"isTrue\":true}}", json.toString());
+		assertTrue(answer.equals(Answer.retrieveObject(json)));
 	}
 
 }

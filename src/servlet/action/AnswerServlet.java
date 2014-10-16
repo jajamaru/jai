@@ -10,6 +10,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import rdg.AnswerRdg;
 import tools.DBUtils;
 import entity.Answer;
@@ -50,7 +53,7 @@ public class AnswerServlet extends HttpServlet {
 			}
 			
 		}
-		RequestDispatcher dispatcher = request.getRequestDispatcher("./index.jsp");
+		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
 		dispatcher.forward(request, response);
 	}
 
@@ -60,9 +63,10 @@ public class AnswerServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		Answer answer = null;
-		if((answer = checkAndGetAnswerWithId(request)) != null) {
+		if(request.getParameter("answer") != null) {
 			try {
 				Integer id = null;
+				answer = Answer.retrieveObject(new JSONObject(request.getParameter("answer")));
 				AnswerRdg rdg = new AnswerRdg(DBUtils.getConnection());
 				id = answer.getId();
 				rdg.update(answer);
@@ -73,10 +77,14 @@ public class AnswerServlet extends HttpServlet {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				request.setAttribute("statut", "nok");
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				request.setAttribute("statut", "nok");
 			}
 			
 		}
-		RequestDispatcher dispatcher = request.getRequestDispatcher("./index.jsp");
+		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
 		dispatcher.forward(request, response);
 	}
 	
@@ -84,8 +92,9 @@ public class AnswerServlet extends HttpServlet {
 	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		Answer answer = null;
-		if((answer = checkAndGetAnswer(request)) != null) {
+		if(request.getParameter("answer") != null) {
 			try {
+				answer = Answer.retrieveObject(new JSONObject(request.getParameter("answer")));
 				AnswerRdg rdg = new AnswerRdg(DBUtils.getConnection());
 				rdg.persist(answer);
 				request.setAttribute("answer", answer);
@@ -94,9 +103,13 @@ public class AnswerServlet extends HttpServlet {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				request.setAttribute("statut", "nok");
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				request.setAttribute("statut", "nok");
 			}
 		}
-		RequestDispatcher dispatcher = request.getRequestDispatcher("./index.jsp");
+		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
 		dispatcher.forward(request, response);
 	}
 	
@@ -104,8 +117,9 @@ public class AnswerServlet extends HttpServlet {
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		Answer answer = null;
-		if((answer = checkAndGetAnswerWithId(request)) != null) {
+		if(request.getParameter("answer") != null) {
 			try {
+				answer = Answer.retrieveObject(new JSONObject(request.getParameter("answer")));
 				AnswerRdg rdg = new AnswerRdg(DBUtils.getConnection());
 				rdg.delete(answer);
 				request.setAttribute("answer", answer);
@@ -114,10 +128,14 @@ public class AnswerServlet extends HttpServlet {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				request.setAttribute("statut", "nok");
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				request.setAttribute("statut", "nok");
 			}
 			
 		}
-		RequestDispatcher dispatcher = request.getRequestDispatcher("./index.jsp");
+		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
 		dispatcher.forward(request, response);
 	}
 	

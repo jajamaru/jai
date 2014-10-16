@@ -12,6 +12,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import rdg.QCMRdg;
 import tools.Checking;
 import tools.DBUtils;
@@ -21,7 +24,7 @@ import entity.Question;
 /**
  * Servlet implementation class SelectServlet
  */
-@WebServlet("/action/qcm/*")
+@WebServlet("/action/qcm")
 public class QcmServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -52,7 +55,7 @@ public class QcmServlet extends HttpServlet {
 				request.setAttribute("statut", "nok");
 			}
 		}
-		RequestDispatcher dispatcher = request.getRequestDispatcher("./index.jsp");
+		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
 		dispatcher.forward(request, response);
 	}
 
@@ -62,8 +65,9 @@ public class QcmServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		QCM qcm = null;
-		if((qcm = checkAndGetQcmWithId(request)) != null) {
+		if(request.getParameter("qcm") != null) {
 			try {
+				qcm = QCM.retrieveObject(new JSONObject(request.getParameter("qcm")));
 				QCMRdg rdg = new QCMRdg(DBUtils.getConnection());
 				rdg.update(qcm);
 				Integer id = qcm.getId();
@@ -74,9 +78,13 @@ public class QcmServlet extends HttpServlet {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				request.setAttribute("statut", "nok");
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				request.setAttribute("statut", "nok");
 			}
 		}
-		RequestDispatcher dispatcher = request.getRequestDispatcher("./index.jsp");
+		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
 		dispatcher.forward(request, response);
 	}
 	
@@ -84,8 +92,9 @@ public class QcmServlet extends HttpServlet {
 	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		QCM qcm = null;
-		if((qcm = checkAndGetQcm(request)) != null) {
+		if(request.getParameter("qcm") != null) {
 			try {
+				qcm = QCM.retrieveObject(new JSONObject(request.getParameter("qcm")));
 				QCMRdg rdg = new QCMRdg(DBUtils.getConnection());
 				rdg.persist(qcm);
 				request.setAttribute("qcm", qcm);
@@ -94,9 +103,13 @@ public class QcmServlet extends HttpServlet {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				request.setAttribute("statut", "nok");
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				request.setAttribute("statut", "nok");
 			}
 		}
-		RequestDispatcher dispatcher = request.getRequestDispatcher("./index.jsp");
+		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
 		dispatcher.forward(request, response);
 	}
 	
@@ -104,8 +117,9 @@ public class QcmServlet extends HttpServlet {
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		QCM qcm = null;
-		if((qcm = checkAndGetQcm(request)) != null) {
+		if(request.getParameter("qcm") != null) {
 			try {
+				qcm = QCM.retrieveObject(new JSONObject(request.getParameter("qcm")));
 				QCMRdg rdg = new QCMRdg(DBUtils.getConnection());
 				rdg.delete(qcm);
 				request.setAttribute("qcm", qcm);
@@ -114,9 +128,13 @@ public class QcmServlet extends HttpServlet {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				request.setAttribute("statut", "nok");
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				request.setAttribute("statut", "nok");
 			}
 		}
-		RequestDispatcher dispatcher = request.getRequestDispatcher("./index.jsp");
+		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
 		dispatcher.forward(request, response);
 	}
 	
