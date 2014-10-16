@@ -28,7 +28,7 @@ public class HomeServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		RequestDispatcher dispatcher = request.getRequestDispatcher("./jsp/index.jsp");
+		RequestDispatcher dispatcher = request.getRequestDispatcher("/WebContent/index.jsp");
 		dispatcher.forward(request, response);
 	}
 
