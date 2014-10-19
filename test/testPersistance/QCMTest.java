@@ -173,6 +173,7 @@ public class QCMTest {
 		
 		JSONObject json = qcm.getJson();
 		System.out.println(json.toString());
+		System.out.println(QCM.retrieveObject(json).stringify());
 		assertTrue(qcm.equals(QCM.retrieveObject(json)));
 	}
 

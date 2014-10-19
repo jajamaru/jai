@@ -1,9 +1,10 @@
 package servlet.action;
 
+import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -17,13 +18,12 @@ import org.json.JSONObject;
 
 import rdg.QuestionRdg;
 import tools.DBUtils;
-import entity.Answer;
 import entity.Question;
 
 /**
  * Servlet implementation class DeleteServlet
  */
-@WebServlet("/action/question")
+@WebServlet("/admin/action/question")
 public class QuestionServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -47,17 +47,24 @@ public class QuestionServlet extends HttpServlet {
 				QuestionRdg rdg = new QuestionRdg(DBUtils.getConnection());
 				id = Integer.valueOf(request.getParameter("id"));
 				question = rdg.retrieve(id);
-				request.setAttribute("question", question);
-				request.setAttribute("statut", "ok");
+				if(question != null) {
+					request.setAttribute("question", question);
+					request.setAttribute("statut", "ok");
+				} else {
+					((HttpServletResponse) response).setStatus(HttpServletResponse.SC_NOT_FOUND);
+					((HttpServletResponse) response).sendError(HttpServletResponse.SC_NOT_FOUND);
+				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
-				request.setAttribute("statut", "nok");
+				request.getServletContext().log("La question demandée n'existe pas",e);
+				((HttpServletResponse) response).setStatus(HttpServletResponse.SC_NOT_FOUND);
+				((HttpServletResponse) response).sendError(HttpServletResponse.SC_NOT_FOUND);
 			}
 			
+		} else {
+			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
+			dispatcher.forward(request, response);
 		}
-		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
-		dispatcher.forward(request, response);
 	}
 
 	/**
@@ -94,89 +101,52 @@ public class QuestionServlet extends HttpServlet {
 	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		Question question = null;
-		if(request.getParameter("question") != null) {
-			try {
-				question = Question.retrieveObject(new JSONObject(request.getParameter("question")));
-				QuestionRdg rdg = new QuestionRdg(DBUtils.getConnection());
-				rdg.persist(question);
-				request.setAttribute("question", question);
-				request.setAttribute("statut", "ok");
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				request.setAttribute("statut", "nok");
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				request.setAttribute("statut", "nok");
+		BufferedReader reader = null;
+		PrintWriter writer = null;
+		try {
+			reader = request.getReader();
+			writer = response.getWriter();
+			String line = "";
+			String json = "";
+			while((line = reader.readLine()) != null) {
+				json += line;
 			}
+			
+			question = Question.retrieveObject(new JSONObject(json));
+			QuestionRdg rdg = new QuestionRdg(DBUtils.getConnection());
+			rdg.persist(question);
+			Integer id = question.getId();
+			question = rdg.retrieve(id);
+			
+			writer.write(question.stringify());
+			writer.flush();
+			
+		} catch(JSONException e) {
+			request.getServletContext().log("Problème de parsing au niveau du json",e);
+		} catch(SQLException e) {
+			request.getServletContext().log("Problème au niveau de la base de donnée",e);
+		} catch(IOException e) {
+			request.getServletContext().log("Problème d'écriture/lecture des flux lors du doPut QCM",e);
+		} finally {
+			close(writer, request);
+			close(reader, request);
 		}
-		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
-		dispatcher.forward(request, response);
 	}
 	
 	@Override
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		Question question = null;
-		if(request.getParameter("question") != null) {
+	}
+	
+	private void close(Closeable inOut, HttpServletRequest request) {
+		if(inOut != null) {
 			try {
-				question = Question.retrieveObject(new JSONObject(request.getParameter("question")));
-				QuestionRdg rdg = new QuestionRdg(DBUtils.getConnection());
-				rdg.delete(question);
-				request.setAttribute("question", question);
-				request.setAttribute("statut", "ok");
-			} catch (SQLException e) {
+				inOut.close();
+			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
-				request.setAttribute("statut", "nok");
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				request.setAttribute("statut", "nok");
+				request.getServletContext().log("Problème lors de la fermeture I/O",e);
 			}
 		}
-		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
-		dispatcher.forward(request, response);
-	}
-	
-	private Question checkAndGetQuestionWithId(HttpServletRequest request) {
-		Question question = null;
-		if((question = checkAndGetQuestion(request)) != null && request.getParameter("id") != null) {
-			question.setId(Integer.valueOf(request.getParameter("id")));
-			return question;
-		}
-		return null;
-	}
-	
-	private Question checkAndGetQuestion(HttpServletRequest request) {
-		Question question = null;
-		List<Answer> answers = null;
-		if(request.getParameter("desc") != null && request.getParameter("idQcm") != null &&
-				(answers = checkAndGetAnswers(request)) != null) {
-			question = new Question();
-			question.setDesc(request.getParameter("desc"));
-			question.setIdQcm(Integer.valueOf(request.getParameter("idQcm")));
-			question.setAnswers(answers);
-		}
-		return question;
-	}
-	
-	private List<Answer> checkAndGetAnswers(HttpServletRequest request) {
-		Boolean good = true;
-		List<Answer> answers = new ArrayList<Answer>();
-		if(request.getAttribute("answers") != null) {
-			answers = (List<Answer>)request.getAttribute("answers");
-			for(Answer a : answers) {
-				if(!checkAnswer(a)) good = false;
-			}
-		}
-		return (answers.isEmpty() || good)?(null):(answers);
-	}
-	
-	public boolean checkAnswer(Answer answer) {
-		return answer.getDesc() != null && answer.getIdQuestion() != null &&
-				answer.getCpt() > -1;
 	}
 
 }

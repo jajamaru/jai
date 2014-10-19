@@ -1,9 +1,10 @@
 package servlet.action;
 
+import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -16,15 +17,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import rdg.QCMRdg;
-import tools.Checking;
 import tools.DBUtils;
 import entity.QCM;
-import entity.Question;
 
 /**
  * Servlet implementation class SelectServlet
  */
-@WebServlet("/action/qcm")
+@WebServlet("/admin/action/qcm")
 public class QcmServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -47,16 +46,24 @@ public class QcmServlet extends HttpServlet {
 				id = Integer.valueOf(request.getParameter("id"));
 				QCMRdg rdg = new QCMRdg(DBUtils.getConnection());
 				qcm = rdg.retrieve(id);
-				request.setAttribute("qcm", qcm);
-				request.setAttribute("statut", "ok");
+				if(qcm != null) {
+					request.setAttribute("qcm", qcm);
+					RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
+					dispatcher.forward(request, response);
+				} else {
+					((HttpServletResponse) response).setStatus(HttpServletResponse.SC_NOT_FOUND);
+					((HttpServletResponse) response).sendError(HttpServletResponse.SC_NOT_FOUND);
+				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
-				request.setAttribute("statut", "nok");
+				request.getServletContext().log("Le qcm demandé n'existe pas",e);
+				((HttpServletResponse) response).setStatus(HttpServletResponse.SC_NOT_FOUND);
+				((HttpServletResponse) response).sendError(HttpServletResponse.SC_NOT_FOUND);
 			}
+		} else {
+			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
+			dispatcher.forward(request, response);
 		}
-		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
-		dispatcher.forward(request, response);
 	}
 
 	/**
@@ -74,43 +81,52 @@ public class QcmServlet extends HttpServlet {
 				qcm = rdg.retrieve(id);
 				request.setAttribute("qcm", qcm);
 				request.setAttribute("statut", "ok");
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				request.setAttribute("statut", "nok");
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
-				request.setAttribute("statut", "nok");
-			}
+				request.getServletContext().log("Le qcm ne respecte pas le format json défini",e);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				request.getServletContext().log("Un problème est survenu lors de la mise à jour du qcm",e);
+			} 
 		}
 		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
 		dispatcher.forward(request, response);
 	}
 	
 	@Override
-	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 		// TODO Auto-generated method stub
 		QCM qcm = null;
-		if(request.getParameter("qcm") != null) {
-			try {
-				qcm = QCM.retrieveObject(new JSONObject(request.getParameter("qcm")));
-				QCMRdg rdg = new QCMRdg(DBUtils.getConnection());
-				rdg.persist(qcm);
-				request.setAttribute("qcm", qcm);
-				request.setAttribute("statut", "ok");
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				request.setAttribute("statut", "nok");
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				request.setAttribute("statut", "nok");
+		BufferedReader reader = null;
+		PrintWriter writer = null;
+		try {
+			reader = request.getReader();
+			writer = response.getWriter();
+			String line = "";
+			String json = "";
+			while((line = reader.readLine()) != null) {
+				json += line;
 			}
+			
+			qcm = QCM.retrieveObject(new JSONObject(json));
+			QCMRdg rdg = new QCMRdg(DBUtils.getConnection());
+			rdg.persist(qcm);
+			Integer id = qcm.getId();
+			qcm = rdg.retrieve(id);
+			
+			writer.write(qcm.stringify());
+			writer.flush();
+			
+		} catch(JSONException e) {
+			request.getServletContext().log("Problème de parsing au niveau du json",e);
+		} catch(SQLException e) {
+			request.getServletContext().log("Problème au niveau de la base de donnée",e);
+		} catch(IOException e) {
+			request.getServletContext().log("Problème d'écriture/lecture des flux lors du doPut QCM",e);
+		} finally {
+			close(writer, request);
+			close(reader, request);
 		}
-		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
-		dispatcher.forward(request, response);
 	}
 	
 	@Override
@@ -124,49 +140,27 @@ public class QcmServlet extends HttpServlet {
 				rdg.delete(qcm);
 				request.setAttribute("qcm", qcm);
 				request.setAttribute("statut", "ok");
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				request.setAttribute("statut", "nok");
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
-				request.setAttribute("statut", "nok");
-			}
+				request.getServletContext().log("Le qcm ne respecte pas le format json défini",e);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				request.getServletContext().log("Un problème est survenu lors de la suppression du qcm",e);
+			} 
 		}
 		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
 		dispatcher.forward(request, response);
 	}
 	
-	private QCM checkAndGetQcmWithId(HttpServletRequest request) {
-		QCM qcm = null;
-		if((qcm = checkAndGetQcm(request)) != null && request.getParameter("id") != null) {
-			qcm.setId(Integer.valueOf(request.getParameter("id")));
-		}
-		return qcm;
-	}
-	
-	private QCM checkAndGetQcm(HttpServletRequest request) {
-		QCM qcm = null;
-		List<Question> questions = new ArrayList<Question>();
-		if(request.getParameter("title") != null && (questions = checkAndGetQuestion(request)) != null) {
-			qcm = new QCM();
-			qcm.setTitle(request.getParameter("title"));
-			qcm.setQuestions(questions);
-		}
-		return qcm;
-	}
-	
-	private List<Question> checkAndGetQuestion(HttpServletRequest request) {
-		Boolean good = true;
-		List<Question> questions = new ArrayList<Question>();
-		if(request.getAttribute("question") != null) {
-			questions = (List<Question>)request.getAttribute("question");
-			for(Question q : questions) {
-				if(!Checking.checkQuestion(q)) good = false;
+	private void close(Closeable inOut, HttpServletRequest request) {
+		if(inOut != null) {
+			try {
+				inOut.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				request.getServletContext().log("Problème lors de la fermeture I/O",e);
 			}
 		}
-		return (questions != null || questions.isEmpty() || good)?(null):(questions);
 	}
 	
 

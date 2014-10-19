@@ -1,6 +1,9 @@
 package servlet.action;
 
+import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.SQLException;
 
 import javax.servlet.RequestDispatcher;
@@ -20,7 +23,7 @@ import entity.Answer;
 /**
  * Servlet implementation class InsertServlet
  */
-@WebServlet("/action/answer")
+@WebServlet("/admin/action/answer")
 public class AnswerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -44,17 +47,26 @@ public class AnswerServlet extends HttpServlet {
 				AnswerRdg rdg = new AnswerRdg(DBUtils.getConnection());
 				id = Integer.valueOf(request.getParameter("id"));
 				answer = rdg.retrieve(id);
-				request.setAttribute("answer", answer);
-				request.setAttribute("statut", "ok");
+				if(answer != null) {
+					request.setAttribute("answer", answer);
+					request.setAttribute("statut", "ok");
+					RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
+					dispatcher.forward(request, response);
+				} else {
+					((HttpServletResponse) response).setStatus(HttpServletResponse.SC_NOT_FOUND);
+					((HttpServletResponse) response).sendError(HttpServletResponse.SC_NOT_FOUND);
+				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
-				request.setAttribute("statut", "nok");
+				request.getServletContext().log("La réponse demandée n'existe pas",e);
+				((HttpServletResponse) response).setStatus(HttpServletResponse.SC_NOT_FOUND);
+				((HttpServletResponse) response).sendError(HttpServletResponse.SC_NOT_FOUND);
 			}
 			
+		} else {
+			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
+			dispatcher.forward(request, response);
 		}
-		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
-		dispatcher.forward(request, response);
 	}
 
 	/**
@@ -92,73 +104,52 @@ public class AnswerServlet extends HttpServlet {
 	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		Answer answer = null;
-		if(request.getParameter("answer") != null) {
-			try {
-				answer = Answer.retrieveObject(new JSONObject(request.getParameter("answer")));
-				AnswerRdg rdg = new AnswerRdg(DBUtils.getConnection());
-				rdg.persist(answer);
-				request.setAttribute("answer", answer);
-				request.setAttribute("statut", "ok");
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				request.setAttribute("statut", "nok");
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				request.setAttribute("statut", "nok");
+		BufferedReader reader = null;
+		PrintWriter writer = null;
+		try {
+			reader = request.getReader();
+			writer = response.getWriter();
+			String line = "";
+			String json = "";
+			while((line = reader.readLine()) != null) {
+				json += line;
 			}
+			
+			answer = Answer.retrieveObject(new JSONObject(json));
+			AnswerRdg rdg = new AnswerRdg(DBUtils.getConnection());
+			rdg.persist(answer);
+			Integer id = answer.getId();
+			answer = rdg.retrieve(id);
+			
+			writer.write(answer.stringify());
+			writer.flush();
+			
+		} catch(JSONException e) {
+			request.getServletContext().log("Problème de parsing au niveau du json",e);
+		} catch(SQLException e) {
+			request.getServletContext().log("Problème au niveau de la base de donnée",e);
+		} catch(IOException e) {
+			request.getServletContext().log("Problème d'écriture/lecture des flux lors du doPut QCM",e);
+		} finally {
+			close(writer, request);
+			close(reader, request);
 		}
-		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
-		dispatcher.forward(request, response);
 	}
 	
 	@Override
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		Answer answer = null;
-		if(request.getParameter("answer") != null) {
+	}
+	
+	private void close(Closeable inOut, HttpServletRequest request) {
+		if(inOut != null) {
 			try {
-				answer = Answer.retrieveObject(new JSONObject(request.getParameter("answer")));
-				AnswerRdg rdg = new AnswerRdg(DBUtils.getConnection());
-				rdg.delete(answer);
-				request.setAttribute("answer", answer);
-				request.setAttribute("statut", "ok");
-			} catch (SQLException e) {
+				inOut.close();
+			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
-				request.setAttribute("statut", "nok");
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				request.setAttribute("statut", "nok");
+				request.getServletContext().log("Problème lors de la fermeture I/O",e);
 			}
-			
 		}
-		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
-		dispatcher.forward(request, response);
-	}
-	
-	private Answer checkAndGetAnswer(HttpServletRequest request) {
-		Answer answer = null;
-		if(request.getParameter("desc") != null && request.getParameter("isTrue") != null && 
-				request.getParameter("cpt") != null && request.getParameter("idQuestion") != null) {
-			answer = new Answer();
-			answer.setDesc(request.getParameter("desc"));
-			answer.setTrue(Boolean.valueOf(request.getParameter("isTrue")));
-			answer.setCpt(Integer.valueOf(request.getParameter("cpt")));
-			answer.setIdQuestion(Integer.valueOf(request.getParameter("idQuestion")));
-		}
-		return answer;
-	}
-	
-	private Answer checkAndGetAnswerWithId(HttpServletRequest request) {
-		Answer answer = checkAndGetAnswer(request);
-		if(answer != null && request.getParameter("id") != null) {
-			answer.setId(Integer.valueOf(request.getParameter("id")));
-			return answer;
-		}
-		else return null;
 	}
 
 }
