@@ -51,14 +51,18 @@ public class QcmServlet extends HttpServlet {
 					RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
 					dispatcher.forward(request, response);
 				} else {
-					((HttpServletResponse) response).setStatus(HttpServletResponse.SC_NOT_FOUND);
-					((HttpServletResponse) response).sendError(HttpServletResponse.SC_NOT_FOUND);
+					response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+					response.sendError(HttpServletResponse.SC_NOT_FOUND);
 				}
+			} catch (NumberFormatException e) {
+				request.getServletContext().log("L'id passer en paramètre n'est pas un entier",e);
+				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+				response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				request.getServletContext().log("Le qcm demandé n'existe pas",e);
-				((HttpServletResponse) response).setStatus(HttpServletResponse.SC_NOT_FOUND);
-				((HttpServletResponse) response).sendError(HttpServletResponse.SC_NOT_FOUND);
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			}
 		} else {
 			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
@@ -81,20 +85,28 @@ public class QcmServlet extends HttpServlet {
 				qcm = rdg.retrieve(id);
 				request.setAttribute("qcm", qcm);
 				request.setAttribute("statut", "ok");
+				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
+				dispatcher.forward(request, response);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				request.getServletContext().log("Le qcm ne respecte pas le format json défini",e);
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				request.getServletContext().log("Un problème est survenu lors de la mise à jour du qcm",e);
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			} 
+		} else {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 		}
-		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
-		dispatcher.forward(request, response);
+		
 	}
 	
 	@Override
-	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		QCM qcm = null;
 		BufferedReader reader = null;
@@ -119,8 +131,12 @@ public class QcmServlet extends HttpServlet {
 			
 		} catch(JSONException e) {
 			request.getServletContext().log("Problème de parsing au niveau du json",e);
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} catch(SQLException e) {
 			request.getServletContext().log("Problème au niveau de la base de donnée",e);
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} catch(IOException e) {
 			request.getServletContext().log("Problème d'écriture/lecture des flux lors du doPut QCM",e);
 		} finally {
@@ -140,16 +156,23 @@ public class QcmServlet extends HttpServlet {
 				rdg.delete(qcm);
 				request.setAttribute("qcm", qcm);
 				request.setAttribute("statut", "ok");
+				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
+				dispatcher.forward(request, response);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				request.getServletContext().log("Le qcm ne respecte pas le format json défini",e);
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				request.getServletContext().log("Un problème est survenu lors de la suppression du qcm",e);
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			} 
+		} else {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 		}
-		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
-		dispatcher.forward(request, response);
 	}
 	
 	private void close(Closeable inOut, HttpServletRequest request) {
