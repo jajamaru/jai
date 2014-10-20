@@ -130,11 +130,11 @@ public class QcmServlet extends HttpServlet {
 			writer.flush();
 			
 		} catch(JSONException e) {
-			request.getServletContext().log("Problème de parsing au niveau du json",e);
+			request.getServletContext().log("Le paramètre donné n'est pas sous format json",e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} catch(SQLException e) {
-			request.getServletContext().log("Problème au niveau de la base de donnée",e);
+			request.getServletContext().log("Le json fourni ne correspond pas au format attendu",e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} catch(IOException e) {

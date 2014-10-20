@@ -153,7 +153,7 @@ public class QCMRdg implements IPersistableWithId<QCM>{
 		return questions;
 	}
 	
-	private void checkGeneratedKey(PreparedStatement statement, QCM qcm) throws SQLException, IllegalStateException{
+	private void checkGeneratedKey(PreparedStatement statement, QCM qcm) throws SQLException {
 		ResultSet generatedKeys = statement.getGeneratedKeys();
 		if(!generatedKeys.next()) throw new IllegalStateException("no generated keys");
 		qcm.setId(generatedKeys.getInt(1));

@@ -6,9 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import tools.IPersistableWithId;
 import entity.Answer;
 
