@@ -1,7 +1,6 @@
 package entity;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -125,6 +124,17 @@ public class Question implements Jsonable<Question>{
 			good = getAnswer(i).equals(a.getAnswer(i));
 		}
 		return good && getDesc() == a.getDesc() && getId() == a.getId() && getIdQcm() == a.getIdQcm();
+	}
+	
+	public boolean equalsBeforePersist(Object obj) {
+		if(!(obj instanceof Question)) return false;
+		Question a = (Question)obj;
+		if(obj == this) return true;
+		Boolean good = getAnswers().size() == a.getAnswers().size();
+		for(int i=0; good && i<getAnswers().size(); ++i) {
+			good = getAnswer(i).equalsBeforePersist(a.getAnswer(i));
+		}
+		return good && getDesc() == a.getDesc();
 	}
 
 	public static Question retrieveObject(JSONObject json) {

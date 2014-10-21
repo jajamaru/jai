@@ -119,6 +119,14 @@ public class QCMResult implements Jsonable<QCMResult>{
 				getSuccessRate() == a.getSuccessRate() && getDuration() == a.getDuration() && 
 				getNbParticipants() == a.getNbParticipants();
 	}
+	
+	public boolean equalsBeforePersist(Object obj) {
+		if(!(obj instanceof QCMResult)) return false;
+		QCMResult a = (QCMResult)obj;
+		if(obj == this) return true;
+		return getSuccessRate() == a.getSuccessRate() && getDuration() == a.getDuration() && 
+				getNbParticipants() == a.getNbParticipants();
+	}
 
 	public static QCMResult retrieveObject(JSONObject json) {
 		// TODO Auto-generated method stub

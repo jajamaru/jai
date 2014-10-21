@@ -113,6 +113,17 @@ public class QCM implements Jsonable<QCM>{
 		}
 		return good && getTitle() == a.getTitle() && getId() == a.getId();
 	}
+	
+	public boolean equalsBeforePersist(Object obj) {
+		if(!(obj instanceof QCM)) return false;
+		QCM a = (QCM)obj;
+		if(obj == this) return true;
+		Boolean good = getQuestions().size() == a.getQuestions().size();
+		for(int i=0; good && i<getQuestions().size(); ++i) {
+			good = getQuestion(i).equalsBeforePersist(a.getQuestion(i));
+		}
+		return good && getTitle() == a.getTitle();
+	}
 
 	public static QCM retrieveObject(JSONObject json) {
 		// TODO Auto-generated method stub

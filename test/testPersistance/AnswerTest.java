@@ -131,5 +131,12 @@ public class AnswerTest {
 		assertEquals("{\"answer\":{\"idQuestion\":1,\"desc\":\"La réponse A !\",\"cpt\":0,\"isTrue\":true}}", json.toString());
 		assertTrue(answer.equals(Answer.retrieveObject(json)));
 	}
+	
+	public void testJsonBeforePersist() throws SQLException {
+		Answer answer = new Answer();
+		answer.setDesc("La réponse A !");
+		answer.setCpt(0);
+		answer.setTrue(true);
+	}
 
 }

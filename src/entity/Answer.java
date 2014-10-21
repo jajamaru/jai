@@ -99,6 +99,13 @@ public class Answer implements Jsonable<Answer>{
 		return isTrue() == a.isTrue() && getCpt() == a.getCpt() && getDesc() == a.getDesc() &&
 				getId() == a.getId() && getIdQuestion() == a.getIdQuestion();
 	}
+	
+	public boolean equalsBeforePersist(Object obj) {
+		if(!(obj instanceof Answer)) return false;
+		Answer a = (Answer)obj;
+		if(obj == this) return true;
+		return isTrue() == a.isTrue() && getCpt() == a.getCpt() && getDesc() == a.getDesc();
+	}
 
 	public static Answer retrieveObject(JSONObject json) {
 		// TODO Auto-generated method stub

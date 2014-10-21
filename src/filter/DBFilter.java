@@ -27,15 +27,15 @@ public class DBFilter implements Filter {
 	public void doFilter(ServletRequest arg0, ServletResponse arg1,
 			FilterChain arg2) throws IOException, ServletException {
 		// TODO Auto-generated method stub
-		try {
+		/*try {
 			Connection connection = DBUtils.getConnection();
-			DBUtils.resetDatabase(connection);
+			DBUtils.resetDatabase(connection);*/
 			arg2.doFilter(arg0, arg1);
-		} catch (SQLException e) {
+		/*} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			arg0.getServletContext().log("Impossible de charger la base de données",e);
 			
-		}
+		}*/
 	}
 
 	@Override
