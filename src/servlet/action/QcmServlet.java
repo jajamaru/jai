@@ -84,7 +84,6 @@ public class QcmServlet extends HttpServlet {
 				Integer id = qcm.getId();
 				qcm = rdg.retrieve(id);
 				request.setAttribute("qcm", qcm);
-				request.setAttribute("statut", "ok");
 				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
 				dispatcher.forward(request, response);
 			} catch (JSONException e) {
@@ -139,6 +138,8 @@ public class QcmServlet extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} catch(IOException e) {
 			request.getServletContext().log("Problème d'écriture/lecture des flux lors du doPut QCM",e);
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} finally {
 			close(writer, request);
 			close(reader, request);
