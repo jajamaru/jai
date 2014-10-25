@@ -1,7 +1,6 @@
 package entity;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -48,11 +47,11 @@ public class QCM implements Jsonable<QCM>{
 		this.title = title;
 	}
 
-	public Collection<Question> getQuestions() {
+	public List<Question> getQuestions() {
 		return questions;
 	}
 	
-	public void setQuestions(Collection<Question> questions) {
+	public void setQuestions(List<Question> questions) {
 		this.questions.clear();
 		for(Question q : questions) {
 			addQuestion(q);
