@@ -156,7 +156,6 @@ public class QcmServlet extends HttpServlet {
 				QCMRdg rdg = new QCMRdg(DBUtils.getConnection());
 				rdg.delete(qcm);
 				request.setAttribute("qcm", qcm);
-				request.setAttribute("statut", "ok");
 				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
 				dispatcher.forward(request, response);
 			} catch (JSONException e) {
