@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import tools.IPersistableWithId;
 import entity.QCM;
@@ -122,7 +123,7 @@ public class QCMRdg implements IPersistableWithId<QCM>{
 	}
 	
 	private void persistQuestions(QCM obj) throws SQLException {
-		Collection<Question> questions = obj.getQuestions();
+		List<Question> questions = obj.getQuestions();
 		for(Question q : questions) {
 			q.setIdQcm(obj.getId());
 			questionRdg.persist(q);
@@ -141,8 +142,8 @@ public class QCMRdg implements IPersistableWithId<QCM>{
 		}
 	}
 	
-	private Collection<Question> retrieveQuestions(Integer id) throws SQLException {
-		Collection<Question> questions = new ArrayList<Question>();
+	private List<Question> retrieveQuestions(Integer id) throws SQLException {
+		List<Question> questions = new ArrayList<Question>();
 		PreparedStatement statement = this.connection.prepareStatement(REQUEST_RETRIEVE_QUESTIONS);
 		statement.setInt(1, id);
 		ResultSet set = statement.executeQuery();
