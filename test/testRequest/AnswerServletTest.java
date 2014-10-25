@@ -81,7 +81,7 @@ public class AnswerServletTest {
 	}
 	
 	@Test
-	public void testPersistQuestion() throws SQLException, JSONException, FailingHttpStatusCodeException, IOException {	
+	public void testPersistAnswer() throws SQLException, JSONException, FailingHttpStatusCodeException, IOException {	
 		Answer answerPut;
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.PUT);
 		request.setRequestBody(answer.stringify());
@@ -100,7 +100,7 @@ public class AnswerServletTest {
 	}
 	
 	@Test
-	public void testPersistJsonMalformedQuestion() throws FailingHttpStatusCodeException, IOException {
+	public void testPersistJsonMalformedAnswer() throws FailingHttpStatusCodeException, IOException {
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.PUT);
 		request.setRequestBody("dedefefef");
 		
@@ -111,7 +111,7 @@ public class AnswerServletTest {
 	}
 	
 	@Test
-	public void testPersistJsonMalformedQuestion2() throws FailingHttpStatusCodeException, IOException {
+	public void testPersistJsonMalformedAnswer2() throws FailingHttpStatusCodeException, IOException {
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.PUT);
 		request.setRequestBody("{}");
 		
@@ -141,7 +141,7 @@ public class AnswerServletTest {
 	}
 	
 	@Test
-	public void testRetrieveParameterMalformedQuestion() throws FailingHttpStatusCodeException, IOException {
+	public void testRetrieveParameterMalformedAnswer() throws FailingHttpStatusCodeException, IOException {
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.GET);
 		request.setRequestParameters(new ArrayList<NameValuePair>());
 		request.getRequestParameters().add(new NameValuePair("id", "yguyguguyg"));
@@ -153,10 +153,10 @@ public class AnswerServletTest {
 	}
 	
 	@Test
-	public void testDeleteQuestion() throws SQLException, FailingHttpStatusCodeException, IOException, JSONException {
+	public void testDeleteAnswer() throws SQLException, FailingHttpStatusCodeException, IOException, JSONException {
 		Answer answerPut;
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.PUT);
-		request.setRequestBody(question.stringify());
+		request.setRequestBody(answer.stringify());
 		
 		TextPage page = webClient.getPage(request);
 		answerPut = Answer.retrieveObject(new JSONObject(page.getContent()));
@@ -172,7 +172,7 @@ public class AnswerServletTest {
 	}
 	
 	@Test
-	public void testDeleteDoesNotExistQuestion() throws SQLException, FailingHttpStatusCodeException, IOException, JSONException {
+	public void testDeleteDoesNotExistAnswer() throws SQLException, FailingHttpStatusCodeException, IOException, JSONException {
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.DELETE);
 		request.setRequestParameters(new ArrayList<NameValuePair>());
 		request.getRequestParameters().add(new NameValuePair("answer", answer.stringify()));
@@ -184,7 +184,7 @@ public class AnswerServletTest {
 	}
 	
 	@Test
-	public void testDeleteJsonMalformedQuestion() throws FailingHttpStatusCodeException, IOException {
+	public void testDeleteJsonMalformedAnswer() throws FailingHttpStatusCodeException, IOException {
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.DELETE);
 		request.setRequestParameters(new ArrayList<NameValuePair>());
 		request.getRequestParameters().add(new NameValuePair("answer", "rrefzefzef"));
@@ -196,7 +196,7 @@ public class AnswerServletTest {
 	}
 	
 	@Test
-	public void testDeleteJsonMalformedQuestion2() throws FailingHttpStatusCodeException, IOException {
+	public void testDeleteJsonMalformedAnswer2() throws FailingHttpStatusCodeException, IOException {
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.DELETE);
 		request.setRequestParameters(new ArrayList<NameValuePair>());
 		request.getRequestParameters().add(new NameValuePair("answer", "{\"answer\":{\"id\":\"fef\"}}"));
@@ -208,7 +208,7 @@ public class AnswerServletTest {
 	}
 	
 	@Test
-	public void testDeleteMissingArgumentQuestion() throws FailingHttpStatusCodeException, IOException {
+	public void testDeleteMissingArgumentAnswer() throws FailingHttpStatusCodeException, IOException {
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.DELETE);
 		
 		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
@@ -218,7 +218,7 @@ public class AnswerServletTest {
 	}
 	
 	@Test
-	public void testUpdateQcm() throws SQLException, FailingHttpStatusCodeException, IOException, JSONException {
+	public void testUpdateAnswer() throws SQLException, FailingHttpStatusCodeException, IOException, JSONException {
 		Answer answerPut;
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.PUT);
 		request.setRequestBody(answer.stringify());
@@ -248,7 +248,7 @@ public class AnswerServletTest {
 	}
 	
 	@Test
-	public void testUpdateJsonMalformedQuestion() throws SQLException, FailingHttpStatusCodeException, IOException {
+	public void testUpdateJsonMalformedAnswer() throws SQLException, FailingHttpStatusCodeException, IOException {
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.POST);
 		request.setRequestParameters(new ArrayList<NameValuePair>());
 		request.getRequestParameters().add(new NameValuePair("answer", "rrefzefzef"));
@@ -260,7 +260,7 @@ public class AnswerServletTest {
 	}
 	
 	@Test
-	public void testUpdateJsonMalformedQuestion2() throws FailingHttpStatusCodeException, IOException {
+	public void testUpdateJsonMalformedAnswer2() throws FailingHttpStatusCodeException, IOException {
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.POST);
 		request.setRequestParameters(new ArrayList<NameValuePair>());
 		request.getRequestParameters().add(new NameValuePair("answer", "{\"answer\":{\"id\":\"fef\"}}"));
@@ -272,7 +272,7 @@ public class AnswerServletTest {
 	}
 	
 	@Test
-	public void testUpdateMissingArgumentQuestion() throws SQLException, FailingHttpStatusCodeException, IOException {
+	public void testUpdateMissingArgumentAnswer() throws SQLException, FailingHttpStatusCodeException, IOException {
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.POST);
 		
 		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
