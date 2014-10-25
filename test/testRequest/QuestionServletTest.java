@@ -215,7 +215,7 @@ public class QuestionServletTest {
 	}
 	
 	@Test
-	public void testUpdateQcm() throws SQLException, FailingHttpStatusCodeException, IOException, JSONException {
+	public void testUpdateQuestion() throws SQLException, FailingHttpStatusCodeException, IOException, JSONException {
 		Question questionPut;
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.PUT);
 		request.setRequestBody(question.stringify());
