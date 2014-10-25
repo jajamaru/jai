@@ -33,13 +33,17 @@ import entity.QCM;
 import entity.Question;
 
 @Ignore
-public class QcmServletTest {
+public class QuestionServletTest {
 	
 	private static WebClient webClient;
 	private static Connection connection;
 	
-	private final static String URL = "http://localhost:8081/romain_huret_jai/admin/action/qcm";
-	private final static String JSON = "{\"qcm\":{\"title\":\"qcm\",\"questions\":[{\"question\":{\"desc\":\"Qui es-tu ?\",\"answers\":[{\"answer\":{\"desc\":\"A\",\"cpt\":0,\"isTrue\":true}}]}}]}}";
+	private Question question;
+	private QCM qcm;
+	
+	private final static String URL = "http://localhost:8081/romain_huret_jai/admin/action/question";
+	private final static String URL_QCM = "http://localhost:8081/romain_huret_jai/admin/action/qcm";
+	private final static String JSON_QCM = "{\"qcm\":{\"title\":\"qcm\",\"questions\":[{\"question\":{\"desc\":\"Qui es-tu ?\",\"answers\":[{\"answer\":{\"desc\":\"A\",\"cpt\":0,\"isTrue\":true}}]}}]}}";
 	
 	@BeforeClass
 	public static void setUpOnce() throws SQLException {
@@ -47,9 +51,19 @@ public class QcmServletTest {
 	}
 	
 	@Before
-	public void setUp() throws SQLException {
+	public void setUp() throws SQLException, FailingHttpStatusCodeException, IOException, JSONException {
 		webClient = new WebClient();
 		DBUtils.resetDatabase(connection);
+		
+		WebRequest request = new WebRequest(new URL(URL_QCM), HttpMethod.PUT);
+		request.setRequestBody(JSON_QCM);
+		
+		TextPage page = webClient.getPage(request);
+		qcm = QCM.retrieveObject(new JSONObject(page.getContent()));
+		
+		final String json = "{\"question\":{\"desc\":\"Es-tu un élève ?\",\"answers\":[{\"answer\":{\"desc\":\"Oui\",\"cpt\":0,\"isTrue\":true}}, {\"answer\":{\"desc\":\"Non\",\"cpt\":0,\"isTrue\":false}}]}}";
+		question = Question.retrieveObject(new JSONObject(json));
+		question.setIdQcm(qcm.getId());
 	}
 	
 	@After
@@ -64,26 +78,26 @@ public class QcmServletTest {
 	}
 	
 	@Test
-	public void testPersistQcm() throws SQLException, JSONException, FailingHttpStatusCodeException, IOException {	
-		QCM qcmPut;
+	public void testPersistQuestion() throws SQLException, JSONException, FailingHttpStatusCodeException, IOException {	
+		Question questionPut;
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.PUT);
-		request.setRequestBody(JSON);
+		request.setRequestBody(question.stringify());
 		
 		TextPage page = webClient.getPage(request);
-		qcmPut = QCM.retrieveObject(new JSONObject(page.getContent()));
+		questionPut = Question.retrieveObject(new JSONObject(page.getContent()));
 		
 		assertEquals(HttpServletResponse.SC_OK, page.getWebResponse().getStatusCode());
 		
 		request = new WebRequest(new URL(URL), HttpMethod.GET);
 		request.setRequestParameters(new ArrayList<NameValuePair>());
-		request.getRequestParameters().add(new NameValuePair("id", qcmPut.getId() + ""));
+		request.getRequestParameters().add(new NameValuePair("id", questionPut.getId() + ""));
 		webClient.getPage(request);
 		
 		assertEquals(HttpServletResponse.SC_OK, page.getWebResponse().getStatusCode());
 	}
 	
 	@Test
-	public void testPersistJsonMalformedQcm() throws FailingHttpStatusCodeException, IOException {
+	public void testPersistJsonMalformedQuestion() throws FailingHttpStatusCodeException, IOException {
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.PUT);
 		request.setRequestBody("dedefefef");
 		
@@ -94,7 +108,7 @@ public class QcmServletTest {
 	}
 	
 	@Test
-	public void testPersistJsonMalformedQcm2() throws FailingHttpStatusCodeException, IOException {
+	public void testPersistJsonMalformedQuestion2() throws FailingHttpStatusCodeException, IOException {
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.PUT);
 		request.setRequestBody("{}");
 		
@@ -106,28 +120,17 @@ public class QcmServletTest {
 	
 	@Test
 	public void testPersistCorrectJsonAnotherObject() throws FailingHttpStatusCodeException, IOException, JSONException  {
-		QCM qcmPut;
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.PUT);
-		request.setRequestBody(JSON);
-		
-		TextPage page = webClient.getPage(request);
-		qcmPut = QCM.retrieveObject(new JSONObject(page.getContent()));
-		
-		final String json = "{\"question\":{\"desc\":\"Es-tu un élève ?\",\"answers\":[{\"answer\":{\"desc\":\"Oui\",\"cpt\":0,\"isTrue\":true}}, {\"answer\":{\"desc\":\"Non\",\"cpt\":0,\"isTrue\":false}}]}}";
-		Question question = Question.retrieveObject(new JSONObject(json));
-		question.setIdQcm(qcmPut.getId());
+		request.setRequestBody(JSON_QCM);
 		
 		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
 		
-		request = new WebRequest(new URL(URL), HttpMethod.PUT);
-		request.setRequestBody(question.stringify());
-		
-		page = webClient.getPage(request);
+		TextPage page = webClient.getPage(request);
 		assertEquals(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, page.getWebResponse().getStatusCode());
 	}
 	
 	@Test
-	public void testRetrieveMissingArgumentQcm() throws FailingHttpStatusCodeException, IOException {
+	public void testRetrieveMissingArgumentQuestion() throws FailingHttpStatusCodeException, IOException {
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.GET);
 		
 		HtmlPage page = webClient.getPage(request);
@@ -135,7 +138,7 @@ public class QcmServletTest {
 	}
 	
 	@Test
-	public void testRetrieveParameterMalformedQcm() throws FailingHttpStatusCodeException, IOException {
+	public void testRetrieveParameterMalformedQuestion() throws FailingHttpStatusCodeException, IOException {
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.GET);
 		request.setRequestParameters(new ArrayList<NameValuePair>());
 		request.getRequestParameters().add(new NameValuePair("id", "yguyguguyg"));
@@ -147,29 +150,29 @@ public class QcmServletTest {
 	}
 	
 	@Test
-	public void testDeleteQcm() throws SQLException, FailingHttpStatusCodeException, IOException, JSONException {
-		QCM qcmPut;
+	public void testDeleteQuestion() throws SQLException, FailingHttpStatusCodeException, IOException, JSONException {
+		Question questionPut;
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.PUT);
-		request.setRequestBody(JSON);
+		request.setRequestBody(question.stringify());
 		
 		TextPage page = webClient.getPage(request);
-		qcmPut = QCM.retrieveObject(new JSONObject(page.getContent()));
+		questionPut = Question.retrieveObject(new JSONObject(page.getContent()));
 		
 		assertEquals(HttpServletResponse.SC_OK, page.getWebResponse().getStatusCode());
 		
 		request = new WebRequest(new URL(URL), HttpMethod.DELETE);
 		request.setRequestParameters(new ArrayList<NameValuePair>());
-		request.getRequestParameters().add(new NameValuePair("qcm", qcmPut.stringify()));
+		request.getRequestParameters().add(new NameValuePair("question", questionPut.stringify()));
 		page = webClient.getPage(request);
 		
 		assertEquals(HttpServletResponse.SC_OK, page.getWebResponse().getStatusCode());
 	}
 	
 	@Test
-	public void testDeleteDoesNotExistQcm() throws SQLException, FailingHttpStatusCodeException, IOException {
+	public void testDeleteDoesNotExistQuestion() throws SQLException, FailingHttpStatusCodeException, IOException, JSONException {
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.DELETE);
 		request.setRequestParameters(new ArrayList<NameValuePair>());
-		request.getRequestParameters().add(new NameValuePair("qcm", JSON));
+		request.getRequestParameters().add(new NameValuePair("question", question.stringify()));
 		
 		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
 		
@@ -178,10 +181,10 @@ public class QcmServletTest {
 	}
 	
 	@Test
-	public void testDeleteJsonMalformedQcm() throws FailingHttpStatusCodeException, IOException {
+	public void testDeleteJsonMalformedQuestion() throws FailingHttpStatusCodeException, IOException {
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.DELETE);
 		request.setRequestParameters(new ArrayList<NameValuePair>());
-		request.getRequestParameters().add(new NameValuePair("qcm", "rrefzefzef"));
+		request.getRequestParameters().add(new NameValuePair("question", "rrefzefzef"));
 		
 		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
 		
@@ -190,10 +193,10 @@ public class QcmServletTest {
 	}
 	
 	@Test
-	public void testDeleteJsonMalformedQcm2() throws FailingHttpStatusCodeException, IOException {
+	public void testDeleteJsonMalformedQuestion2() throws FailingHttpStatusCodeException, IOException {
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.DELETE);
 		request.setRequestParameters(new ArrayList<NameValuePair>());
-		request.getRequestParameters().add(new NameValuePair("qcm", "{\"qcm\":{\"id\":\"fef\"}}"));
+		request.getRequestParameters().add(new NameValuePair("question", "{\"question\":{\"id\":\"fef\"}}"));
 		
 		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
 		
@@ -202,7 +205,7 @@ public class QcmServletTest {
 	}
 	
 	@Test
-	public void testDeleteMissingArgumentQcm() throws FailingHttpStatusCodeException, IOException {
+	public void testDeleteMissingArgumentQuestion() throws FailingHttpStatusCodeException, IOException {
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.DELETE);
 		
 		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
@@ -213,39 +216,39 @@ public class QcmServletTest {
 	
 	@Test
 	public void testUpdateQcm() throws SQLException, FailingHttpStatusCodeException, IOException, JSONException {
-		QCM qcmPut;
+		Question questionPut;
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.PUT);
-		request.setRequestBody(JSON);
+		request.setRequestBody(question.stringify());
 		
 		TextPage page = webClient.getPage(request);
-		qcmPut = QCM.retrieveObject(new JSONObject(page.getContent()));
-		qcmPut.setTitle("truc");
+		questionPut = Question.retrieveObject(new JSONObject(page.getContent()));
+		questionPut.setDesc("truc");
 		
 		assertEquals(HttpServletResponse.SC_OK, page.getWebResponse().getStatusCode());
 		
 		request = new WebRequest(new URL(URL), HttpMethod.POST);
 		request.setRequestParameters(new ArrayList<NameValuePair>());
-		request.getRequestParameters().add(new NameValuePair("qcm", qcmPut.stringify()));
-		HtmlPage page2 = webClient.getPage(request);
+		request.getRequestParameters().add(new NameValuePair("question", questionPut.stringify()));
+		page = webClient.getPage(request);
 		
-		assertEquals(HttpServletResponse.SC_OK, page2.getWebResponse().getStatusCode());
+		assertEquals(HttpServletResponse.SC_OK, page.getWebResponse().getStatusCode());
 	}
 	
 	@Test
-	public void testUpdateDoesNotExist() throws SQLException, FailingHttpStatusCodeException, IOException {
+	public void testUpdateDoesNotExist() throws SQLException, FailingHttpStatusCodeException, IOException, JSONException {
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.POST);
 		request.setRequestParameters(new ArrayList<NameValuePair>());
-		request.getRequestParameters().add(new NameValuePair("qcm", JSON));
+		request.getRequestParameters().add(new NameValuePair("question", question.stringify()));
 		
 		HtmlPage page = webClient.getPage(request);
 		assertEquals(HttpServletResponse.SC_OK, page.getWebResponse().getStatusCode());
 	}
 	
 	@Test
-	public void testUpdateJsonMalformedQcm() throws SQLException, FailingHttpStatusCodeException, IOException {
+	public void testUpdateJsonMalformedQuestion() throws SQLException, FailingHttpStatusCodeException, IOException {
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.POST);
 		request.setRequestParameters(new ArrayList<NameValuePair>());
-		request.getRequestParameters().add(new NameValuePair("qcm", "rrefzefzef"));
+		request.getRequestParameters().add(new NameValuePair("question", "rrefzefzef"));
 		
 		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
 		
@@ -254,10 +257,10 @@ public class QcmServletTest {
 	}
 	
 	@Test
-	public void testUpdateJsonMalformedQcm2() throws FailingHttpStatusCodeException, IOException {
+	public void testUpdateJsonMalformedQuestion2() throws FailingHttpStatusCodeException, IOException {
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.POST);
 		request.setRequestParameters(new ArrayList<NameValuePair>());
-		request.getRequestParameters().add(new NameValuePair("qcm", "{\"qcm\":{\"id\":\"fef\"}}"));
+		request.getRequestParameters().add(new NameValuePair("question", "{\"question\":{\"id\":\"fef\"}}"));
 		
 		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
 		
@@ -266,7 +269,7 @@ public class QcmServletTest {
 	}
 	
 	@Test
-	public void testUpdateMissingArgumentQcm() throws SQLException, FailingHttpStatusCodeException, IOException {
+	public void testUpdateMissingArgumentQuestion() throws SQLException, FailingHttpStatusCodeException, IOException {
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.POST);
 		
 		webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
@@ -282,7 +285,7 @@ public class QcmServletTest {
 		//Requête post
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.POST);
 		request.setRequestParameters(new ArrayList<NameValuePair>());
-		request.getRequestParameters().add(new NameValuePair("question", JSON));
+		request.getRequestParameters().add(new NameValuePair("qcm", JSON_QCM));
 		
 		HtmlPage page = webClient.getPage(request);
 		assertEquals(HttpServletResponse.SC_BAD_REQUEST, page.getWebResponse().getStatusCode());
@@ -290,7 +293,7 @@ public class QcmServletTest {
 		//Requête get
 		request = new WebRequest(new URL(URL), HttpMethod.GET);
 		request.setRequestParameters(new ArrayList<NameValuePair>());
-		request.getRequestParameters().add(new NameValuePair("question", JSON));
+		request.getRequestParameters().add(new NameValuePair("question", JSON_QCM));
 		
 		page = webClient.getPage(request);
 		assertEquals(HttpServletResponse.SC_BAD_REQUEST, page.getWebResponse().getStatusCode());
@@ -298,7 +301,7 @@ public class QcmServletTest {
 		//Requête delete
 		request = new WebRequest(new URL(URL), HttpMethod.DELETE);
 		request.setRequestParameters(new ArrayList<NameValuePair>());
-		request.getRequestParameters().add(new NameValuePair("question", JSON));
+		request.getRequestParameters().add(new NameValuePair("qcm", JSON_QCM));
 		
 		page = webClient.getPage(request);
 		assertEquals(HttpServletResponse.SC_BAD_REQUEST, page.getWebResponse().getStatusCode());

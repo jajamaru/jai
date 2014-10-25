@@ -49,16 +49,21 @@ public class QuestionServlet extends HttpServlet {
 				question = rdg.retrieve(id);
 				if(question != null) {
 					request.setAttribute("question", question);
-					request.setAttribute("statut", "ok");
+					RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
+					dispatcher.forward(request, response);
 				} else {
-					((HttpServletResponse) response).setStatus(HttpServletResponse.SC_NOT_FOUND);
-					((HttpServletResponse) response).sendError(HttpServletResponse.SC_NOT_FOUND);
+					response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+					response.sendError(HttpServletResponse.SC_NOT_FOUND);
 				}
+			} catch (NumberFormatException e) {
+				request.getServletContext().log("L'id passer en paramètre n'est pas un entier",e);
+				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+				response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				request.getServletContext().log("La question demandée n'existe pas",e);
-				((HttpServletResponse) response).setStatus(HttpServletResponse.SC_NOT_FOUND);
-				((HttpServletResponse) response).sendError(HttpServletResponse.SC_NOT_FOUND);
+				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+				response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			}
 			
 		} else {
@@ -82,19 +87,23 @@ public class QuestionServlet extends HttpServlet {
 				id = question.getId();
 				question = rdg.retrieve(id);
 				request.setAttribute("question", question);
-				request.setAttribute("statut", "ok");
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				request.setAttribute("statut", "nok");
+				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
+				dispatcher.forward(request, response);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
-				request.setAttribute("statut", "nok");
-			}
+				request.getServletContext().log("La question ne respecte pas le format json défini",e);
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				request.getServletContext().log("Un problème est survenu lors de la mise à jour de la question",e);
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			} 
+		} else {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 		}
-		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
-		dispatcher.forward(request, response);
 	}
 	
 	@Override
@@ -122,11 +131,17 @@ public class QuestionServlet extends HttpServlet {
 			writer.flush();
 			
 		} catch(JSONException e) {
-			request.getServletContext().log("Problème de parsing au niveau du json",e);
+			request.getServletContext().log("Le paramètre donné n'est pas sous format json",e);
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} catch(SQLException e) {
-			request.getServletContext().log("Problème au niveau de la base de donnée",e);
+			request.getServletContext().log("Le json fourni ne correspond pas au format attendu",e);
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} catch(IOException e) {
-			request.getServletContext().log("Problème d'écriture/lecture des flux lors du doPut QCM",e);
+			request.getServletContext().log("Problème d'écriture/lecture des flux lors du doPut Question",e);
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} finally {
 			close(writer, request);
 			close(reader, request);
@@ -136,6 +151,30 @@ public class QuestionServlet extends HttpServlet {
 	@Override
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		Question question = null;
+		if(request.getParameter("question") != null) {
+			try {
+				question = Question.retrieveObject(new JSONObject(request.getParameter("question")));
+				QuestionRdg rdg = new QuestionRdg(DBUtils.getConnection());
+				rdg.delete(question);
+				request.setAttribute("question", question);
+				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
+				dispatcher.forward(request, response);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				request.getServletContext().log("La question ne respecte pas le format json défini",e);
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				request.getServletContext().log("Un problème est survenu lors de la suppression de la question",e);
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			} 
+		} else {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+		}
 	}
 	
 	private void close(Closeable inOut, HttpServletRequest request) {
