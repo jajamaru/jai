@@ -130,7 +130,7 @@ public class QcmServletTest {
 	public void testRetrieveMissingArgumentQcm() throws FailingHttpStatusCodeException, IOException {
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.GET);
 		
-		HtmlPage page = webClient.getPage(request);
+		TextPage page = webClient.getPage(request);
 		assertEquals(HttpServletResponse.SC_OK, page.getWebResponse().getStatusCode());
 	}
 	
@@ -292,8 +292,8 @@ public class QcmServletTest {
 		request.setRequestParameters(new ArrayList<NameValuePair>());
 		request.getRequestParameters().add(new NameValuePair("question", JSON));
 		
-		page = webClient.getPage(request);
-		assertEquals(HttpServletResponse.SC_BAD_REQUEST, page.getWebResponse().getStatusCode());
+		TextPage page2 = webClient.getPage(request);
+		assertEquals(HttpServletResponse.SC_BAD_REQUEST, page2.getWebResponse().getStatusCode());
 		
 		//Requête delete
 		request = new WebRequest(new URL(URL), HttpMethod.DELETE);
