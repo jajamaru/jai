@@ -49,7 +49,7 @@ public class QuestionServlet extends HttpServlet {
 				question = rdg.retrieve(id);
 				if(question != null) {
 					request.setAttribute("question", question);
-					RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
+					RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/display/question");
 					dispatcher.forward(request, response);
 				} else {
 					response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -67,7 +67,7 @@ public class QuestionServlet extends HttpServlet {
 			}
 			
 		} else {
-			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
+			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/display/question");
 			dispatcher.forward(request, response);
 		}
 	}

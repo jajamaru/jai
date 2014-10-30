@@ -49,7 +49,7 @@ public class QcmResultServlet extends HttpServlet {
 				result = rdg.retrieve(id);
 				if(result != null) {
 					request.setAttribute("result", result);
-					RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
+					RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/display/result");
 					dispatcher.forward(request, response);
 				} else {
 					response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -67,7 +67,7 @@ public class QcmResultServlet extends HttpServlet {
 			}
 			
 		} else {
-			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
+			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/display/result");
 			dispatcher.forward(request, response);
 		}
 	}

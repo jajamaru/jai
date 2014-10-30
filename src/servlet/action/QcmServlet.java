@@ -48,7 +48,7 @@ public class QcmServlet extends HttpServlet {
 				qcm = rdg.retrieve(id);
 				if(qcm != null) {
 					request.setAttribute("qcm", qcm);
-					RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
+					RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/display/qcm");
 					dispatcher.forward(request, response);
 				} else {
 					response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -65,7 +65,7 @@ public class QcmServlet extends HttpServlet {
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			}
 		} else {
-			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
+			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/display/qcm");
 			dispatcher.forward(request, response);
 		}
 	}
