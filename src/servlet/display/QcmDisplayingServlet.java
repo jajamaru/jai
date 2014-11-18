@@ -2,6 +2,7 @@ package servlet.display;
 
 import java.io.IOException;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -33,7 +34,8 @@ public class QcmDisplayingServlet extends HttpServlet {
 		if(request.getAttribute(KEY_OBJECT) != null) {
 			
 		} else {
-			
+			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/display-list/qcm");
+			dispatcher.forward(request, response);
 		}
 	}
 

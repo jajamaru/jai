@@ -27,6 +27,8 @@ public class StudentServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		//Il faut regarder si une question est active, si oui on le redirige vers cette question
+		//sinon l'utilisateur n'est pas autorisé et on le redirige vers une page d'attente
 	}
 
 	/**
@@ -34,6 +36,7 @@ public class StudentServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		doGet(request, response);
 	}
 
 }

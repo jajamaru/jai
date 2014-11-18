@@ -8,7 +8,7 @@ import entity.QCM;
 import entity.QCMResult;
 import entity.Question;
 
-public class CheckingEntities {
+class CheckingEntities {
 	
 	public static boolean checkingAnswer(Answer answer) {
 		return answer.getDesc() != null && answer.getDesc().length() > 0 &&

@@ -64,7 +64,7 @@ public class AnswerServletTest {
 		qcm = QCM.retrieveObject(new JSONObject(page.getContent()));
 		question = qcm.getQuestions().get(0);
 		
-		final String json_answer = "{\"answer\":{\"desc\":\"B\",\"cpt\":0,\"isTrue\":false}}";
+		final String json_answer = "{'answer':{'desc':'B','cpt':0,'isTrue':false}}";
 		answer = Answer.retrieveObject(new JSONObject(json_answer));
 		answer.setIdQuestion(question.getId());
 	}
