@@ -11,13 +11,13 @@ import javax.servlet.http.HttpServletResponse;
  * Servlet implementation class QcmResultDisplayingServlet
  */
 @WebServlet("/admin/display/result")
-public class QcmResultDisplayingServlet extends HttpServlet {
+public class ResultDisplayingServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public QcmResultDisplayingServlet() {
+    public ResultDisplayingServlet() {
         super();
         // TODO Auto-generated constructor stub
     }

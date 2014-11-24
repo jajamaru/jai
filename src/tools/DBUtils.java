@@ -7,19 +7,16 @@ import java.sql.Statement;
 
 public class DBUtils {
 	
-	public static final String CONNECTION_REQUEST = "jdbc:derby:romain_huret_jai;create=true";
+	private static final String CONNECTION_REQUEST = "jdbc:derby:romain_huret_jai;create=true";
 	
-	public static final String[] CREATE_TABLE_STATEMENTS = new String[] {
-		"create table Qcm (id integer not null generated always as identity, title VARCHAR(255) not null, primary key(id))",
-		"create table Question (id integer not null generated always as identity, description VARCHAR(2048) not null, idQcm integer, primary key(id), foreign key(idQcm) references Qcm(id))",
-		"create table Answer (id integer not null generated always as identity, description VARCHAR(1024), isTrue boolean default false, cpt integer, idQuestion integer, primary key(id), foreign key(idQuestion) references Question(id))",
-		"create table Qcmresult (id integer not null generated always as identity, QCMId integer not null, date DATE not null, nbParticipants integer not null, successRate decimal(4,2) not null, duration integer, primary key(id), foreign key(QCMId) references Qcm(id))"
+	private static final String[] CREATE_TABLE_STATEMENTS = new String[] {
+		"create table Question (id int not null generated always as identity (start with 1, increment by 1), description VARCHAR(2048) not null, primary key(id))",
+		"create table Answer (id int not null generated always as identity (start with 1, increment by 1), description VARCHAR(1024), isTrue boolean default false, idQuestion integer, primary key(id), foreign key(idQuestion) references Question(id))",
+		"create table Result (id int not null generated always as identity (start with 1, increment by 1), questionId integer not null, date double not null, nbParticipants integer not null, successRate decimal(4,2) not null, primary key(id), foreign key(questionId) references Question(id))"
 		};
 	
-	public static final String[] DROP_TABLE_STATEMENTS = new String[] {
-		"drop table Qcmresult", "drop table Answer",
-		"drop table Question","drop table Qcm"
-		};
+	private static final String[] DROP_TABLE_STATEMENTS = new String[] {
+		"drop table Result", "drop table Answer", "drop table Question"};
 	
 	public static Connection getConnection() throws SQLException {
 		return DriverManager.getConnection(CONNECTION_REQUEST);

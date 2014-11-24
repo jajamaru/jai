@@ -13,12 +13,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import listener.InitDataBase;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import rdg.AnswerRdg;
-import tools.DBUtils;
 import entity.Answer;
+import entity.MissingJsonArgumentException;
 
 /**
  * Servlet implementation class InsertServlet
@@ -44,7 +46,7 @@ public class AnswerServlet extends HttpServlet {
 		if(request.getParameter("id") != null) {
 			try {
 				Answer answer = null;
-				AnswerRdg rdg = new AnswerRdg(DBUtils.getConnection());
+				AnswerRdg rdg = (AnswerRdg)getServletContext().getAttribute(InitDataBase.RDG_ANSWER);
 				id = Integer.valueOf(request.getParameter("id"));
 				answer = rdg.retrieve(id);
 				if(answer != null) {
@@ -82,13 +84,17 @@ public class AnswerServlet extends HttpServlet {
 			try {
 				Integer id = null;
 				answer = Answer.retrieveObject(new JSONObject(request.getParameter("answer")));
-				AnswerRdg rdg = new AnswerRdg(DBUtils.getConnection());
+				AnswerRdg rdg = (AnswerRdg)getServletContext().getAttribute(InitDataBase.RDG_ANSWER);
 				id = answer.getId();
 				rdg.update(answer);
 				answer = rdg.retrieve(id);
 				request.setAttribute("answer", answer);
-				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
+				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/display-list/answer");
 				dispatcher.forward(request, response);
+			} catch(MissingJsonArgumentException e) {
+				request.getServletContext().log(e.getMessage(),e);
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				request.getServletContext().log("La réponse ne respecte pas le format json défini",e);
@@ -112,10 +118,8 @@ public class AnswerServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		Answer answer = null;
 		BufferedReader reader = null;
-		PrintWriter writer = null;
 		try {
 			reader = request.getReader();
-			writer = response.getWriter();
 			String line = "";
 			String json = "";
 			while((line = reader.readLine()) != null) {
@@ -123,14 +127,20 @@ public class AnswerServlet extends HttpServlet {
 			}
 			
 			answer = Answer.retrieveObject(new JSONObject(json));
-			AnswerRdg rdg = new AnswerRdg(DBUtils.getConnection());
+			AnswerRdg rdg = (AnswerRdg)getServletContext().getAttribute(InitDataBase.RDG_ANSWER);
 			rdg.persist(answer);
+			
 			Integer id = answer.getId();
 			answer = rdg.retrieve(id);
 			
-			writer.write(answer.stringify());
-			writer.flush();
-			
+			/*request.setAttribute("answer", answer);
+			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/display-list/answer");
+			dispatcher.forward(request, response);*/
+
+		} catch(MissingJsonArgumentException e) {
+			request.getServletContext().log(e.getMessage(),e);
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);	
 		} catch(JSONException e) {
 			request.getServletContext().log("Le paramètre donné n'est pas sous format json",e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -144,7 +154,6 @@ public class AnswerServlet extends HttpServlet {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} finally {
-			close(writer, request);
 			close(reader, request);
 		}
 	}
@@ -153,17 +162,16 @@ public class AnswerServlet extends HttpServlet {
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		Answer answer = null;
-		if(request.getParameter("answer") != null) {
+		if(request.getParameter("id") != null) {
 			try {
-				answer = Answer.retrieveObject(new JSONObject(request.getParameter("answer")));
-				AnswerRdg rdg = new AnswerRdg(DBUtils.getConnection());
-				rdg.delete(answer);
+				Integer id = Integer.valueOf(request.getParameter("id"));
+				AnswerRdg rdg = (AnswerRdg)getServletContext().getAttribute(InitDataBase.RDG_ANSWER);
+				rdg.delete(id);
 				request.setAttribute("answer", answer);
-				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
+				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/display-list/answer");
 				dispatcher.forward(request, response);
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				request.getServletContext().log("La question ne respecte pas le format json défini",e);
+			} catch(NumberFormatException e) {
+				request.getServletContext().log("Le paramètre passé n'est pas integer",e);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			} catch (SQLException e) {

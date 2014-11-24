@@ -3,7 +3,7 @@ package tools;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public interface Jsonable<OBJECT> {
+public interface Jsonable {
 
 	public abstract JSONObject getJson() throws JSONException;
 	

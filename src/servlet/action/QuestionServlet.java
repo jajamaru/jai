@@ -3,7 +3,6 @@ package servlet.action;
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 
 import javax.servlet.RequestDispatcher;
@@ -13,11 +12,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import listener.InitDataBase;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import rdg.QuestionRdg;
-import tools.DBUtils;
+import entity.MissingJsonArgumentException;
 import entity.Question;
 
 /**
@@ -44,7 +45,7 @@ public class QuestionServlet extends HttpServlet {
 		if(request.getParameter("id") != null) {
 			try {
 				Question question = null;
-				QuestionRdg rdg = new QuestionRdg(DBUtils.getConnection());
+				QuestionRdg rdg = (QuestionRdg)getServletContext().getAttribute(InitDataBase.RDG_QUESTION);
 				id = Integer.valueOf(request.getParameter("id"));
 				question = rdg.retrieve(id);
 				if(question != null) {
@@ -82,13 +83,17 @@ public class QuestionServlet extends HttpServlet {
 			try {
 				Integer id = null;
 				question = Question.retrieveObject(new JSONObject(request.getParameter("question")));
-				QuestionRdg rdg = new QuestionRdg(DBUtils.getConnection());
+				QuestionRdg rdg = (QuestionRdg)getServletContext().getAttribute(InitDataBase.RDG_QUESTION);
 				rdg.update(question);
 				id = question.getId();
 				question = rdg.retrieve(id);
 				request.setAttribute("question", question);
-				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
+				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/display-list/question");
 				dispatcher.forward(request, response);
+			} catch(MissingJsonArgumentException e) {
+				request.getServletContext().log(e.getMessage(),e);
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				request.getServletContext().log("La question ne respecte pas le format json défini",e);
@@ -111,25 +116,27 @@ public class QuestionServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		Question question = null;
 		BufferedReader reader = null;
-		PrintWriter writer = null;
 		try {
 			reader = request.getReader();
-			writer = response.getWriter();
 			String line = "";
 			String json = "";
 			while((line = reader.readLine()) != null) {
 				json += line;
 			}
-			
+
 			question = Question.retrieveObject(new JSONObject(json));
-			QuestionRdg rdg = new QuestionRdg(DBUtils.getConnection());
+			QuestionRdg rdg = (QuestionRdg)getServletContext().getAttribute(InitDataBase.RDG_QUESTION);
 			rdg.persist(question);
 			Integer id = question.getId();
 			question = rdg.retrieve(id);
 			
-			writer.write(question.stringify());
-			writer.flush();
-			
+			/*request.setAttribute("question", question);
+			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/display-list/question");
+			dispatcher.forward(request, response);*/
+		} catch(MissingJsonArgumentException e) {
+			request.getServletContext().log(e.getMessage(),e);
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} catch(JSONException e) {
 			request.getServletContext().log("Le paramètre donné n'est pas sous format json",e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -143,7 +150,6 @@ public class QuestionServlet extends HttpServlet {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} finally {
-			close(writer, request);
 			close(reader, request);
 		}
 	}
@@ -152,21 +158,19 @@ public class QuestionServlet extends HttpServlet {
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		Question question = null;
-		if(request.getParameter("question") != null) {
+		if(request.getParameter("id") != null) {
 			try {
-				question = Question.retrieveObject(new JSONObject(request.getParameter("question")));
-				QuestionRdg rdg = new QuestionRdg(DBUtils.getConnection());
-				rdg.delete(question);
+				Integer id = Integer.valueOf(request.getParameter("id"));
+				QuestionRdg rdg = (QuestionRdg)getServletContext().getAttribute(InitDataBase.RDG_QUESTION);
+				rdg.delete(id);
 				request.setAttribute("question", question);
-				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
+				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/display-list/question");
 				dispatcher.forward(request, response);
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				request.getServletContext().log("La question ne respecte pas le format json défini",e);
+			} catch(NumberFormatException e) {
+				request.getServletContext().log("Le paramètre passé n'est pas integer",e);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				request.getServletContext().log("Un problème est survenu lors de la suppression de la question",e);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

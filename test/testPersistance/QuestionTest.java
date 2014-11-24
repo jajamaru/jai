@@ -1,6 +1,9 @@
 package testPersistance;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -18,11 +21,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import rdg.AnswerRdg;
-import rdg.QCMRdg;
 import rdg.QuestionRdg;
 import tools.DBUtils;
 import entity.Answer;
-import entity.QCM;
+import entity.MissingJsonArgumentException;
 import entity.Question;
 
 public class QuestionTest {
@@ -30,17 +32,15 @@ public class QuestionTest {
 	private static Connection connection;
 	private static QuestionRdg questionRdg;
 	private static AnswerRdg answerRdg;
-	private static QCMRdg qcmRdg;
 	
-	private static QCM qcm;
 	private static List<Answer> answers = new ArrayList<Answer>();
+	private Question question;
 	
 	@BeforeClass
 	public static void setUpOnce() throws SQLException {
 		connection = DBUtils.getConnection();
-		questionRdg = new QuestionRdg(connection);
 		answerRdg = new AnswerRdg(connection);
-		qcmRdg = new QCMRdg(connection);
+		questionRdg = new QuestionRdg(connection, answerRdg);
 	}
 	
 	@Before
@@ -48,19 +48,17 @@ public class QuestionTest {
 		DBUtils.resetDatabase(connection);
 		Answer answer1, answer2;
 		answer1 = new Answer();
-		answer1.setCpt(0);
 		answer1.setDesc("A");
 		answer1.setTrue(false);
 		answer2 = new Answer();
-		answer2.setCpt(0);
 		answer2.setDesc("B");
 		answer2.setTrue(true);
 		answers.add(answer1);
 		answers.add(answer2);
 		
-		qcm = new QCM();
-		qcm.setTitle("Ceci est un qcm");
-		qcmRdg.persist(qcm);
+		question = new Question();
+		question.setDesc("Qui es-tu ?");
+		question.setAnswers(answers);
 	}
 	
 	@After
@@ -76,10 +74,6 @@ public class QuestionTest {
 	
 	@Test
 	public void testRetrieve() throws SQLException {
-		Question question = new Question();
-		question.setDesc("Qui es-tu ?");
-		question.setAnswers(answers);
-		question.setIdQcm(qcm.getId());
 		questionRdg.persist(question);
 		assertEquals(2, question.getAnswers().size());
 		Integer id = question.getId();
@@ -90,10 +84,6 @@ public class QuestionTest {
 	
 	@Test
 	public void testPersist() throws SQLException {
-		Question question = new Question();
-		question.setDesc("Qui es-tu ?");
-		question.setAnswers(answers);
-		question.setIdQcm(qcm.getId());
 		questionRdg.persist(question);
 		assertNotNull(question.getId());
 		Iterator<Answer> it = question.getAnswers().iterator();
@@ -107,14 +97,10 @@ public class QuestionTest {
 	public void testDelete() throws SQLException {
 		Integer id = null;
 		Collection<Answer> answersQuestion = new ArrayList<Answer>();
-		Question question = new Question();
-		question.setDesc("Qui es-tu ?");
-		question.setAnswers(answers);
-		question.setIdQcm(qcm.getId());
 		questionRdg.persist(question);
 		id = question.getId();
 		answersQuestion = question.getAnswers();
-		questionRdg.delete(question);
+		questionRdg.delete(question.getId());
 		assertNull(questionRdg.retrieve(id));
 		//On vérifie que les réponses sont aussi supprimées
 		Iterator<Answer> it = answersQuestion.iterator();
@@ -131,10 +117,6 @@ public class QuestionTest {
 	
 	@Test
 	public void testUpdate() throws SQLException {
-		Question question = new Question();
-		question.setDesc("Qui es-tu ?");
-		question.setAnswers(answers);
-		question.setIdQcm(qcm.getId());
 		questionRdg.persist(question);
 		question.setDesc("T'es qui ?");
 		questionRdg.update(question);
@@ -169,24 +151,40 @@ public class QuestionTest {
 	}
 	
 	@Test
-	public void testJson() throws JSONException {
-		Question question = new Question();
-		question.setDesc("question");
-		question.setIdQcm(qcm.getId());
-		Answer answer = new Answer();
-		answer.setCpt(0);
-		answer.setDesc("A");
-		answer.setTrue(true);
-		question.addAnswer(answer);
-		answer = new Answer();
-		answer.setCpt(0);
-		answer.setDesc("B");
-		answer.setTrue(false);
-		question.addAnswer(answer);
-		
+	public void testJson() throws JSONException, MissingJsonArgumentException {		
 		JSONObject json = question.getJson();
-		System.out.println(json.toString());
 		assertTrue(question.equals(Question.retrieveObject(json)));
+	}
+	
+	@Test
+	public void testJson2() throws JSONException, MissingJsonArgumentException {
+		Question.retrieveObject(new JSONObject("{'question':{'desc':'Ceci est une question','answers':[{'answer':{'desc':'réponse','isTrue':true}}]}}"));
+		Question.retrieveObject(new JSONObject("{'question':{'id':1,'desc':'Ceci est une question','answers':[{'answer':{'desc':'réponse','isTrue':true}}]}}"));
+	}
+	
+	@Test(expected=MissingJsonArgumentException.class)
+	public void testJsonWithMissingParameter1() throws JSONException, MissingJsonArgumentException {
+		Question.retrieveObject(new JSONObject("{}"));
+	}
+	
+	@Test(expected=MissingJsonArgumentException.class)
+	public void testJsonWithMissingParameter2() throws JSONException, MissingJsonArgumentException {
+		Question.retrieveObject(new JSONObject("{'question':{}}"));
+	}
+	
+	@Test(expected=MissingJsonArgumentException.class)
+	public void testJsonWithMissingParameter3() throws JSONException, MissingJsonArgumentException {
+		Question.retrieveObject(new JSONObject("{'question':{'desc':'Ceci est une question'}}"));
+	}
+	
+	@Test(expected=MissingJsonArgumentException.class)
+	public void testJsonWithMissingParameter4() throws JSONException, MissingJsonArgumentException {
+		Question.retrieveObject(new JSONObject("{'question':{'answers':[{'answer':{'desc':'réponse','isTrue':true}}]}}"));
+	}
+	
+	@Test(expected=MissingJsonArgumentException.class)
+	public void testJsonWithMissingParameter5() throws JSONException, MissingJsonArgumentException {
+		Question.retrieveObject(new JSONObject("{'answer':{'desc':'Ceci est une question','answers':[{'answer':{'desc':'réponse','isTrue':true}}]}}"));
 	}
 
 }
