@@ -162,22 +162,40 @@ public class AnswerServlet extends HttpServlet {
 	@Override
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		PrintWriter writer = null;
+		Integer id = null;
 		if(request.getParameter("id") != null) {
 			try {
-				Integer id = Integer.valueOf(request.getParameter("id"));
+				Answer answer = null;
+				
+				id = Integer.valueOf(request.getParameter("id"));
 				AnswerRdg rdg = (AnswerRdg)getServletContext().getAttribute(InitDataBase.RDG_ANSWER);
-				rdg.delete(id);
-
+				answer = rdg.retrieve(id);
+				if(answer == null) {
+					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				} else {
+					rdg.delete(id);
+					writer = response.getWriter();
+					writer.write(answer.stringify());
+					writer.flush();
+				}
+	
 			} catch(NumberFormatException e) {
 				request.getServletContext().log("Le paramètre passé n'est pas integer",e);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				request.getServletContext().log("Un problème est survenu lors de la suppression de la question",e);
+			} catch (JSONException e) {
+				request.getServletContext().log("Le paramètre passé n'est pas integer",e);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			} 
+			} catch (SQLException e) {
+				request.getServletContext().log("Un problème est survenu lors de la suppression de la réponse",e);
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			} finally {
+				close(writer, request);
+			}
 		} else {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);

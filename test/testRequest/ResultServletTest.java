@@ -7,7 +7,6 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -38,7 +37,6 @@ public class ResultServletTest {
 	private static WebClient webClient;
 	private static Connection connection;
 	
-	private Question question;
 	private Result result;
 	
 	private final static String URL = "http://localhost:8081/romain_huret_jai/admin/action/result";
@@ -62,7 +60,7 @@ public class ResultServletTest {
 		answer.setDesc("Réponse");
 		answer.setTrue(true);
 
-		question = new Question();
+		Question question = new Question();
 		question.setDesc("Ceci est une question !");
 		question.setAnswers(new ArrayList<Answer>());
 		question.getAnswers().add(answer);
@@ -71,7 +69,6 @@ public class ResultServletTest {
 		request.setRequestBody(question.stringify());
 		
 		Page page = webClient.getPage(request);
-		
 		question = Question.retrieveObject(new JSONObject(page.getWebResponse().getContentAsString()));
 		
 		final String json_result = "{'result':{'nbParticipants':20,'successRate':85}}";
@@ -164,7 +161,7 @@ public class ResultServletTest {
 		
 		request = new WebRequest(new URL(URL), HttpMethod.DELETE);
 		request.setRequestParameters(new ArrayList<NameValuePair>());
-		request.getRequestParameters().add(new NameValuePair("result", resultPut.stringify()));
+		request.getRequestParameters().add(new NameValuePair("id", "" + resultPut.getId()));
 		page = webClient.getPage(request);
 		
 		assertEquals(HttpServletResponse.SC_OK, page.getWebResponse().getStatusCode());
@@ -174,7 +171,7 @@ public class ResultServletTest {
 	public void testDeleteDoesNotExistResult() throws SQLException, FailingHttpStatusCodeException, IOException, JSONException {
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.DELETE);
 		request.setRequestParameters(new ArrayList<NameValuePair>());
-		request.getRequestParameters().add(new NameValuePair("result", result.stringify()));
+		request.getRequestParameters().add(new NameValuePair("id", "" + Integer.MAX_VALUE));
 		
 		Page page = webClient.getPage(request);
 		assertEquals(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, page.getWebResponse().getStatusCode());
@@ -184,13 +181,19 @@ public class ResultServletTest {
 	public void testDeleteJsonMalformedResult() throws FailingHttpStatusCodeException, IOException {
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.DELETE);
 		request.setRequestParameters(new ArrayList<NameValuePair>());
-		request.getRequestParameters().add(new NameValuePair("result", "rrefzefzef"));
+		request.getRequestParameters().add(new NameValuePair("id", "rrefzefzef"));
 		
 		Page page = webClient.getPage(request);
 		assertEquals(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, page.getWebResponse().getStatusCode());
 		
 		request.setRequestParameters(new ArrayList<NameValuePair>());
-		request.getRequestParameters().add(new NameValuePair("result", "{'result':{'id':'fef'}}"));
+		request.getRequestParameters().add(new NameValuePair("id", "{'result':{'id':'fef'}}"));
+		
+		page = webClient.getPage(request);
+		assertEquals(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, page.getWebResponse().getStatusCode());
+		
+		request.setRequestParameters(new ArrayList<NameValuePair>());
+		request.getRequestParameters().add(new NameValuePair("id", ""));
 		
 		page = webClient.getPage(request);
 		assertEquals(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, page.getWebResponse().getStatusCode());

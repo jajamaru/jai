@@ -12,6 +12,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -23,7 +24,6 @@ import tools.DBUtils;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.Page;
-import com.gargoylesoftware.htmlunit.TextPage;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -112,16 +112,18 @@ public class QuestionServletTest {
 	}
 	
 	@Test
-	public void testRetrieveQuestion() throws SQLException, JSONException, FailingHttpStatusCodeException, IOException {
+	public void testRetrieveQuestion() throws SQLException, JSONException, FailingHttpStatusCodeException, IOException, MissingJsonArgumentException {
+		Question questionPut = null;
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.PUT);
 		request.setRequestBody(question.stringify());
 		
 		Page page = webClient.getPage(request);
+		questionPut = Question.retrieveObject(new JSONObject(page.getWebResponse().getContentAsString()));
 		assertEquals(HttpServletResponse.SC_OK, page.getWebResponse().getStatusCode());
 		
 		request = new WebRequest(new URL(URL), HttpMethod.GET);
 		request.setRequestParameters(new ArrayList<NameValuePair>());
-		request.getRequestParameters().add(new NameValuePair("id", "1"));
+		request.getRequestParameters().add(new NameValuePair("id", ""+questionPut.getId()));
 		
 		page = webClient.getPage(request);
 		assertEquals(HttpServletResponse.SC_OK, page.getWebResponse().getStatusCode());
@@ -147,16 +149,17 @@ public class QuestionServletTest {
 	
 	@Test
 	public void testDeleteQuestion() throws SQLException, FailingHttpStatusCodeException, IOException, JSONException, MissingJsonArgumentException {
+		Question questionPut = null;
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.PUT);
 		request.setRequestBody(question.stringify());
 		
 		Page page = webClient.getPage(request);
-		
+		questionPut = Question.retrieveObject(new JSONObject(page.getWebResponse().getContentAsString()));
 		assertEquals(HttpServletResponse.SC_OK, page.getWebResponse().getStatusCode());
 		
 		request = new WebRequest(new URL(URL), HttpMethod.DELETE);
 		request.setRequestParameters(new ArrayList<NameValuePair>());
-		request.getRequestParameters().add(new NameValuePair("id", "1"));
+		request.getRequestParameters().add(new NameValuePair("id", "" + questionPut.getId()));
 		page = webClient.getPage(request);
 		
 		assertEquals(HttpServletResponse.SC_OK, page.getWebResponse().getStatusCode());
@@ -166,7 +169,7 @@ public class QuestionServletTest {
 	public void testDeleteDoesNotExistQuestion() throws SQLException, FailingHttpStatusCodeException, IOException, JSONException {
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.DELETE);
 		request.setRequestParameters(new ArrayList<NameValuePair>());
-		request.getRequestParameters().add(new NameValuePair("id", Integer.MAX_VALUE + ""));
+		request.getRequestParameters().add(new NameValuePair("id", "" + Integer.MAX_VALUE));
 		
 		Page page = webClient.getPage(request);
 		assertEquals(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, page.getWebResponse().getStatusCode());
@@ -176,10 +179,10 @@ public class QuestionServletTest {
 	public void testDeleteJsonMalformedQuestion() throws FailingHttpStatusCodeException, IOException {
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.DELETE);
 		request.setRequestParameters(new ArrayList<NameValuePair>());
-		request.getRequestParameters().add(new NameValuePair("id", "rrefzefzef"));
+		request.getRequestParameters().add(new NameValuePair("question", "uiheiduhezih"));
 		
 		Page page = webClient.getPage(request);
-		assertEquals(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, page.getWebResponse().getStatusCode());
+		assertEquals(HttpServletResponse.SC_BAD_REQUEST, page.getWebResponse().getStatusCode());
 		
 		request.setRequestParameters(new ArrayList<NameValuePair>());
 		request.getRequestParameters().add(new NameValuePair("id", "{}"));
@@ -195,30 +198,19 @@ public class QuestionServletTest {
 	}
 	
 	@Test
-	public void testDeleteMissingArgumentQuestion() throws FailingHttpStatusCodeException, IOException {
-		WebRequest request = new WebRequest(new URL(URL), HttpMethod.DELETE);
-		
-		Page page = webClient.getPage(request);
-		assertEquals(HttpServletResponse.SC_BAD_REQUEST, page.getWebResponse().getStatusCode());
-	}
-	
-	@Test
 	public void testUpdateQuestion() throws SQLException, FailingHttpStatusCodeException, IOException, JSONException, MissingJsonArgumentException {
+		Question questionPut = null;
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.PUT);
 		request.setRequestBody(question.stringify());
 		
 		Page page = webClient.getPage(request);
-		
+		questionPut = Question.retrieveObject(new JSONObject(page.getWebResponse().getContentAsString()));
 		assertEquals(HttpServletResponse.SC_OK, page.getWebResponse().getStatusCode());
 		
-		question.setDesc("Bidule");
-		question.setId(1);
-		for(int i = 0; i<question.getAnswers().size(); ++i) {
-			question.getAnswer(i).setId(i+1);
-		}
+		questionPut.setDesc("Bidule");
 		request = new WebRequest(new URL(URL), HttpMethod.POST);
 		request.setRequestParameters(new ArrayList<NameValuePair>());
-		request.getRequestParameters().add(new NameValuePair("question", question.stringify()));
+		request.getRequestParameters().add(new NameValuePair("question", questionPut.stringify()));
 		
 		page = webClient.getPage(request);
 		assertEquals(HttpServletResponse.SC_OK, page.getWebResponse().getStatusCode());
@@ -261,7 +253,7 @@ public class QuestionServletTest {
 		request.setRequestParameters(new ArrayList<NameValuePair>());
 		request.getRequestParameters().add(new NameValuePair("answer", WRONG_JSON));
 		
-		HtmlPage page = webClient.getPage(request);
+		Page page = webClient.getPage(request);
 		assertEquals(HttpServletResponse.SC_BAD_REQUEST, page.getWebResponse().getStatusCode());
 		
 		//Requête get
@@ -269,8 +261,8 @@ public class QuestionServletTest {
 		request.setRequestParameters(new ArrayList<NameValuePair>());
 		request.getRequestParameters().add(new NameValuePair("answer", WRONG_JSON));
 		
-		TextPage page2 = webClient.getPage(request);
-		assertEquals(HttpServletResponse.SC_OK, page2.getWebResponse().getStatusCode());
+		page = webClient.getPage(request);
+		assertEquals(HttpServletResponse.SC_OK, page.getWebResponse().getStatusCode());
 		
 	}
 

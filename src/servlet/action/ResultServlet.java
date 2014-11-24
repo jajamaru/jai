@@ -132,7 +132,6 @@ public class ResultServlet extends HttpServlet {
 			Integer id = result.getId();
 			result = rdg.retrieve(id);
 			
-			
 			writer.write(result.stringify());
 			writer.flush();
 		} catch (MissingJsonArgumentException e) {
@@ -144,7 +143,7 @@ public class ResultServlet extends HttpServlet {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} catch(SQLException e) {
-			request.getServletContext().log("Le json fourni ne correspond pas au format attendu",e);
+			request.getServletContext().log("Une erreur s'est produite lors d'un insert",e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} catch(IOException e) {
@@ -160,22 +159,39 @@ public class ResultServlet extends HttpServlet {
 	@Override
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		PrintWriter writer = null;
+		Integer id = null;
 		if(request.getParameter("id") != null) {
 			try {
-				Integer id = Integer.valueOf(request.getParameter("id"));
+				Result result = null;
+				
+				id = Integer.valueOf(request.getParameter("id"));
 				ResultRdg rdg = (ResultRdg)getServletContext().getAttribute(InitDataBase.RDG_RESULT);
-				rdg.delete(id);
-
+				result = rdg.retrieve(id);
+				if(result == null) {
+					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				} else {
+					rdg.delete(id);
+					writer = response.getWriter();
+					writer.write(result.stringify());
+					writer.flush();
+				}
+			} catch (JSONException e) {
+				request.getServletContext().log("Un problème est survenu lors de du parsing de l'objet",e);
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			} catch(NumberFormatException e) {
 				request.getServletContext().log("Le paramètre passé n'est pas integer",e);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				request.getServletContext().log("Un problème est survenu lors de la suppression du résultat",e);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			} 
+			} finally {
+				close(writer, request);
+			}
 		} else {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);

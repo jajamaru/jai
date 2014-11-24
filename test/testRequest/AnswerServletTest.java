@@ -7,7 +7,6 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -62,26 +61,19 @@ public class AnswerServletTest {
 
 		Question question = new Question();
 		question.setDesc("Ceci est une question !");
-		List<Answer> answers = new ArrayList<Answer>();
-		answers.add(answer2);
-		question.setAnswers(answers);
+		question.setAnswers(new ArrayList<Answer>());
+		question.getAnswers().add(answer2);
 		
 		
 		WebRequest request = new WebRequest(new URL(URL_PERSIST), HttpMethod.PUT);
 		request.setRequestBody(question.stringify());
 		
-		webClient.getPage(request);
-		
-		request = new WebRequest(new URL(URL_PERSIST), HttpMethod.GET);
-		request.setRequestParameters(new ArrayList<NameValuePair>());
-		request.getRequestParameters().add(new NameValuePair("id", "1"));
-		
-		webClient.getPage(request);
+		Page page = webClient.getPage(request);
+		Question questionPut = Question.retrieveObject(new JSONObject(page.getWebResponse().getContentAsString()));
 		
 		final String json_answer = "{'answer':{'desc':'B','isTrue':true}}";
 		answer = Answer.retrieveObject(new JSONObject(json_answer));
-		answer.setIdQuestion(1);
-		System.out.println(answer.stringify());
+		answer.setIdQuestion(questionPut.getId());
 	}
 	
 	@After
@@ -97,16 +89,18 @@ public class AnswerServletTest {
 	
 	@Test
 	public void testPersistAnswer() throws SQLException, JSONException, FailingHttpStatusCodeException, IOException, MissingJsonArgumentException {	
+		Answer answerPut = null;
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.PUT);
 		request.setRequestBody(answer.stringify());
 		
 		Page page = webClient.getPage(request);
+		answerPut = Answer.retrieveObject(new JSONObject(page.getWebResponse().getContentAsString()));
 		
 		assertEquals(HttpServletResponse.SC_OK, page.getWebResponse().getStatusCode());
 		
 		request = new WebRequest(new URL(URL), HttpMethod.GET);
 		request.setRequestParameters(new ArrayList<NameValuePair>());
-		request.getRequestParameters().add(new NameValuePair("id", "2"));
+		request.getRequestParameters().add(new NameValuePair("id", "" + answerPut.getId()));
 		page = webClient.getPage(request);
 		
 		assertEquals(HttpServletResponse.SC_OK, page.getWebResponse().getStatusCode());
@@ -155,16 +149,17 @@ public class AnswerServletTest {
 	
 	@Test
 	public void testDeleteAnswer() throws SQLException, FailingHttpStatusCodeException, IOException, JSONException, MissingJsonArgumentException {
+		Answer answerPut = null;
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.PUT);
 		request.setRequestBody(answer.stringify());
 		
 		Page page = webClient.getPage(request);
-		
+		answerPut = Answer.retrieveObject(new JSONObject(page.getWebResponse().getContentAsString()));
 		assertEquals(HttpServletResponse.SC_OK, page.getWebResponse().getStatusCode());
 		
 		request = new WebRequest(new URL(URL), HttpMethod.DELETE);
 		request.setRequestParameters(new ArrayList<NameValuePair>());
-		request.getRequestParameters().add(new NameValuePair("id", "2"));
+		request.getRequestParameters().add(new NameValuePair("id", "" + answerPut.getId()));
 		page = webClient.getPage(request);
 		
 		assertEquals(HttpServletResponse.SC_OK, page.getWebResponse().getStatusCode());
@@ -174,7 +169,7 @@ public class AnswerServletTest {
 	public void testDeleteDoesNotExistAnswer() throws SQLException, FailingHttpStatusCodeException, IOException, JSONException {
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.DELETE);
 		request.setRequestParameters(new ArrayList<NameValuePair>());
-		request.getRequestParameters().add(new NameValuePair("id", "2"));
+		request.getRequestParameters().add(new NameValuePair("id", "" + Integer.MAX_VALUE));
 		
 		Page page = webClient.getPage(request);
 		assertEquals(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, page.getWebResponse().getStatusCode());
@@ -212,17 +207,18 @@ public class AnswerServletTest {
 	
 	@Test
 	public void testUpdateAnswer() throws SQLException, FailingHttpStatusCodeException, IOException, JSONException, MissingJsonArgumentException {
+		Answer answerPut = null;
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.PUT);
 		request.setRequestBody(answer.stringify());
 		
 		Page page = webClient.getPage(request);
-		
+		answerPut = Answer.retrieveObject(new JSONObject(page.getWebResponse().getContentAsString()));
 		assertEquals(HttpServletResponse.SC_OK, page.getWebResponse().getStatusCode());
 		
-		answer.setId(2);
+		answerPut.setDesc("Bidule");
 		request = new WebRequest(new URL(URL), HttpMethod.POST);
 		request.setRequestParameters(new ArrayList<NameValuePair>());
-		request.getRequestParameters().add(new NameValuePair("answer", answer.stringify()));
+		request.getRequestParameters().add(new NameValuePair("answer", answerPut.stringify()));
 		page = webClient.getPage(request);
 		
 		assertEquals(HttpServletResponse.SC_OK, page.getWebResponse().getStatusCode());
