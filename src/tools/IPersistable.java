@@ -8,7 +8,7 @@ public interface IPersistable<OBJET, T_KEY> {
 	
 	void update(OBJET obj) throws SQLException;
 	
-	void delete(OBJET obj) throws SQLException;
+	void delete(Integer id) throws SQLException;
 	
 	OBJET retrieve(T_KEY id) throws SQLException;
 

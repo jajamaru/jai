@@ -7,32 +7,29 @@ import org.json.JSONObject;
 
 import tools.Jsonable;
 
-public class QCMResult implements Jsonable<QCMResult>{
+public class Result implements Jsonable {
 	
-	public final static String KEY_OBJECT = "qcmResult";
+	public final static String KEY_OBJECT = "result";
 	public final static String KEY_ID = "id";
-	public final static String KEY_ID_QCM = "idQcm";
+	public final static String KEY_ID_QUESTION = "questionId";
 	public final static String KEY_DATE = "date";
 	public final static String KEY_NB_PARTICIPANTS = "nbParticipants";
 	public final static String KEY_SUCCESS_RATE = "successRate";
-	public final static String KEY_DURATION = "duration";
 	
 	private Integer id;
-	private Integer idQcm;
+	private Integer questionId;
 	private Date date;
 	private int nbParticipants;
 	private double successRate;
-	private int duration; //en second
 	
-	public QCMResult() {}
+	public Result() {}
 	
-	public QCMResult(Integer id, Date date, int nbParticipants,
-			float successRate, int duration) {
+	public Result(Integer id, Date date, int nbParticipants,
+			float successRate) {
 		this.id = id;
 		this.date = date;
 		this.nbParticipants = nbParticipants;
 		this.successRate = successRate;
-		this.duration = duration;
 	}
 	
 	public Integer getId() {
@@ -67,20 +64,12 @@ public class QCMResult implements Jsonable<QCMResult>{
 		this.successRate = successRate;
 	}
 
-	public int getDuration() {
-		return duration;
+	public Integer getQuestionId() {
+		return questionId;
 	}
 
-	public void setDuration(int duration) {
-		this.duration = duration;
-	}
-
-	public Integer getIdQcm() {
-		return idQcm;
-	}
-
-	public void setIdQcm(Integer idqcm) {
-		idQcm = idqcm;
+	public void setQuestionId(Integer questionId) {
+		this.questionId = questionId;
 	}
 
 	@Override
@@ -89,11 +78,10 @@ public class QCMResult implements Jsonable<QCMResult>{
 		JSONObject json = new JSONObject();
 		JSONObject result = new JSONObject();
 		result.put(KEY_ID, getId());
-		result.put(KEY_ID_QCM, getIdQcm());
+		result.put(KEY_ID_QUESTION, getQuestionId());
 		if(getDate() != null)
 			result.put(KEY_DATE, getDate().getTime());
 		result.put(KEY_NB_PARTICIPANTS, getNbParticipants());
-		result.put(KEY_DURATION, getDuration());
 		result.put(KEY_SUCCESS_RATE, getSuccessRate());
 		json.put(KEY_OBJECT, result);
 		return json;
@@ -109,39 +97,48 @@ public class QCMResult implements Jsonable<QCMResult>{
 	public boolean equals(Object obj) {
 		// TODO Auto-generated method stub
 		Boolean isDate = false;
-		if(!(obj instanceof QCMResult)) return false;
-		QCMResult a = (QCMResult)obj;
+		if(!(obj instanceof Result)) return false;
+		Result a = (Result)obj;
 		if(obj == this) return true;
 		if((getDate() !=null && a.getDate() == null) || (getDate() == null && a.getDate() != null)) return false;
 		if(getDate() == null && a.getDate() == null) isDate=true;
 		else isDate = getDate().equals(a.getDate());
-		return isDate && getId() == a.getId() && getIdQcm() == a.getIdQcm() &&
-				getSuccessRate() == a.getSuccessRate() && getDuration() == a.getDuration() && 
+		return isDate && getId() == a.getId() && getQuestionId() == a.getQuestionId() &&
+				getSuccessRate() == a.getSuccessRate() && 
 				getNbParticipants() == a.getNbParticipants();
 	}
 	
 	public boolean equalsBeforePersist(Object obj) {
-		if(!(obj instanceof QCMResult)) return false;
-		QCMResult a = (QCMResult)obj;
+		if(!(obj instanceof Result)) return false;
+		Result a = (Result)obj;
 		if(obj == this) return true;
-		return getSuccessRate() == a.getSuccessRate() && getDuration() == a.getDuration() && 
+		return getSuccessRate() == a.getSuccessRate() && 
 				getNbParticipants() == a.getNbParticipants();
 	}
 
-	public static QCMResult retrieveObject(JSONObject json) {
+	public static Result retrieveObject(JSONObject json) throws MissingJsonArgumentException {
 		// TODO Auto-generated method stub
-		QCMResult result = null;
+		Result result = null;
 		try {
-			result = new QCMResult();
-			JSONObject jsonResult = json.getJSONObject(QCMResult.KEY_OBJECT);
-			result.setIdQcm(jsonResult.getInt(QCMResult.KEY_ID_QCM));
-			result.setNbParticipants(jsonResult.getInt(QCMResult.KEY_NB_PARTICIPANTS));
-			result.setSuccessRate(jsonResult.getDouble(QCMResult.KEY_SUCCESS_RATE));
-			result.setDuration(jsonResult.getInt(QCMResult.KEY_DURATION));
-			if(!jsonResult.isNull(QCMResult.KEY_DATE))
-				result.setDate(new Date(jsonResult.getLong(QCMResult.KEY_DATE)));
-			if(!jsonResult.isNull(QCMResult.KEY_ID))
-				result.setId(jsonResult.getInt(QCMResult.KEY_ID));
+			result = new Result();
+			if(json.isNull(Result.KEY_OBJECT))
+				throw new MissingJsonArgumentException("Le json donnée ne correspond pas");
+			JSONObject jsonResult = json.getJSONObject(Result.KEY_OBJECT);
+			
+			if(jsonResult.isNull(Result.KEY_NB_PARTICIPANTS))
+				throw new MissingJsonArgumentException("Le nombre de participant est inexistant");
+			result.setNbParticipants(jsonResult.getInt(Result.KEY_NB_PARTICIPANTS));
+			
+			if(jsonResult.isNull(Result.KEY_SUCCESS_RATE))
+				throw new MissingJsonArgumentException("Le taux de réussite est inexistant");
+			result.setSuccessRate(jsonResult.getDouble(Result.KEY_SUCCESS_RATE));
+			
+			if(!jsonResult.isNull(Result.KEY_ID_QUESTION))
+				result.setQuestionId(jsonResult.getInt(Result.KEY_ID_QUESTION));
+			if(!jsonResult.isNull(Result.KEY_DATE))
+				result.setDate(new Date(jsonResult.getLong(Result.KEY_DATE)));
+			if(!jsonResult.isNull(Result.KEY_ID))
+				result.setId(jsonResult.getInt(Result.KEY_ID));
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

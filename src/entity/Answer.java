@@ -6,28 +6,25 @@ import org.json.JSONObject;
 import tools.Jsonable;
 
 
-public class Answer implements Jsonable<Answer>{
+public class Answer implements Jsonable {
 	
 	public final static String KEY_OBJECT = "answer";
 	public final static String KEY_ID = "id";
 	public final static String KEY_DESCRIPTION = "desc";
 	public final static String KEY_IS_TRUE = "isTrue";
-	public final static String KEY_CPT = "cpt";
 	public final static String KEY_ID_QUESTION = "idQuestion";
 	
 	private Integer id;
 	private String desc;
-	private boolean isTrue;
-	private int cpt;
+	private boolean isTrue = false;
 	private Integer idQuestion;
 	
 	public Answer() {}
 	
-	public Answer(Integer id, String desc, boolean isTrue, int cpt) {
+	public Answer(Integer id, String desc, boolean isTrue) {
 		this.id = id;
 		this.desc = desc;
 		this.isTrue = isTrue;
-		this.cpt = cpt;
 	}
 
 	public Integer getId() {
@@ -54,14 +51,6 @@ public class Answer implements Jsonable<Answer>{
 		this.isTrue = isTrue;
 	}
 
-	public int getCpt() {
-		return cpt;
-	}
-
-	public void setCpt(int cpt) {
-		this.cpt = cpt;
-	}
-
 	public Integer getIdQuestion() {
 		return idQuestion;
 	}
@@ -78,7 +67,6 @@ public class Answer implements Jsonable<Answer>{
 		answer.put(KEY_ID, getId());
 		answer.put(KEY_DESCRIPTION, getDesc());
 		answer.put(KEY_IS_TRUE, isTrue());
-		answer.put(KEY_CPT, getCpt());
 		answer.put(KEY_ID_QUESTION, getIdQuestion());
 		json.put(KEY_OBJECT, answer);
 		return json;
@@ -96,7 +84,7 @@ public class Answer implements Jsonable<Answer>{
 		if(!(obj instanceof Answer)) return false;
 		Answer a = (Answer)obj;
 		if(obj == this) return true;
-		return isTrue() == a.isTrue() && getCpt() == a.getCpt() && getDesc() == a.getDesc() &&
+		return isTrue() == a.isTrue() && getDesc() == a.getDesc() &&
 				getId() == a.getId() && getIdQuestion() == a.getIdQuestion();
 	}
 	
@@ -104,20 +92,29 @@ public class Answer implements Jsonable<Answer>{
 		if(!(obj instanceof Answer)) return false;
 		Answer a = (Answer)obj;
 		if(obj == this) return true;
-		return isTrue() == a.isTrue() && getCpt() == a.getCpt() && getDesc() == a.getDesc();
+		return isTrue() == a.isTrue() && getDesc() == a.getDesc();
 	}
 
-	public static Answer retrieveObject(JSONObject json) {
+	public static Answer retrieveObject(JSONObject json) throws MissingJsonArgumentException {
 		// TODO Auto-generated method stub
 		Answer answer = null;
 		try {
 			answer = new Answer();
+			if(json.isNull(Answer.KEY_OBJECT))
+				throw new MissingJsonArgumentException("Le json donné ne correspond pas à une réponse !");
 			JSONObject jsonAnswer = json.getJSONObject(Answer.KEY_OBJECT);
-			answer.setCpt(jsonAnswer.getInt(Answer.KEY_CPT));
+			
+			if(jsonAnswer.isNull(Answer.KEY_DESCRIPTION))
+				throw new MissingJsonArgumentException("La réponse ne possède pas de description !");
 			answer.setDesc(jsonAnswer.getString(Answer.KEY_DESCRIPTION));
+			
+			if(jsonAnswer.isNull(Answer.KEY_IS_TRUE))
+				throw new MissingJsonArgumentException("La question ne possède pas de valeur de vérité !");
 			answer.setTrue(jsonAnswer.getBoolean(Answer.KEY_IS_TRUE));
+			
 			if(!jsonAnswer.isNull(Answer.KEY_ID_QUESTION))
 				answer.setIdQuestion(jsonAnswer.getInt(Answer.KEY_ID_QUESTION));
+			
 			if(!jsonAnswer.isNull(Answer.KEY_ID))
 				answer.setId(jsonAnswer.getInt(Answer.KEY_ID));
 		} catch (JSONException e) {

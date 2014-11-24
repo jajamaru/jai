@@ -9,24 +9,22 @@ import org.json.JSONObject;
 
 import tools.Jsonable;
 
-public class Question implements Jsonable<Question>{
+public class Question implements Jsonable {
 	
 	public final static String KEY_OBJECT = "question";
 	public final static String KEY_ID = "id";
 	public final static String KEY_DESCRIPTION = "desc";
-	public final static String KEY_ID_QCM = "idQcm";
 	public final static String KEY_ANSWERS = "answers";
 	
 	private Integer id;
 	private String desc;
-	private Integer idQcm;
 	
 	private List<Answer> answers;
 
 	public Question(Integer id, String desc) {
 		this.id = id;
 		this.desc = desc;
-		this.answers = new ArrayList<Answer>();
+		this.answers = new ArrayList<Answer>(); 
 	}
 	
 	public Question() {
@@ -40,7 +38,11 @@ public class Question implements Jsonable<Question>{
 	}
 	
 	public void addAnswer(Answer answer) {
-		if(this.answers.contains(answer))
+		boolean isIn = false;
+		for(Answer a : answers) {
+			if(a.hashCode() == answer.hashCode()) isIn = true;
+		}
+		if(isIn)
 			updateAnswer(answer);
 		else
 			this.answers.add(answer);
@@ -82,14 +84,6 @@ public class Question implements Jsonable<Question>{
 		this.desc = desc;
 	}
 
-	public Integer getIdQcm() {
-		return idQcm;
-	}
-
-	public void setIdQcm(Integer idQcm) {
-		this.idQcm = idQcm;
-	}
-
 	@Override
 	public JSONObject getJson() throws JSONException{
 		// TODO Auto-generated method stub
@@ -101,7 +95,6 @@ public class Question implements Jsonable<Question>{
 		}
 		question.put(KEY_ID, getId());
 		question.put(KEY_DESCRIPTION, getDesc());
-		question.put(KEY_ID_QCM, getIdQcm());
 		question.put(KEY_ANSWERS, answers);
 		json.put(KEY_OBJECT, question);
 		return json;
@@ -123,7 +116,7 @@ public class Question implements Jsonable<Question>{
 		for(int i=0; good && i<getAnswers().size(); ++i) {
 			good = getAnswer(i).equals(a.getAnswer(i));
 		}
-		return good && getDesc() == a.getDesc() && getId() == a.getId() && getIdQcm() == a.getIdQcm();
+		return good && getDesc() == a.getDesc() && getId() == a.getId();
 	}
 	
 	public boolean equalsBeforePersist(Object obj) {
@@ -137,14 +130,21 @@ public class Question implements Jsonable<Question>{
 		return good && getDesc() == a.getDesc();
 	}
 
-	public static Question retrieveObject(JSONObject json) {
+	public static Question retrieveObject(JSONObject json) throws MissingJsonArgumentException {
 		// TODO Auto-generated method stub
 		Question question = null;
 		try {
 			question = new Question();
+			if(json.isNull(Question.KEY_OBJECT))
+				throw new MissingJsonArgumentException("Le json donné ne correspond pas à une question !");
 			JSONObject jsonQuestion = json.getJSONObject(Question.KEY_OBJECT);
+			
+			if(jsonQuestion.isNull(Question.KEY_DESCRIPTION))
+				throw new MissingJsonArgumentException("La question ne possède pas de description !");
 			question.setDesc(jsonQuestion.getString(Question.KEY_DESCRIPTION));
 			
+			if(jsonQuestion.isNull(Question.KEY_ANSWERS))
+				throw new MissingJsonArgumentException("La question ne possède pas de réponses !");
 			JSONArray jsonAnswers = jsonQuestion.getJSONArray(Question.KEY_ANSWERS);
 			List<Answer> answers = new ArrayList<Answer>();
 			for(int i=0; i<jsonAnswers.length(); ++i) {
@@ -152,8 +152,6 @@ public class Question implements Jsonable<Question>{
 			}
 			question.setAnswers(answers);
 			
-			if(!jsonQuestion.isNull(Question.KEY_ID_QCM))
-				question.setIdQcm(jsonQuestion.getInt(Question.KEY_ID_QCM));
 			if(!jsonQuestion.isNull(Question.KEY_ID))
 				question.setId(jsonQuestion.getInt(Question.KEY_ID));
 		} catch (JSONException e) {

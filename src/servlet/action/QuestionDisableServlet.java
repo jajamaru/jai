@@ -13,7 +13,7 @@ import entity.Question;
 /**
  * Servlet implementation class QuestionDisableServlet
  */
-@WebServlet("/admin/action/question/disable")
+@WebServlet("/admin/disable/question")
 public class QuestionDisableServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        

@@ -13,24 +13,26 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import listener.InitDataBase;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import rdg.QCMResultRdg;
-import tools.DBUtils;
-import entity.QCMResult;
+import rdg.ResultRdg;
+import entity.MissingJsonArgumentException;
+import entity.Result;
 
 /**
  * Servlet implementation class UpdateServlet
  */
 @WebServlet("/admin/action/result")
-public class QcmResultServlet extends HttpServlet {
+public class ResultServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public QcmResultServlet() {
+    public ResultServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -43,8 +45,8 @@ public class QcmResultServlet extends HttpServlet {
 		Integer id = null;
 		if(request.getParameter("id") != null) {
 			try {
-				QCMResult result = null;
-				QCMResultRdg rdg = new QCMResultRdg(DBUtils.getConnection());
+				Result result = null;
+				ResultRdg rdg = (ResultRdg)getServletContext().getAttribute(InitDataBase.RDG_RESULT);
 				id = Integer.valueOf(request.getParameter("id"));
 				result = rdg.retrieve(id);
 				if(result != null) {
@@ -77,25 +79,27 @@ public class QcmResultServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		QCMResult result = null;
+		Result result = null;
 		if(request.getParameter("result") != null) {
 			try {
 				Integer id = null;
-				result = QCMResult.retrieveObject(new JSONObject(request.getParameter("result")));
-				QCMResultRdg rdg = new QCMResultRdg(DBUtils.getConnection());
+				result = Result.retrieveObject(new JSONObject(request.getParameter("result")));
+				ResultRdg rdg = (ResultRdg)getServletContext().getAttribute(InitDataBase.RDG_RESULT);
 				id = result.getId();
 				rdg.update(result);
 				result = rdg.retrieve(id);
 				request.setAttribute("result", result);
-				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
+				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/display-list/result");
 				dispatcher.forward(request, response);
+			} catch (MissingJsonArgumentException e) {
+				request.getServletContext().log(e.getMessage(),e);
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				request.getServletContext().log("Le résultat du questionnaire ne respecte pas le format json défini",e);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				request.getServletContext().log("Un problème est survenu lors de la mise à jour du résultat",e);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -110,27 +114,34 @@ public class QcmResultServlet extends HttpServlet {
 	@Override
 	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		QCMResult result = null;
+		Result result = null;
 		BufferedReader reader = null;
 		PrintWriter writer = null;
 		try {
 			reader = request.getReader();
-			writer = response.getWriter();
+			//writer = response.getWriter();
 			String line = "";
 			String json = "";
 			while((line = reader.readLine()) != null) {
 				json += line;
 			}
 			
-			result = QCMResult.retrieveObject(new JSONObject(json));
-			QCMResultRdg rdg = new QCMResultRdg(DBUtils.getConnection());
+			result = Result.retrieveObject(new JSONObject(json));
+			ResultRdg rdg = (ResultRdg)getServletContext().getAttribute(InitDataBase.RDG_RESULT);
 			rdg.persist(result);
 			Integer id = result.getId();
 			result = rdg.retrieve(id);
 			
-			writer.write(result.stringify());
-			writer.flush();
+			request.setAttribute("result", result);
+			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/display-list/result");
+			dispatcher.forward(request, response);
 			
+			/*writer.write(result.stringify());
+			writer.flush();*/
+		} catch (MissingJsonArgumentException e) {
+			request.getServletContext().log(e.getMessage(),e);
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} catch(JSONException e) {
 			request.getServletContext().log("Le paramètre donné n'est pas sous format json",e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -152,18 +163,17 @@ public class QcmResultServlet extends HttpServlet {
 	@Override
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		QCMResult result = null;
-		if(request.getParameter("result") != null) {
+		Result result = null;
+		if(request.getParameter("id") != null) {
 			try {
-				result = QCMResult.retrieveObject(new JSONObject(request.getParameter("result")));
-				QCMResultRdg rdg = new QCMResultRdg(DBUtils.getConnection());
-				rdg.delete(result);
+				Integer id = Integer.valueOf(request.getParameter("id"));
+				ResultRdg rdg = (ResultRdg)getServletContext().getAttribute(InitDataBase.RDG_RESULT);
+				rdg.delete(id);
 				request.setAttribute("result", result);
-				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
+				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/display-list/result");
 				dispatcher.forward(request, response);
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				request.getServletContext().log("Le résultat du questionnaire ne respecte pas le format json défini",e);
+			} catch(NumberFormatException e) {
+				request.getServletContext().log("Le paramètre passé n'est pas integer",e);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			} catch (SQLException e) {

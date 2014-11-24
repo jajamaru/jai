@@ -29,7 +29,8 @@ import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 
-import entity.QCM;
+import entity.Answer;
+import entity.MissingJsonArgumentException;
 import entity.Question;
 
 @Ignore
@@ -40,9 +41,8 @@ public class QuestionEnableServletTest {
 	
 	private Question question;
 	
-	private final static String URL = "http://localhost:8081/romain_huret_jai/admin/action/question/enable";
-	private final static String URL_QCM = "http://localhost:8081/romain_huret_jai/admin/action/qcm";
-	private final static String JSON_QCM = "{\"qcm\":{\"title\":\"qcm\",\"questions\":[{\"question\":{\"desc\":\"Qui es-tu ?\",\"answers\":[{\"answer\":{\"desc\":\"A\",\"cpt\":0,\"isTrue\":true}}]}}]}}";
+	private final static String URL = "http://localhost:8081/romain_huret_jai/admin/enable/question";
+	private final static String WRONG_JSON = "{'answer':{'desc':'B','cpt':0,'isTrue':false}}";
 	
 	@BeforeClass
 	public static void setUpOnce() throws SQLException {
@@ -50,17 +50,26 @@ public class QuestionEnableServletTest {
 	}
 	
 	@Before
-	public void setUp() throws SQLException, FailingHttpStatusCodeException, IOException, JSONException {
+	public void setUp() throws SQLException, FailingHttpStatusCodeException, IOException, JSONException, MissingJsonArgumentException {
 		webClient = new WebClient();
 		DBUtils.resetDatabase(connection);
 		
-		final WebRequest request = new WebRequest(new URL(URL_QCM), HttpMethod.PUT);
-		request.setRequestBody(JSON_QCM);
+		final String URL_PERSIST = "http://localhost:8081/romain_huret_jai/admin/action/question";
+		
+		Answer answer = new Answer();
+		answer.setDesc("Réponse");
+		answer.setTrue(true);
+
+		question = new Question();
+		question.setDesc("Ceci est une question !");
+		question.setAnswers(new ArrayList<Answer>());
+		question.getAnswers().add(answer);
+		
+		final WebRequest request = new WebRequest(new URL(URL_PERSIST), HttpMethod.PUT);
+		request.setRequestBody(question.stringify());
 		
 		TextPage page = webClient.getPage(request);
-		QCM qcm = QCM.retrieveObject(new JSONObject(page.getContent()));
-		
-		question = qcm.getQuestions().get(0);
+		question = Question.retrieveObject(new JSONObject(page.getContent()));
 	}
 	
 	@After
@@ -139,25 +148,25 @@ public class QuestionEnableServletTest {
 	public void testWrongParameterKey() throws FailingHttpStatusCodeException, IOException {
 		WebRequest request = new WebRequest(new URL(URL), HttpMethod.GET);
 		request.setRequestParameters(new ArrayList<NameValuePair>());
-		request.getRequestParameters().add(new NameValuePair("qcm", JSON_QCM));
+		request.getRequestParameters().add(new NameValuePair("answer", WRONG_JSON));
 		
 		HtmlPage page = webClient.getPage(request);
 		assertEquals(HttpServletResponse.SC_BAD_REQUEST, page.getWebResponse().getStatusCode());
 		
 		request.setRequestParameters(new ArrayList<NameValuePair>());
-		request.getRequestParameters().add(new NameValuePair("", JSON_QCM));
+		request.getRequestParameters().add(new NameValuePair("", WRONG_JSON));
 		
 		page = webClient.getPage(request);
 		assertEquals(HttpServletResponse.SC_BAD_REQUEST, page.getWebResponse().getStatusCode());
 		
 		request.setRequestParameters(new ArrayList<NameValuePair>());
-		request.getRequestParameters().add(new NameValuePair("-1", JSON_QCM));
+		request.getRequestParameters().add(new NameValuePair("-1", WRONG_JSON));
 		
 		page = webClient.getPage(request);
 		assertEquals(HttpServletResponse.SC_BAD_REQUEST, page.getWebResponse().getStatusCode());
 		
 		request.setRequestParameters(new ArrayList<NameValuePair>());
-		request.getRequestParameters().add(new NameValuePair("8528282", JSON_QCM));
+		request.getRequestParameters().add(new NameValuePair("8528282", WRONG_JSON));
 		
 		page = webClient.getPage(request);
 		assertEquals(HttpServletResponse.SC_BAD_REQUEST, page.getWebResponse().getStatusCode());

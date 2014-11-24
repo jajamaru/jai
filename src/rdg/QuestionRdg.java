@@ -15,7 +15,7 @@ import entity.Question;
 
 public class QuestionRdg implements IPersistableWithId<Question>{
 	
-	public static final String REQUEST_PERSIST = "insert into Question(description, idQcm) values(?,?)";
+	public static final String REQUEST_PERSIST = "insert into Question(description) values(?)";
 	public static final String REQUEST_RETRIEVE = "select * from Question where Question.id = ?";
 	public static final String REQUEST_RETRIEVE_ANSWERS = "select * from Answer where idQuestion = ?";
 	public static final String REQUEST_UPDATE = "update Question set description = ? where Question.id = ?";
@@ -24,9 +24,9 @@ public class QuestionRdg implements IPersistableWithId<Question>{
 	private Connection connection;
 	private AnswerRdg answerRdg;
 	
-	public QuestionRdg(Connection connection) {
+	public QuestionRdg(Connection connection, AnswerRdg answerRdg) {
 		this.connection = connection;
-		this.answerRdg = new AnswerRdg(connection);
+		this.answerRdg = answerRdg;
 	}
 
 	@Override
@@ -41,7 +41,6 @@ public class QuestionRdg implements IPersistableWithId<Question>{
 			//On persiste la question
 			PreparedStatement statement = this.connection.prepareStatement(REQUEST_PERSIST, Statement.RETURN_GENERATED_KEYS);
 			statement.setString(1, obj.getDesc());
-			statement.setInt(2, obj.getIdQcm());
 			statement.executeUpdate();
 			//On vérifie qu'un id est générer pour la question
 			checkGeneratedKey(statement, obj);
@@ -82,13 +81,14 @@ public class QuestionRdg implements IPersistableWithId<Question>{
 	}
 
 	@Override
-	public void delete(Question obj) throws SQLException {
+	public void delete(Integer id) throws SQLException {
 		// TODO Auto-generated method stub
 		this.connection.setAutoCommit(false);
 		try {
-			deleteAnswers(obj.getAnswers());
+			Question q = retrieve(id);
+			deleteAnswers(q.getAnswers());
 			PreparedStatement statement = this.connection.prepareStatement(REQUEST_DELETE);
-			statement.setInt(1, obj.getId());
+			statement.setInt(1, q.getId());
 			statement.executeUpdate();
 			this.connection.setAutoCommit(false);
 		} catch(Exception e) {
@@ -122,12 +122,6 @@ public class QuestionRdg implements IPersistableWithId<Question>{
 		return question;
 	}
 	
-	public void increaseAnswer(Answer answer) throws SQLException {
-		Integer cpt = answer.getCpt();
-		answer.setCpt(++cpt);
-		answerRdg.update(answer);
-	}
-	
 	
 	/**
 	 * Check the generated key of question object
@@ -139,6 +133,7 @@ public class QuestionRdg implements IPersistableWithId<Question>{
 	private void checkGeneratedKey(PreparedStatement statement, Question obj) throws SQLException, IllegalStateException {
 		ResultSet generatedKeys = statement.getGeneratedKeys();
 		if(!generatedKeys.next()) throw new IllegalStateException("no generated keys");
+		System.out.println("Question id generated -- " + generatedKeys.getInt(1));
 		obj.setId(generatedKeys.getInt(1));
 	}
 	
@@ -159,7 +154,7 @@ public class QuestionRdg implements IPersistableWithId<Question>{
 	
 	private void deleteAnswers(Collection<Answer> answers) throws SQLException {
 		for(Answer a : answers) {
-			answerRdg.delete(a);
+			answerRdg.delete(a.getId());
 		}
 	}
 	

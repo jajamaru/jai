@@ -13,13 +13,13 @@ import javax.servlet.http.HttpServletResponse;
  * Servlet implementation class ResultListDisplayingServlet
  */
 @WebServlet("/admin/display-list/result")
-public class QcmResultListDisplayingServlet extends HttpServlet {
+public class ResultListDisplayingServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public QcmResultListDisplayingServlet() {
+    public ResultListDisplayingServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
