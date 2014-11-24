@@ -118,8 +118,10 @@ public class AnswerServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		Answer answer = null;
 		BufferedReader reader = null;
+		PrintWriter writer = null;
 		try {
 			reader = request.getReader();
+			writer = response.getWriter();
 			String line = "";
 			String json = "";
 			while((line = reader.readLine()) != null) {
@@ -133,10 +135,8 @@ public class AnswerServlet extends HttpServlet {
 			Integer id = answer.getId();
 			answer = rdg.retrieve(id);
 			
-			/*request.setAttribute("answer", answer);
-			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/display-list/answer");
-			dispatcher.forward(request, response);*/
-
+			writer.write(answer.stringify());
+			writer.flush();
 		} catch(MissingJsonArgumentException e) {
 			request.getServletContext().log(e.getMessage(),e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -155,21 +155,19 @@ public class AnswerServlet extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} finally {
 			close(reader, request);
+			close(writer, request);
 		}
 	}
 	
 	@Override
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		Answer answer = null;
 		if(request.getParameter("id") != null) {
 			try {
 				Integer id = Integer.valueOf(request.getParameter("id"));
 				AnswerRdg rdg = (AnswerRdg)getServletContext().getAttribute(InitDataBase.RDG_ANSWER);
 				rdg.delete(id);
-				request.setAttribute("answer", answer);
-				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/display-list/answer");
-				dispatcher.forward(request, response);
+
 			} catch(NumberFormatException e) {
 				request.getServletContext().log("Le paramètre passé n'est pas integer",e);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

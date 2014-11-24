@@ -8,6 +8,7 @@ import java.sql.Statement;
 public class DBUtils {
 	
 	private static final String CONNECTION_REQUEST = "jdbc:derby:romain_huret_jai;create=true";
+	private static final String CONNECTION_CLOSING = "jdbc:derby:romain_huret_jai;shutdown=true";
 	
 	private static final String[] CREATE_TABLE_STATEMENTS = new String[] {
 		"create table Question (id int not null generated always as identity (start with 1, increment by 1), description VARCHAR(2048) not null, primary key(id))",
@@ -19,7 +20,17 @@ public class DBUtils {
 		"drop table Result", "drop table Answer", "drop table Question"};
 	
 	public static Connection getConnection() throws SQLException {
+		try {
+			Class.forName("org.apache.derby.jdbc.EmbeddedDriver").newInstance();
+		} catch (InstantiationException | IllegalAccessException
+				| ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		return DriverManager.getConnection(CONNECTION_REQUEST);
+	}
+	
+	public static void closeConnection() throws SQLException {
+		DriverManager.getConnection(CONNECTION_CLOSING);
 	}
 	
 	public static void createDatabase(Connection connection) throws SQLException {

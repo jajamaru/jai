@@ -81,6 +81,7 @@ public class AnswerServletTest {
 		final String json_answer = "{'answer':{'desc':'B','isTrue':true}}";
 		answer = Answer.retrieveObject(new JSONObject(json_answer));
 		answer.setIdQuestion(1);
+		System.out.println(answer.stringify());
 	}
 	
 	@After
@@ -106,7 +107,7 @@ public class AnswerServletTest {
 		request = new WebRequest(new URL(URL), HttpMethod.GET);
 		request.setRequestParameters(new ArrayList<NameValuePair>());
 		request.getRequestParameters().add(new NameValuePair("id", "2"));
-		webClient.getPage(request);
+		page = webClient.getPage(request);
 		
 		assertEquals(HttpServletResponse.SC_OK, page.getWebResponse().getStatusCode());
 	}

@@ -3,6 +3,7 @@ package servlet.action;
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.SQLException;
 
 import javax.servlet.RequestDispatcher;
@@ -116,8 +117,10 @@ public class QuestionServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		Question question = null;
 		BufferedReader reader = null;
+		PrintWriter writer = null;
 		try {
 			reader = request.getReader();
+			writer = response.getWriter();
 			String line = "";
 			String json = "";
 			while((line = reader.readLine()) != null) {
@@ -130,9 +133,8 @@ public class QuestionServlet extends HttpServlet {
 			Integer id = question.getId();
 			question = rdg.retrieve(id);
 			
-			/*request.setAttribute("question", question);
-			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/display-list/question");
-			dispatcher.forward(request, response);*/
+			writer.write(question.stringify());
+			writer.flush();
 		} catch(MissingJsonArgumentException e) {
 			request.getServletContext().log(e.getMessage(),e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -151,21 +153,19 @@ public class QuestionServlet extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} finally {
 			close(reader, request);
+			close(writer, request);
 		}
 	}
 	
 	@Override
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		Question question = null;
 		if(request.getParameter("id") != null) {
 			try {
 				Integer id = Integer.valueOf(request.getParameter("id"));
 				QuestionRdg rdg = (QuestionRdg)getServletContext().getAttribute(InitDataBase.RDG_QUESTION);
 				rdg.delete(id);
-				request.setAttribute("question", question);
-				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/display-list/question");
-				dispatcher.forward(request, response);
+
 			} catch(NumberFormatException e) {
 				request.getServletContext().log("Le paramètre passé n'est pas integer",e);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
