@@ -43,13 +43,13 @@ public class QuestionFormValidationServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		Map<String, String> errors = new HashMap<String, String>();
+		Map<String, Boolean> errors = new HashMap<String, Boolean>();
 		Question question = QuestionFormTools.getAncCreateBeginQuestion(request);
 		if(request.getParameter("desc") != null && !"".equals(request.getParameter("desc"))) {
 			question.setDesc(request.getParameter("desc"));
 			QuestionFormTools.setBeginQuestion(question, request);
 		} else {
-			errors.put("err_desc", "Le champs 'desc' est vide");
+			errors.put("err_desc", true);
 			request.setAttribute("error", errors);
 		}
 		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/display-list/question");

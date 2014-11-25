@@ -2,6 +2,7 @@ package servlet.form.canceling;
 
 import java.io.IOException;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -39,6 +40,8 @@ public class QuestionFormCancelServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		QuestionFormTools.destroyBeginQuestion(request);
 		getServletContext().log("Annulation de la question ...");
+		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/display-list/question");
+		dispatcher.forward(request, response);
 	}
 
 }
