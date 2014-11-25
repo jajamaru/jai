@@ -1,6 +1,8 @@
 package servlet.form.creation;
 
 import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -27,6 +29,8 @@ public class AnswerFormCreationServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/page/createAnswer.jsp");
+		dispatcher.forward(request, response);
 	}
 
 	/**
@@ -34,6 +38,7 @@ public class AnswerFormCreationServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		doGet(request, response);
 	}
 
 }

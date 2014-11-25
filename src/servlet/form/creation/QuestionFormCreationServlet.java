@@ -31,6 +31,8 @@ public class QuestionFormCreationServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/page/createQuestion.jsp");
+		dispatcher.forward(request, response);
 	}
 
 	/**
@@ -38,10 +40,7 @@ public class QuestionFormCreationServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		QuestionFormTools.getAncCreateBeginQuestion(request);
-		getServletContext().log("Début de question ...");
-		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/display-list/question");
-		dispatcher.forward(request, response);
+		doGet(request, response);
 	}
 
 }

@@ -1,8 +1,8 @@
-package servlet.form.verification;
+package servlet.form.creation;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -11,20 +11,20 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import servlet.form.creation.FormTools;
+import entity.Answer;
 import entity.Question;
 
 /**
- * Servlet implementation class QuestionFormValidationServlet
+ * Servlet implementation class QuestionFormBuildServlet
  */
-@WebServlet("/admin/validation/question")
-public class QuestionFormValidationServlet extends HttpServlet {
+@WebServlet("/admin/terminate/question")
+public class QuestionFormTerminateServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public QuestionFormValidationServlet() {
+    public QuestionFormTerminateServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -42,23 +42,21 @@ public class QuestionFormValidationServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		Map<String, Boolean> errors = new HashMap<String, Boolean>();
-		errors.clear();
-		if(request.getParameter("desc") != null && !"".equals(request.getParameter("desc"))) {
-			Question question = FormTools.getQuestion(request);
-			question.setDesc(request.getParameter("desc"));
-			FormTools.setQuestion(request, question);
-		} else {
-			errors.put("question_err_desc", true);
-			request.setAttribute("error", errors);
-		}
-		if(errors.isEmpty()) {
-			//On autorise la validation de la question
+		Question question = FormTools.getQuestion(request);
+		Map<Integer, Answer> answersId = FormTools.getAnswers(request);
+		if(answersId.size() > 0 && question.getDesc() != null) {
+			for(Entry<Integer, Answer> entry : answersId.entrySet()) {
+				question.addAnswer(entry.getValue());
+			}
+			answersId.clear();
+			FormTools.cleanAnswer(request);
+			FormTools.cleanQuestion(request);
+			FormTools.setReadyQuestion(request, question);
 			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/create/answer");
 			dispatcher.forward(request, response);
 		} else {
-			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/create/question");
-			dispatcher.forward(request, response);
+			// Un problème est survenue
+			System.out.println("Un problème est survenue lors de la création d'une question !");
 		}
 	}
 

@@ -1,11 +1,15 @@
 package servlet.form.canceling;
 
 import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import servlet.form.creation.FormTools;
 
 /**
  * Servlet implementation class AnswerFormCancelServlet
@@ -27,6 +31,7 @@ public class AnswerFormCancelServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		doPost(request, response);
 	}
 
 	/**
@@ -34,6 +39,12 @@ public class AnswerFormCancelServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		if(request.getParameter("id") != null) {
+			Integer id = Integer.valueOf(request.getParameter("id"));
+			FormTools.removeAnswer(request, id);
+		}
+		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/create/answer");
+		dispatcher.forward(request, response);
 	}
 
 }

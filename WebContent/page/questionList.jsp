@@ -37,73 +37,45 @@
 		<section id="view">
 			<c:choose>
 				<c:when test="${empty createdQuestion}">
-					<form id="beginQuestion" name="beginQuestion" method="POST" action="<c:url value="/admin/create/question" />" >
-						<div class="input-form">
-						 	<label for="begin"><fmt:message key="questionList.form.beginQuestion.label"/></label>
-						 	<input name="begin" type="submit" value="<fmt:message key="questionList.form.beginQuestion.submit"/>"/>
-					 	</div>
+					<form name="createQuestion" method="POST" action="<c:url value="/admin/create/question" />">
+						<input type="submit" value="Créer une question" />
 					</form>
 				</c:when>
 				<c:otherwise>
-					<form id="question" name="question" method="POST" action="<c:url value="/admin/validation/question" />">
-						<fieldset>
-							<legend><fmt:message key="questionList.form.question.legend"/></legend>
-							<div class="input-form">
-								<label for="desc"></label>
-								<input name="desc" type="text" placeholder="<fmt:message key="questionList.form.question.desc.placeholder"/>"/>
-							</div>
-							<c:if test="${! empty error.err_desc}" >
-							<span class="error">
-								<fmt:message key="questionList.error.err_desc"/>
-							</span>
-							</c:if>
-							<input type="submit" value="<fmt:message key="questionList.form.question.submit"/>" />
-						 </fieldset>
-					</form>
-					<form id="cancelQuestion" name="cancelQuestion" method="POST" action="<c:url value="/admin/cancel/question" />" >
+					<form name="question" method="POST" action="<c:url value="/admin/validation/question" />">
+						<h3>Question</h3>
 						<div class="input-form">
-						 	<label for="cancel"></label>
-						 	<input name="cancel" type="submit" value="<fmt:message key="questionList.form.cancelQuestion.submit"/>"/>
-					 	</div>
-					</form>
-					<c:choose>
-					<c:when test="${empty createdAnswer}">
-						<form id="beginAnswer" name="beginAnswer" method="POST" action="<c:url value="/admin/create/answer" />" >
-							<div class="input-form">
-							 	<label for="begin"><fmt:message key="questionList.form.beginAnswer.label"/></label>
-							 	<input name="begin" type="submit" value="<fmt:message key="questionList.form.beginAnswer.submit"/>"/>
-						 	</div>
+							<label for="desc"></label>
+							<input name="desc" type="text" placeholder="<fmt:message key="questionList.form.question.desc.placeholder"/>"/>
+						</div>
+						<c:if test="${! empty error.question_err_desc}" >
+						<span class="error">
+							<fmt:message key="questionList.error.err_desc"/>
+						</span>
+						</c:if>
+						<form name="createAnswer" method="POST" action="<c:url value="/admin/create/answer" />">
+							<input type="submit" value="Créer une réponse" />
 						</form>
-					</c:when>
-						<c:otherwise>
-							<form id="cancelAnswer" name="cancelAnswer" method="POST" action="<c:url value="/admin/cancel/answer" />" >
-								<div class="input-form">
-								 	<label for="cancel"></label>
-								 	<input name="cancel" type="submit" value="<fmt:message key="questionList.form.cancelAnswer.submit"/>"/>
-							 	</div>
-							</form>
-							<form id="answer" name="answer" method="POST" action="<c:url value="/admin/validation/answer" />">
-								<fieldset>
-									<legend><fmt:message key="questionList.form.answer.legend"/></legend>
-									<div class="input-form">
-									 	<label for="desc"></label>
-									 	<input name="desc" type="text" placeholder="<fmt:message key="questionList.form.answer.desc.placeholder"/>"/>
-									 </div>
-									<c:if test="${! empty error.err_desc}" >
-										<span class="error">
-											<fmt:message key="questionList.error.err_desc"/>
-										</span>
-									</c:if>
-									 <div class="input-form">
-									 	<label for="isTrue"><fmt:message key="questionList.form.answer.isTrue"/></label>
-									 	<input name="isTrue" type="radio" value="vraie" checked="checked">
-									 	<input name="isTrue" type="radio" value="fausse" />
-									 </div>
-									 <input type="submit" value="<fmt:message key="questionList.form.answer.submit"/>" />
-								 </fieldset>
-							</form>
-						</c:otherwise>
-					</c:choose>
+						<c:forEach var="answerId" items="${answersId}">
+							<h3>Answer ${answerId}</h3>
+							<a href="<c:url value="/admin/cancel/answer" />" >Annuler</a>
+							<div class="input-form">
+							 	<label for="desc${answerId}"></label>
+							 	<input name="desc${answerId}" type="text" placeholder="<fmt:message key="questionList.form.answer.desc.placeholder"/>"/>
+							</div>
+							<c:if test="${! empty error.answer_err_desc}" >
+								<span class="error">
+									<fmt:message key="questionList.error.err_desc"/>
+								</span>
+							</c:if>
+							<div class="input-form">
+								<label for="isTrue${answerId}"><fmt:message key="questionList.form.answer.isTrue"/></label>
+								<input name="isTrue${answerId}" type="radio" value="vraie" checked="checked">
+								<input name="isTrue${answerId}" type="radio" value="fausse" />
+							</div>
+						</c:forEach>
+						<input type="submit" value="<fmt:message key="questionList.form.question.submit"/>" />
+					</form>
 				</c:otherwise>
 			</c:choose>
 			<c:if test="${! empty createdQuestion}" >

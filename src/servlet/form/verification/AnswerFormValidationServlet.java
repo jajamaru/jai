@@ -1,6 +1,8 @@
 package servlet.form.verification;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -8,6 +10,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import servlet.form.creation.FormTools;
+import entity.Answer;
 
 /**
  * Servlet implementation class AnswerFormValidationServlet
@@ -29,8 +34,7 @@ public class AnswerFormValidationServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/display-list/answer");
-		dispatcher.forward(request, response);
+		doPost(request, response);
 	}
 
 	/**
@@ -38,6 +42,27 @@ public class AnswerFormValidationServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		Map<String, Boolean> errors = new HashMap<String, Boolean>();
+		errors.clear();
+		if(request.getParameter("desc") != null && !"".equals(request.getParameter("desc"))) {
+			Answer answer = createAnswer(request);
+			FormTools.addAnswer(request, answer);
+			if(FormTools.getAnswers(request).size() > 1)
+				request.getSession(true).setAttribute("closeQuestion", true);
+		} else {
+			errors.put("answer_err_desc", true);
+			request.setAttribute("error", errors);
+		}
+		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/create/answer");
+		dispatcher.forward(request, response);
+	}
+	
+	private Answer createAnswer(HttpServletRequest request) {
+		Answer answer = new Answer();
+		answer.setDesc(request.getParameter("desc"));
+		boolean isTrue = request.getParameter("isTrue").equals("vraie");
+		answer.setTrue(isTrue);
+		return answer;
 	}
 
 }

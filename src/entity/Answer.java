@@ -1,13 +1,19 @@
 package entity;
 
+import java.io.Serializable;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import tools.Jsonable;
 
 
-public class Answer implements Jsonable {
+public class Answer implements Jsonable, Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public final static String KEY_OBJECT = "answer";
 	public final static String KEY_ID = "id";
 	public final static String KEY_DESCRIPTION = "desc";
