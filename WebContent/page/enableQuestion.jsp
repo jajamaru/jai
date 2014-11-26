@@ -52,16 +52,16 @@
 		<div id="sidebar-wrapper" class="col-md-2">
 			<aside id="sidebar">
 			    <ul class="nav list-group">
-			        <c:forEach var="q" items="${applicationScope.questionList}">
+					<c:forEach var="q" items="${applicationScope.questionList}">
 						<li>
 							<a class="list-group-item" href="#">
 								<i class="icon-home icon-1x"></i>
 								<c:out value="${q.id} -- ${q.desc}" />
 							</a>
-							<a class="deleteQuestionAction" href="<c:url value="/admin/action/question" />" title="supprimer">
+							<a class="list-group-item deleteQuestionAction" href="<c:url value="/admin/action/question" />" title="supprimer">
 								<i class="glyphicon glyphicon-remove"></i>
 							</a>
-							<a href="<c:url value="/admin/enable/question" />?id=${q.id}" title="activer">
+							<a class="list-group-item" href="<c:url value="/admin/enable/question" />" title="activer">
 								<i class="glyphicon glyphicon-share"></i>
 							</a>
 						</li>
@@ -72,35 +72,25 @@
 		<div id="main-wrapper" class="col-md-10 pull-right">
 			<div id="main">
 				<header class="page-header">
-					<h3>Créer une Question</h3>
+					<h3><strong><c:out value="${applicationScope.questionActivated.desc}" /></strong></h3>
 				</header>
-				<c:if test="${! empty sessionScope.readyQuestion}">
-					<section>
+				<div class="row">
+					<section class="col-md-10">
+						<dl class="dl-horizontal">
+						<c:forEach var="answer" items="${applicationScope.questionActivated.answers}" varStatus="st">
+							<dt><c:out value="${st.index}" /></dt>
+							<dd><c:out value="${answer.desc}" /></dd>
+						</c:forEach>
+						</dl>
+					</section>
+					<section class="col-md-2">
 						<p>
-							Question terminée -- <c:out value="${sessionScope.readyQuestion.desc}" />
-							<c:forEach var="answer" items="${sessionScope.readyQuestion.answers}">
-								<p>
-									Answer -- <c:out value="${answer.desc}" />
-								</p>
-							</c:forEach>
+							<a href="<c:url value="/admin/disable/question"/>?id=${applicationScope.questionActivated.id}">
+								Fermer la question
+							</a>
 						</p>
 					</section>
-				</c:if>
-				<section>
-					<form class="well" role="form" name="question" method="POST" action="<c:url value="/admin/validation/question" />">
-						<div class="form-group">
-							<label for="desc">Quelle est la question ?</label>
-							<textarea class="form-control" name="desc" rows="2"></textarea>
-							<p class="help-block">Vous pouvez agrandir la fenêtre</p>
-						</div>
-						<c:if test="${! empty error.question_err_desc}" >
-						<span class="help-block">
-							<fmt:message key="questionList.error.err_desc"/>
-						</span>
-						</c:if>
-						<button class="btn btn-primary" type="submit"><fmt:message key="questionList.form.question.submit"/></button>
-					</form>
-				</section>
+				</div>
 			</div>
 		</div>
 	</div>

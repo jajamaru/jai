@@ -20,12 +20,6 @@ public class DBUtils {
 		"drop table Result", "drop table Answer", "drop table Question"};
 	
 	public static Connection getConnection() throws SQLException {
-		try {
-			Class.forName("org.apache.derby.jdbc.EmbeddedDriver").newInstance();
-		} catch (InstantiationException | IllegalAccessException
-				| ClassNotFoundException e) {
-			e.printStackTrace();
-		}
 		return DriverManager.getConnection(CONNECTION_REQUEST);
 	}
 	

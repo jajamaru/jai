@@ -47,8 +47,6 @@ public class AnswerFormValidationServlet extends HttpServlet {
 		if(request.getParameter("desc") != null && !"".equals(request.getParameter("desc"))) {
 			Answer answer = createAnswer(request);
 			FormTools.addAnswer(request, answer);
-			if(FormTools.getAnswers(request).size() > 1)
-				request.getSession(true).setAttribute("closeQuestion", true);
 		} else {
 			errors.put("answer_err_desc", true);
 			request.setAttribute("error", errors);

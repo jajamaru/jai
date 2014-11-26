@@ -1,6 +1,8 @@
 package servlet.form.creation;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +21,19 @@ public class FormTools {
 	 * Identifiant utilisé pour la question a persister.
 	 */
 	private static final String READY_QUESTION = "readyQuestion";
+	
+	/**
+	 * Limite de réponse associées à une question
+	 * pour laquelle il est possible de terminer une question.
+	 */
+	private static final int LIMIT_TO_TERMINATE_QUESTION = 2;
+	
+	/**
+	 * Identifiant utilisé pour terminer une question.
+	 * Lorsque la limite 'LIMIT_TO_TERMINATE_QUESTION' est atteinte,
+	 * cette constante apparait dans la session.
+	 */
+	private static final String CLOSE_QUESTION = "closeQuestion";
 	
 	/**
 	 * Cette méthode supprime la question temporaire de la session.
@@ -60,10 +75,20 @@ public class FormTools {
 	}
 	
 	/**
+	 * Cette méthode indique si une question est en cours de création.
+	 * @param request
+	 * @return True si une question est en cours, False sinon.
+	 */
+	public static boolean isThereAQuestion(HttpServletRequest request) {
+		HttpSession session = request.getSession(true);
+		return session.getAttribute(CREATED_QUESTION) != null;
+	}
+	
+	/**
 	 * Cette méthode supprime la question temporaire mise dans la session
 	 * @param request
 	 */
-	public static void cleanQuestion(HttpServletRequest request) {
+	private static void cleanQuestion(HttpServletRequest request) {
 		HttpSession session = request.getSession(true);
 		session.removeAttribute(CREATED_QUESTION);
 	}
@@ -73,10 +98,46 @@ public class FormTools {
 	 * @param request
 	 * @param question
 	 */
-	public static void setReadyQuestion(HttpServletRequest request, Question question) {
+	private static void setReadyQuestion(HttpServletRequest request, Question question) {
 		HttpSession session = request.getSession(true);
 		session.setAttribute(READY_QUESTION, question);
 	}
+	
+	/**
+	 * Cette méthode termine la question de la session.
+	 * C'est-à-dire qu'elle ajoute toutes les réponses à cette question
+	 * et la met dans la session sous la valeur 'readyQuestion'.
+	 * @param request
+	 * @return True si la question est terminée, False sinon.
+	 */
+	public static boolean terminateQuestion(HttpServletRequest request) {
+		Collection<Answer> answers = getAnswers(request).values();
+		Question question = getQuestion(request);
+		if(!answers.isEmpty() && question != null) {
+			for(Iterator<Answer> it = answers.iterator(); it.hasNext();) {
+				question.addAnswer(it.next());
+			}
+			FormTools.cleanAnswer(request);
+			FormTools.cleanQuestion(request);
+			FormTools.setReadyQuestion(request, question);
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Cette méthode détermine si ma question de la session peut être terminée.
+	 * C'est-à-dire si la question peut être persistée dans la base de données.
+	 * @param request
+	 */
+	private static void questionIsTerminted(HttpServletRequest request) {
+		HttpSession session = request.getSession(true);
+		if(FormTools.getAnswers(request).size() >= LIMIT_TO_TERMINATE_QUESTION)
+			session.setAttribute(CLOSE_QUESTION, true);
+		else
+			session.removeAttribute(CLOSE_QUESTION);
+	}
+	
 	
 	
 	
@@ -92,7 +153,7 @@ public class FormTools {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static Map<Integer, Answer> getAnswers(HttpServletRequest request) {
+	private static Map<Integer, Answer> getAnswers(HttpServletRequest request) {
 		HttpSession session = request.getSession(true);
 		if(session.getAttribute(ANSWERS_ID) != null) {
 			return (Map<Integer, Answer>)session.getAttribute(ANSWERS_ID);
@@ -101,23 +162,40 @@ public class FormTools {
 		}
 	}
 	
+	/**
+	 * Cette méthode ajout une réponse à la question temporaire de la session.
+	 * @param request
+	 * @param answer
+	 */
 	public static void addAnswer(HttpServletRequest request, Answer answer) {
 		HttpSession session = request.getSession(true);
 		Map<Integer, Answer> answersId = getAnswers(request);
 		answersId.put(GEN_ANSWER_ID++, answer);
 		session.setAttribute(ANSWERS_ID, answersId);
+		questionIsTerminted(request);
 	}
 	
+	/**
+	 * Cette méthode supprime une réponse de la question temporaire de la session.
+	 * @param request
+	 * @param id
+	 */
 	public static void removeAnswer(HttpServletRequest request, int id) {
 		HttpSession session = request.getSession(true);
 		Map<Integer, Answer> answersId = getAnswers(request);
 		answersId.remove(id);
 		session.setAttribute(ANSWERS_ID, answersId);
+		questionIsTerminted(request);
 	}
 	
-	public static void cleanAnswer(HttpServletRequest request) {
+	/**
+	 * Cette méthode permet la suppresion de toutes les réponses de la session.
+	 * @param request
+	 */
+	private static void cleanAnswer(HttpServletRequest request) {
 		HttpSession session = request.getSession(true);
 		session.removeAttribute(ANSWERS_ID);
+		questionIsTerminted(request);
 	}
-
+	
 }

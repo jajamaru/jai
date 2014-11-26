@@ -29,8 +29,13 @@ public class AnswerFormCreationServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/page/createAnswer.jsp");
-		dispatcher.forward(request, response);
+		if(FormTools.isThereAQuestion(request)) {
+			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/page/createAnswer.jsp");
+			dispatcher.forward(request, response);
+		} else {
+			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/create/question");
+			dispatcher.forward(request, response);
+		}
 	}
 
 	/**

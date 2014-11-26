@@ -1,113 +1,64 @@
-@CHARSET "UTF-8";
-
-html, body, header, div, footer, section, article, p, h1, h2, h3, h4, ul, ol, li, a {
-    margin: 0;
-    padding: 0;
-}
-
-html {
-    height: 100%;   
-}
-
 body {
-    display: table;
-    position: relative;
-    width: 100%;
-	height: 100%;
-}
-
-header {
-    background-color: #eee;
-}
-
-header > h1 {
-    padding: 1em;
-    border-bottom: 1px solid #bbb;
-}
-
-footer {
-    display: table-row;
-    background-color: #eee;
-}
-
-footer > p {
-    padding: 0.25em;
-    border-top: 1px solid #bbb;
-}
-
-div#wrapper {
-    display: table-row;
-    height: 100%;
-}
-
-aside#menu {
-    float: left;
-    width: 35%;
-    height: 100%;
-    border-right: 1px solid #bbb;
-}
-
-aside#menu > section {
-    max-height: 25%;
+    padding-top: 50px;
     overflow: hidden;
 }
-
-aside#menu > section ul {
-    
-}
-
-aside#menu > section h3 {
-    padding: 1em;
-    font-weight: bold;
-    background-color: #eee;
-    border-bottom: 1px solid #bbb;
-}
-
-aside#menu > section ul li {
-    margin-left: 1em;
-    padding: 0.5em;
-    
-    list-style: none;
-}
-
-aside#menu > section ul li:nth-child(odd) {
-    background-color: red;
-}
-
-aside#menu > ul li:hover {
-    background-color: #ddd;   
-}
-
-nav#main-menu {
-    float: left;
-    max-height: 50px;
-    background-color: #eee;
-    border-bottom: 1px solid #bbb;
-    border-right: 1px solid #bbb;
-}
-
-nav#main-menu ul {
-    text-align: center;
-}
-
-nav#main-menu li{
+#wrapper {
+    min-height: 100%;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0px;
+    left: 0;
     display: inline-block;
 }
-
-nav#main-menu li:hover{
-    background-color: #ccc;
+#main-wrapper {
+    height: 100%;
+    overflow-y: auto;
+    padding: 50px 0 0px 0;
 }
-
-nav#main-menu a{
-    font-size: 1.25em;
-    display: block;
-    text-decoration: none;
-    color: #000;
-    padding: 0.5em 1.5em 0.5em 1.5em;
-    text-align: center;
+#main {
+    position: relative;
+    height: 100%;
+    overflow-y: auto;
+    padding: 0 15px;
 }
-
-section#view {
-    float: left;
-    width: 63%;
+#sidebar-wrapper {
+    height: 100%;
+    padding: 50px 0 0px 0;
+    position: fixed;
+    border-right: 1px solid gray;
+}
+#sidebar {
+    position: relative;
+    height: 100%;
+    overflow-y: auto;
+}
+#sidebar .list-group-item {
+        border-radius: 0;
+        border-left: 0;
+        border-right: 0;
+        border-top: 0;
+}
+@media (max-width: 992px) {
+    body {
+        padding-top: 0px;
+    }
+}
+@media (min-width: 992px) {
+    #main-wrapper {
+        float:right;
+    }
+}
+@media (max-width: 992px) {
+    #main-wrapper {
+        padding-top: 0px;
+    }
+}
+@media (max-width: 992px) {
+    #sidebar-wrapper {
+        position: static;
+        height:auto;
+        max-height: 300px;
+  		border-right:0;
+	}
 }

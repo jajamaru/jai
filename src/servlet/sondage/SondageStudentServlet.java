@@ -1,23 +1,27 @@
-package servlet.role;
+package servlet.sondage;
 
 import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import servlet.form.creation.QuestionActivation;
+
 /**
- * Servlet implementation class StudentServlet
+ * Servlet implementation class SondageStudentServlet
  */
-@WebServlet("/student")
-public class StudentServlet extends HttpServlet {
+@WebServlet("/student/display/question")
+public class SondageStudentServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public StudentServlet() {
+    public SondageStudentServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -27,8 +31,13 @@ public class StudentServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		//Il faut regarder si une question est active, si oui on le redirige vers cette question
-		//sinon l'utilisateur n'est pas autorisé et on le redirige vers une page d'attente
+		if(QuestionActivation.isEnable(request)) {
+			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/page/enableQuestionStudent.jsp");
+			dispatcher.forward(request, response);
+		} else {
+			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/page/noRessources.jsp");
+			dispatcher.forward(request, response);
+		}
 	}
 
 	/**

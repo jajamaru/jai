@@ -17,6 +17,7 @@ public class QuestionRdg implements IPersistableWithId<Question>{
 	
 	public static final String REQUEST_PERSIST = "insert into Question(description) values(?)";
 	public static final String REQUEST_RETRIEVE = "select * from Question where Question.id = ?";
+	public static final String REQUEST_RETRIEVE_ALL = "select * from Question";
 	public static final String REQUEST_RETRIEVE_ANSWERS = "select * from Answer where idQuestion = ?";
 	public static final String REQUEST_UPDATE = "update Question set description = ? where Question.id = ?";
 	public static final String REQUEST_DELETE = "delete from Question where Question.id = ?";
@@ -120,6 +121,28 @@ public class QuestionRdg implements IPersistableWithId<Question>{
 			throw e;
 		}
 		return question;
+	}
+	
+	public List<Question> retrieveAll() throws SQLException {
+		List<Question> questions = new ArrayList<Question>();
+		this.connection.setAutoCommit(false);
+		try {
+			PreparedStatement statement = this.connection.prepareStatement(REQUEST_RETRIEVE_ALL);
+			ResultSet set = statement.executeQuery();
+			if(set.next()) {
+				Question question = new Question();
+				question.setId(set.getInt(1));
+				question.setDesc(set.getString(2));
+				question.setAnswers(retrieveAnswers(set.getInt(1)));
+				questions.add(question);
+			}
+			this.connection.setAutoCommit(true);
+		} catch(Exception e) {
+			this.connection.rollback();
+			this.connection.setAutoCommit(true);
+			throw e;
+		}
+		return questions;
 	}
 	
 	

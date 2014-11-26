@@ -2,13 +2,14 @@ package servlet.action;
 
 import java.io.IOException;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import entity.Question;
+import servlet.form.creation.QuestionActivation;
 
 /**
  * Servlet implementation class QuestionEnableServlet
@@ -30,9 +31,17 @@ public class QuestionEnableServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		Question question = null;
 		if(request.getParameter("id") != null) {
-			
+			try {
+				Integer id = Integer.valueOf(request.getParameter("id"));
+				QuestionActivation.enable(request, id);
+				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/sondage/question");
+				dispatcher.forward(request, response);
+			} catch(NumberFormatException e) {
+				getServletContext().log(e.getMessage());
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			}
 		} else {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
