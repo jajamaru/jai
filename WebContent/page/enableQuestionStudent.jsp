@@ -24,29 +24,15 @@
 	<title><fmt:message key="questionList.title"/></title>
 </head>
 <body>
-	<header id="header" class="navbar navbar-default navbar-fixed-top">
-		<div class="navbar-header">
-		    <a class="navbar-brand" href="#">
-		        SondageLand
-		    </a>
-		</div>
+	<header class="page-header">
+		<h3><c:out value="${applicationScope.questionActivated.desc}" /></h3>
 	</header>
-	<div id="wrapper">
-		<div id="main">
-			<header class="page-header">
-				<h3><c:out value="${applicationScope.questionActivated.desc}" /></h3>
-			</header>
-			<section>
-				<c:forEach var="answer" items="${applicationScope.questionActivated.answers}" varStatus="st">
-					<div class="row">
-						
-					</div>
-				</c:forEach>
-			</section>
-		</div>
-	</div>
-	<!-- Script js -->
-	<script type="text/javascript" src="<c:url value="/js/jquery-1.11.1.min.js" />"></script>
-	<script type="text/javascript" src="<c:url value="/js/bootstrap.js" />"></script>
+	<section>
+		<c:forEach var="answer" items="${applicationScope.questionActivated.answers}" varStatus="st">
+			<div class="row">
+				
+			</div>
+		</c:forEach>
+	</section>
 </body>
 </html>

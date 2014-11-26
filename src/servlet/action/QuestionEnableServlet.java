@@ -34,9 +34,13 @@ public class QuestionEnableServlet extends HttpServlet {
 		if(request.getParameter("id") != null) {
 			try {
 				Integer id = Integer.valueOf(request.getParameter("id"));
-				QuestionActivation.enable(request, id);
-				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/sondage/question");
-				dispatcher.forward(request, response);
+				if(QuestionActivation.enable(request, id)) {
+					RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/sondage/question");
+					dispatcher.forward(request, response);
+				} else {
+					RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/display/question");
+					dispatcher.forward(request, response);
+				}
 			} catch(NumberFormatException e) {
 				getServletContext().log(e.getMessage());
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

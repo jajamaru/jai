@@ -2,6 +2,7 @@ package servlet.display;
 
 import java.io.IOException;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -31,9 +32,11 @@ public class QuestionDisplayingServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		if(request.getAttribute(KEY_OBJECT) != null) {
-			
+			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/page/createQuestion.jsp");
+			dispatcher.forward(request, response);
 		} else {
-			
+			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/page/createQuestion.jsp");
+			dispatcher.forward(request, response);
 		}
 	}
 

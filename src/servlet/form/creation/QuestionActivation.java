@@ -1,12 +1,10 @@
 package servlet.form.creation;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import listener.InitDataBase;
 import entity.Question;
@@ -23,8 +21,18 @@ public class QuestionActivation {
 	 */
 	private static final String QUESTION_ACTIVATED = "questionActivated";
 	
+	/**
+	 * Map contenant toutes les questions en vues d'être activée.
+	 * Elles sont identifiées par leur id (id de persistance).
+	 */
 	private static Map<Integer, Question> questionsActivated = new HashMap<Integer, Question>();
 	
+	/**
+	 * Cette méthode active une question. Cette question est alors visible par les utilisateurs tiers.
+	 * @param request
+	 * @param id Identifiant de la question
+	 * @return True si la question est trouvée, False sinon
+	 */
 	public static boolean enable(HttpServletRequest request, int id) {
 		List<Question> questions = getQuestionsCanBeActivated(request);
 		for(Question q : questions) {
@@ -37,6 +45,12 @@ public class QuestionActivation {
 		return false;
 	}
 	
+	/**
+	 * Cette méthode désactive une question. La question n'est plus visible par les utilisateurs tiers.
+	 * @param request
+	 * @param id Identifiant de la question
+	 * @return True si la question est trouvée, False sinon
+	 */
 	public static boolean disable(HttpServletRequest request, int id) {
 		Question question = questionsActivated.get(id);
 		if(question != null) {
@@ -47,20 +61,19 @@ public class QuestionActivation {
 		}
 		return false;
 	}
+	
+	/**
+	 * Cette méthode est un prédicat sur l'existence d'une question activée.
+	 * @param request
+	 * @return True si une question est activée, False sinon.
+	 */
 	public static boolean isEnable(HttpServletRequest request) {
-		return request.getSession(true).getAttribute(QUESTION_ACTIVATED) != null;
+		return request.getServletContext().getAttribute(QUESTION_ACTIVATED) != null;
 	}
 	
 	@SuppressWarnings("unchecked")
 	private static List<Question> getQuestionsCanBeActivated(HttpServletRequest request) {
-		HttpSession session = request.getSession(true);
-		if(session.getAttribute(QUESTION_LIST) != null) {
-			return (List<Question>)session.getAttribute(QUESTION_LIST);
-		} else {
-			List<Question> questions = new ArrayList<Question>();
-			session.setAttribute(QUESTION_LIST, questions);
-			return questions;
-		}
+		return (List<Question>)request.getServletContext().getAttribute(QUESTION_LIST);
 	}
 	
 	private static void activate(HttpServletRequest request, Question question) {
