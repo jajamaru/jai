@@ -33,7 +33,7 @@ public class AnswerRdg implements IPersistableWithId<Answer>{
 		try {
 			PreparedStatement statement = this.connection.prepareStatement(REQUEST_PERSIST, Statement.RETURN_GENERATED_KEYS);
 			statement.setString(1, obj.getDesc());
-			statement.setBoolean(2, obj.isTrue());
+			statement.setBoolean(2, obj.isCorrectAnswer());
 			statement.setInt(3, obj.getIdQuestion());
 			statement.executeUpdate();
 			checkGeneratedKey(statement, obj);
@@ -56,7 +56,7 @@ public class AnswerRdg implements IPersistableWithId<Answer>{
 		try {
 			PreparedStatement statement = this.connection.prepareStatement(REQUEST_UPDATE);
 			statement.setString(1, obj.getDesc());
-			statement.setBoolean(2, obj.isTrue());
+			statement.setBoolean(2, obj.isCorrectAnswer());
 			statement.setInt(3, obj.getId());
 			statement.executeUpdate();
 			this.connection.setAutoCommit(true);

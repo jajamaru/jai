@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletContextEvent;
@@ -11,11 +12,14 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
 import org.apache.derby.jdbc.EmbeddedDriver;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import rdg.AnswerRdg;
 import rdg.QuestionRdg;
 import rdg.ResultRdg;
 import tools.DBUtils;
+import entity.MissingJsonArgumentException;
 import entity.Question;
 
 @WebListener
@@ -61,7 +65,9 @@ public class InitDataBase implements ServletContextListener {
 			AnswerRdg answerRdg = new AnswerRdg(connection);
 			QuestionRdg questionRdg = new QuestionRdg(connection, answerRdg);
 			
-			List<Question> questions = questionRdg.retrieveAll();
+			List<Question> questions = new ArrayList<Question>();//questionRdg.retrieveAll();
+			String json = "{'question':{'id':1,'desc':'Ceci est une question','answers':[{'answer':{'id':1,'desc':'réponse','isTrue':true,'idQuestion':1}},{'answer':{'id':2,'desc':'réponse 2','isTrue':false,'idQuestion':1}}]}}";
+			questions.add(Question.retrieveObject(new JSONObject(json)));
 			
 			arg0.getServletContext().setAttribute(DB_CONNECTION, connection);
 			arg0.getServletContext().setAttribute(RDG_ANSWER, answerRdg);
@@ -70,6 +76,10 @@ public class InitDataBase implements ServletContextListener {
 			arg0.getServletContext().setAttribute(QUESTION_LIST, questions);
 			arg0.getServletContext().log("Connection DB ok !");
 		} catch (SQLException e) {
+			arg0.getServletContext().log(e.getMessage());
+		} catch (MissingJsonArgumentException e) {
+			arg0.getServletContext().log(e.getMessage());
+		} catch (JSONException e) {
 			arg0.getServletContext().log(e.getMessage());
 		}
 	}

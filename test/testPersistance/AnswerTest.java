@@ -69,7 +69,7 @@ public class AnswerTest {
 		Integer id = answer.getId();
 		answer = answerRdg.retrieve(id);
 		assertNotNull(answer);
-		assertEquals(true, answer.isTrue());
+		assertEquals(true, answer.isCorrectAnswer());
 		assertEquals("La réponse A !", answer.getDesc());
 	}
 	
@@ -84,7 +84,7 @@ public class AnswerTest {
 		answerRdg.persist(answer);
 		answer.setTrue(false);
 		answerRdg.update(answer);
-		assertEquals(false, answerRdg.retrieve(answer.getId()).isTrue());
+		assertEquals(false, answerRdg.retrieve(answer.getId()).isCorrectAnswer());
 	}
 	
 	@Test

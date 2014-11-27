@@ -1,5 +1,6 @@
 package entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,8 +10,12 @@ import org.json.JSONObject;
 
 import tools.Jsonable;
 
-public class Question implements Jsonable {
+public class Question implements Jsonable,Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public final static String KEY_OBJECT = "question";
 	public final static String KEY_ID = "id";
 	public final static String KEY_DESCRIPTION = "desc";

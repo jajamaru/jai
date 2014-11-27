@@ -53,17 +53,20 @@
 			<aside id="sidebar">
 			    <ul class="nav list-group">
 					<c:forEach var="q" items="${applicationScope.questionList}">
-						<li>
-							<a class="list-group-item" href="#">
-								<i class="icon-home icon-1x"></i>
-								<c:out value="${q.id} -- ${q.desc}" />
-							</a>
-							<a class="list-group-item deleteQuestionAction" href="<c:url value="/admin/action/question" />" title="supprimer">
-								<i class="glyphicon glyphicon-remove"></i>
-							</a>
-							<a class="list-group-item" href="<c:url value="/admin/enable/question" />" title="activer">
-								<i class="glyphicon glyphicon-share"></i>
-							</a>
+						<li class="list-group-item">
+							<h4 class="list-group-item-heading" style="overflow: hidden;text-overflow: ellipsis;">
+								<a href="#" title="voir la question" >
+									<c:out value="${q.desc}" />
+								</a>
+							</h4>
+							<div class="btn-group">
+								<a class="btn btn-danger deleteQuestionAction" href="<c:url value="/admin/action/question" />" title="supprimer">
+								<span class="glyphicon glyphicon-remove"></span>
+								</a>
+								<a class="btn btn-primary" href="<c:url value="/admin/enable/question" />?id=${q.id}" title="activer">
+									<span class="glyphicon glyphicon-share"></span>
+								</a>
+							</div>
 						</li>
 					</c:forEach>
 			    </ul>
@@ -75,21 +78,39 @@
 					<h3><strong><c:out value="${applicationScope.questionActivated.desc}" /></strong></h3>
 				</header>
 				<div class="row">
-					<section class="col-md-10">
-						<dl class="dl-horizontal">
-						<c:forEach var="answer" items="${applicationScope.questionActivated.answers}" varStatus="st">
-							<dt><c:out value="${st.index}" /></dt>
-							<dd><c:out value="${answer.desc}" /></dd>
-						</c:forEach>
-						</dl>
-					</section>
-					<section class="col-md-2">
-						<p>
-							<a href="<c:url value="/admin/disable/question"/>?id=${applicationScope.questionActivated.id}">
-								Fermer la question
-							</a>
-						</p>
-					</section>
+					<c:choose>
+						<c:when test="${! empty applicationScope.questionActivated}">
+							<section class="col-md-10">
+								<table class="table table-bordered table-striped">
+									<caption><c:out value="${applicationScope.questionActivated}" /></caption>
+									<thead>
+										<tr>
+											<th>Rang</th>
+											<th>Réponse</th>
+										</tr>
+									</thead>
+									<tbody>
+										<c:forEach var="answer" items="${applicationScope.questionActivated.answers}" varStatus="st">
+										<tr>
+											<td><c:out value="${st.index}" /></td>
+											<td><c:out value="${answer.desc}" /></td>
+										</tr>
+										</c:forEach>
+									</tbody>
+								</table>
+								<p>
+									<a class="btn btn-primary" href="<c:url value="/admin/disable/question"/>?id=${applicationScope.questionActivated.id}">
+										Fermer la question
+									</a>
+								</p>
+							</section>
+						</c:when>
+						<c:otherwise>
+							<p class="well">
+								Aucune question proposée pour le moment.
+							</p>
+						</c:otherwise>
+					</c:choose>
 				</div>
 			</div>
 		</div>

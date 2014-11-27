@@ -11,7 +11,6 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link href="<c:url value="/css/bootstrap.css" />" rel="stylesheet">
-	<link href="<c:url value="/css/theme.css" />" rel="stylesheet">
 	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 	<!--[if lt IE 9]>
@@ -24,15 +23,31 @@
 	<title><fmt:message key="questionList.title"/></title>
 </head>
 <body>
-	<header class="page-header">
+	<div class="container">
+	<header class="page-header hidden-xs">
 		<h3><c:out value="${applicationScope.questionActivated.desc}" /></h3>
 	</header>
 	<section>
-		<c:forEach var="answer" items="${applicationScope.questionActivated.answers}" varStatus="st">
-			<div class="row">
-				
-			</div>
-		</c:forEach>
+		<c:choose>
+			<c:when test="${empty sessionScope.isPolled}">
+				<ul class="list-group">
+					<c:forEach var="answer" items="${applicationScope.questionActivated.answers}" varStatus="st">
+						<a class="list-group-item" href="<c:url value="/student/action/vote"/>?id=${answer.id}" title="Réponse ${st.index}">
+							<h4 class="list-group-item-heading">
+								<c:out value="${st.index}"/>
+							</h4>
+							<p class="list-group-item-text hidden-xs">
+								<c:out value="${answer.desc}" />
+							</p>
+						</a>
+					</c:forEach>
+				</ul>
+			</c:when>
+			<c:otherwise>
+				<p class="well">Merci d'avoir voté !</p>
+			</c:otherwise>
+		</c:choose>
 	</section>
+	</div>
 </body>
 </html>

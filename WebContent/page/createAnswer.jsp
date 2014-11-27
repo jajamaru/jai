@@ -54,17 +54,20 @@
 			<div id="sidebar">
 			    <ul class="nav list-group">
 					<c:forEach var="q" items="${applicationScope.questionList}">
-						<li>
-							<a class="list-group-item" href="#">
-								<i class="icon-home icon-1x"></i>
-								<c:out value="${q.id} -- ${q.desc}" />
-							</a>
-							<a class="list-group-item deleteQuestionAction" href="<c:url value="/admin/action/question" />" title="supprimer">
-								<i class="glyphicon glyphicon-remove"></i>
-							</a>
-							<a class="list-group-item" href="<c:url value="/admin/enable/question" />" title="activer">
-								<i class="glyphicon glyphicon-share"></i>
-							</a>
+						<li class="list-group-item">
+							<h4 class="list-group-item-heading" style="overflow: hidden;text-overflow: ellipsis;">
+								<a href="#" title="voir la question" >
+									<c:out value="${q.desc}" />
+								</a>
+							</h4>
+							<div class="btn-group">
+								<a class="btn btn-danger deleteQuestionAction" href="<c:url value="/admin/action/question" />" title="supprimer">
+								<span class="glyphicon glyphicon-remove"></span>
+								</a>
+								<a class="btn btn-primary" href="<c:url value="/admin/enable/question" />?id=${q.id}" title="activer">
+									<span class="glyphicon glyphicon-share"></span>
+								</a>
+							</div>
 						</li>
 					</c:forEach>
 			    </ul>

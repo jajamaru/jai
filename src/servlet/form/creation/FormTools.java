@@ -120,6 +120,7 @@ public class FormTools {
 			FormTools.cleanAnswer(request);
 			FormTools.cleanQuestion(request);
 			FormTools.setReadyQuestion(request, question);
+			QuestionActivation.addQuestionToContext(request, question);
 			return true;
 		}
 		return false;

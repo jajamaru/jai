@@ -43,8 +43,8 @@ public class QuestionEnableServlet extends HttpServlet {
 				}
 			} catch(NumberFormatException e) {
 				getServletContext().log(e.getMessage());
-				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			}
 		} else {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

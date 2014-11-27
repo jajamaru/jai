@@ -75,34 +75,41 @@
 		<div id="main-wrapper" class="col-md-10 pull-right">
 			<div id="main">
 				<header class="page-header">
-					<h3>Créer une Question</h3>
+					<h3>Résultat de la question</h3>
 				</header>
-				<c:if test="${! empty sessionScope.readyQuestion}">
-					<section>
-						<p>
-							Question terminée -- <c:out value="${sessionScope.readyQuestion.desc}" />
-							<c:forEach var="answer" items="${sessionScope.readyQuestion.answers}">
-								<p>
-									Answer -- <c:out value="${answer.desc}" />
-								</p>
-							</c:forEach>
-						</p>
-					</section>
-				</c:if>
 				<section>
-					<form class="well" role="form" name="question" method="POST" action="<c:url value="/admin/validation/question" />">
-						<div class="form-group">
-							<label for="desc">Quelle est la question ?</label>
-							<textarea class="form-control" name="desc" rows="2"></textarea>
-							<p class="help-block">Vous pouvez agrandir la fenêtre</p>
-						</div>
-						<c:if test="${! empty error.question_err_desc}" >
-						<span class="help-block">
-							<fmt:message key="questionList.error.err_desc"/>
-						</span>
-						</c:if>
-						<button class="btn btn-primary" type="submit"><fmt:message key="questionList.form.question.submit"/></button>
-					</form>
+					<c:if test="${! empty applicationScope.vote}">
+						<table class="table table-bordered">
+							<caption><c:out value="${applicationScope.vote.question.desc}" /></caption>
+							<thead>
+								<tr>
+									<th></th>
+									<th>Réponse</th>
+									<th>Nombre de votes</th>
+								</tr>
+							</thead>
+							<tbody>
+								<c:forEach var="v" items="${applicationScope.vote.votes}" varStatus="st">
+									<c:choose>
+										<c:when test="${applicationScope.vote.question.answers[si.index].correctAnswer}">
+											<tr class="success">
+												<td><c:out value="${st.index}" /></td>
+												<td><c:out value="${applicationScope.vote.question.answers[st.index].desc}" /></td>
+												<td><c:out value="${v}" /></td>
+											</tr>
+										</c:when>
+										<c:otherwise>
+											<tr>
+												<td><c:out value="${st.index}" /></td>
+												<td><c:out value="${applicationScope.vote.question.answers[st.index].desc}" /></td>
+												<td><c:out value="${v}" /></td>
+											</tr>
+										</c:otherwise>
+									</c:choose>
+								</c:forEach>
+							</tbody>
+						</table>
+					</c:if>
 				</section>
 			</div>
 		</div>

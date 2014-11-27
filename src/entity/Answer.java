@@ -49,7 +49,7 @@ public class Answer implements Jsonable, Serializable{
 		this.desc = desc;
 	}
 
-	public boolean isTrue() {
+	public boolean isCorrectAnswer() {
 		return isTrue;
 	}
 
@@ -72,7 +72,7 @@ public class Answer implements Jsonable, Serializable{
 		JSONObject answer = new JSONObject();
 		answer.put(KEY_ID, getId());
 		answer.put(KEY_DESCRIPTION, getDesc());
-		answer.put(KEY_IS_TRUE, isTrue());
+		answer.put(KEY_IS_TRUE, isCorrectAnswer());
 		answer.put(KEY_ID_QUESTION, getIdQuestion());
 		json.put(KEY_OBJECT, answer);
 		return json;
@@ -90,7 +90,7 @@ public class Answer implements Jsonable, Serializable{
 		if(!(obj instanceof Answer)) return false;
 		Answer a = (Answer)obj;
 		if(obj == this) return true;
-		return isTrue() == a.isTrue() && getDesc() == a.getDesc() &&
+		return isCorrectAnswer() == a.isCorrectAnswer() && getDesc() == a.getDesc() &&
 				getId() == a.getId() && getIdQuestion() == a.getIdQuestion();
 	}
 	
@@ -98,7 +98,7 @@ public class Answer implements Jsonable, Serializable{
 		if(!(obj instanceof Answer)) return false;
 		Answer a = (Answer)obj;
 		if(obj == this) return true;
-		return isTrue() == a.isTrue() && getDesc() == a.getDesc();
+		return isCorrectAnswer() == a.isCorrectAnswer() && getDesc() == a.getDesc();
 	}
 
 	public static Answer retrieveObject(JSONObject json) throws MissingJsonArgumentException {

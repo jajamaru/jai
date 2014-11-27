@@ -12,42 +12,43 @@ import javax.servlet.http.HttpServletResponse;
 import servlet.form.creation.QuestionActivation;
 
 /**
- * Servlet implementation class QuestionDisableServlet
+ * Servlet implementation class VoteServlet
  */
-@WebServlet("/admin/disable/question")
-public class QuestionDisableServlet extends HttpServlet {
+@WebServlet("/student/action/vote")
+public class VoteServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	
+	private static final String IS_POLLED = "isPolled";
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public QuestionDisableServlet() {
+    public VoteServlet() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		if(request.getParameter("id") != null) {
 			try {
 				Integer id = Integer.valueOf(request.getParameter("id"));
-				if(QuestionActivation.disable(request, id)) {
-					RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/sondage/result");
+				if(QuestionActivation.addVote(id)) {
+					//request.getSession(true).setAttribute(IS_POLLED, true);
+					RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/student/display/question");
 					dispatcher.forward(request, response);
 				} else {
-					RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/display/question");
+					RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/student/display/question");
 					dispatcher.forward(request, response);
 				}
 			} catch(NumberFormatException e) {
 				getServletContext().log(e.getMessage());
-				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+				response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			}
 		} else {
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+			
 		}
 	}
 
@@ -55,7 +56,7 @@ public class QuestionDisableServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doGet(request, response);
+		doPost(request, response);
 	}
 
 }
