@@ -97,6 +97,10 @@ public class QuestionActivation {
 		return (List<Question>)request.getServletContext().getAttribute(QUESTION_LIST);
 	}
 	
+	private static void setQuestionCanBeActivated(HttpServletRequest request, List<Question> questions) {
+		request.getServletContext().setAttribute(QUESTION_LIST, questions);
+	}
+	
 	/**
 	 * Cette méthode active une question. Cela consiste en la mise en place
 	 * de cette question dans le contexte de l'application.
@@ -167,10 +171,42 @@ public class QuestionActivation {
 	 * @param request
 	 * @param question Question ajoutée.
 	 */
-	public static void addQuestionToContext(HttpServletRequest request, Question question) {
+	public static boolean addQuestionToContext(HttpServletRequest request, Question question) {
+		System.out.println("Ajout d'une question en contexte en cours ...");
 		List<Question> questions = getQuestionsCanBeActivated(request);
-		questions.add(question);
-		request.getServletContext().setAttribute(QUESTION_LIST, questions);
+		if(questions != null) {
+			questions.add(question);
+			setQuestionCanBeActivated(request, questions);
+			System.out.println("Ajout de la question en contexte réussie !");
+			return true;
+		}
+		System.out.println("Ajout de la question en contexte échec !");
+		return false;
+	}
+	
+	/**
+	 * Cette méthode supprime du contexte une question.
+	 * @param request
+	 * @param id Identifiant de la question.
+	 * @return True si la question est supprimée, False sinon.
+	 */
+	public static boolean removeQuestionFromContext(HttpServletRequest request, int id) {
+		System.out.println("Suppression d'une question en contexte en cours ...");
+		List<Question> questions = getQuestionsCanBeActivated(request);
+		int i_remove = -1;
+		for(int i=0; i<questions.size(); ++i) {
+			if(questions.get(i).getId() == id) {
+				i_remove = i;
+			}
+		}
+		if(i_remove > -1) {
+			questions.remove(i_remove);
+			setQuestionCanBeActivated(request, questions);
+			System.out.println("Suppression d'une question en contexte en réussie !");
+			return true;
+		}
+		System.out.println("Suppression d'une question en contexte échec !");
+		return false;
 	}
 
 }

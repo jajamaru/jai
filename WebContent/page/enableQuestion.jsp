@@ -60,11 +60,15 @@
 								</a>
 							</h4>
 							<div class="btn-group">
-								<a class="btn btn-danger deleteQuestionAction" href="<c:url value="/admin/action/question" />" title="supprimer">
+								<a class="btn btn-danger" href="<c:url value="/admin/action/question" />" title="supprimer"
+									onclick='return supprQuestion(event, this, ${q.id});'>
 								<span class="glyphicon glyphicon-remove"></span>
 								</a>
 								<a class="btn btn-primary" href="<c:url value="/admin/enable/question" />?id=${q.id}" title="activer">
 									<span class="glyphicon glyphicon-share"></span>
+								</a>
+								<a class="btn btn-success" href="#" title="modifier">
+									<span class="glyphicon glyphicon-edit"></span>
 								</a>
 							</div>
 						</li>
@@ -118,5 +122,6 @@
 	<!-- Script js -->
 	<script type="text/javascript" src="<c:url value="/js/jquery-1.11.1.min.js" />"></script>
 	<script type="text/javascript" src="<c:url value="/js/bootstrap.js" />"></script>
+	<script type="text/javascript" src="<c:url value="/js/request.js" />"></script>
 </body>
 </html>

@@ -120,7 +120,22 @@ public class FormTools {
 			FormTools.cleanAnswer(request);
 			FormTools.cleanQuestion(request);
 			FormTools.setReadyQuestion(request, question);
-			QuestionActivation.addQuestionToContext(request, question);
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Cette méthode valide la question de la session. Elle enlève la question de la session.
+	 * @param request
+	 * @return True si la question est enlevée, False sinon.
+	 */
+	public static boolean deleteReadyQuestion(HttpServletRequest request) {
+		HttpSession session = request.getSession(true);
+		Question question = (Question)session.getAttribute(READY_QUESTION);
+		if(question != null) {
+			session.removeAttribute(READY_QUESTION);
+			//QuestionActivation.addQuestionToContext(request, question);
 			return true;
 		}
 		return false;

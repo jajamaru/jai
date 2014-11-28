@@ -19,6 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import rdg.QuestionRdg;
+import servlet.form.creation.QuestionActivation;
 import entity.MissingJsonArgumentException;
 import entity.Question;
 
@@ -135,6 +136,9 @@ public class QuestionServlet extends HttpServlet {
 			
 			writer.write(question.stringify());
 			writer.flush();
+			
+			//On ajoute la question au contexte
+			QuestionActivation.addQuestionToContext(request, question);
 		} catch(MissingJsonArgumentException e) {
 			request.getServletContext().log(e.getMessage(),e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -175,6 +179,7 @@ public class QuestionServlet extends HttpServlet {
 					writer = response.getWriter();
 					writer.write(question.stringify());
 					writer.flush();
+					QuestionActivation.removeQuestionFromContext(request, id);
 				}
 			} catch (JSONException e) {
 				request.getServletContext().log("Un problème est survenu lors du parsing de l'objet",e);
@@ -203,7 +208,7 @@ public class QuestionServlet extends HttpServlet {
 				inOut.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				request.getServletContext().log("Problème lors de la fermeture I/O",e);
+				request.getServletContext().log(e.getMessage(),e);
 			}
 		}
 	}

@@ -3,6 +3,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <c:set var="language" value="${not empty param.language ? param.language : not empty language ? language : pageContext.request.locale}" scope="session" />
+<c:set var="readyQuestion" value="${sessionScope.readyQuestion}" scope="page"/>
+<c:set var="questionList" value="${applicationScope.questionList}" scope="page"/>
 <fmt:setLocale value="${language}" />
 <fmt:setBundle basename="langage.text" />
 <!DOCTYPE html>
@@ -52,7 +54,7 @@
 		<div id="sidebar-wrapper" class="col-md-2">
 			<aside id="sidebar">
 			    <ul class="nav list-group">
-			        <c:forEach var="q" items="${applicationScope.questionList}">
+			        <c:forEach var="q" items="${questionList}">
 						<li class="list-group-item">
 							<h4 class="list-group-item-heading" style="overflow: hidden;text-overflow: ellipsis;">
 								<a href="#" title="voir la question" >
@@ -60,11 +62,15 @@
 								</a>
 							</h4>
 							<div class="btn-group">
-								<a class="btn btn-danger deleteQuestionAction" href="<c:url value="/admin/action/question" />" title="supprimer">
+								<a class="btn btn-danger" href="<c:url value="/admin/action/question" />" title="supprimer"
+									onclick='return supprQuestion(event, this, ${q.id});'>
 								<span class="glyphicon glyphicon-remove"></span>
 								</a>
 								<a class="btn btn-primary" href="<c:url value="/admin/enable/question" />?id=${q.id}" title="activer">
 									<span class="glyphicon glyphicon-share"></span>
+								</a>
+								<a class="btn btn-success" href="#" title="modifier">
+									<span class="glyphicon glyphicon-edit"></span>
 								</a>
 							</div>
 						</li>
@@ -77,15 +83,25 @@
 				<header class="page-header">
 					<h3>Créer une Question</h3>
 				</header>
-				<c:if test="${! empty sessionScope.readyQuestion}">
+				<c:if test="${! empty readyQuestion}">
 					<section>
 						<p>
-							Question terminée -- <c:out value="${sessionScope.readyQuestion.desc}" />
-							<c:forEach var="answer" items="${sessionScope.readyQuestion.answers}">
+							Question terminée -- <c:out value="${readyQuestion.desc}" />
+							<c:forEach var="answer" items="${readyQuestion.answers}">
 								<p>
 									Answer -- <c:out value="${answer.desc}" />
 								</p>
 							</c:forEach>
+						</p>
+						<p>
+							<a class="btn btn-primary" href="<c:url value="/admin/action/question" />" title="valider"
+								data-nextLink="<c:url value="/admin/valid/question" />"
+								onclick='return validQuestion(event, this, ${readyQuestion.stringify()});'>
+								Valider la question
+							</a>
+							<a class="btn btn-primary" href="<c:url value="/admin/invalid/question"/>" title="invalider">
+								Invalider la question
+							</a>
 						</p>
 					</section>
 				</c:if>
@@ -110,5 +126,6 @@
 	<!-- Script js -->
 	<script type="text/javascript" src="<c:url value="/js/jquery-1.11.1.min.js" />"></script>
 	<script type="text/javascript" src="<c:url value="/js/bootstrap.js" />"></script>
+	<script type="text/javascript" src="<c:url value="/js/request.js" />"></script>
 </body>
 </html>

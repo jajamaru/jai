@@ -129,7 +129,7 @@ public class QuestionRdg implements IPersistableWithId<Question>{
 		try {
 			PreparedStatement statement = this.connection.prepareStatement(REQUEST_RETRIEVE_ALL);
 			ResultSet set = statement.executeQuery();
-			if(set.next()) {
+			while(set.next()) {
 				Question question = new Question();
 				question.setId(set.getInt(1));
 				question.setDesc(set.getString(2));
