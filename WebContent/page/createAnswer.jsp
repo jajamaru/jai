@@ -4,6 +4,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <c:set var="language" value="${not empty param.language ? param.language : not empty language ? language : pageContext.request.locale}" scope="session" />
+<c:set var="questionList" value="${applicationScope.questionList}" scope="page"/>
+<c:set var="createdQuestion" value="${sessionScope.createdQuestion}" scope="page" />
+<c:set var="answersId" value="${sessionScope.answersId}" scope="page" />
+<c:set var="closeQuestion" value="${sessionScope.closeQuestion}" scope="page" />
 <fmt:setLocale value="${language}" />
 <fmt:setBundle basename="langage.text" />
 <!DOCTYPE html>
@@ -53,7 +57,7 @@
 		<aside id="sidebar-wrapper" class="col-md-2">
 			<div id="sidebar">
 			    <ul class="nav list-group">
-					<c:forEach var="q" items="${applicationScope.questionList}">
+					<c:forEach var="q" items="${questionList}">
 						<li class="list-group-item">
 							<h4 class="list-group-item-heading" style="overflow: hidden;text-overflow: ellipsis;">
 								<a href="#" title="voir la question" >
@@ -80,7 +84,7 @@
 		<div id="main-wrapper" class="col-md-10 pull-right">
 			<div id="main">
 				<header class="page-header">
-					<h3>Créer des réponses pour la question <strong><c:out value="${sessionScope.createdQuestion.desc}" /></strong></h3>
+					<h3>Créer des réponses pour la question <strong><c:out value="${createdQuestion.desc}" /></strong></h3>
 				</header>
 				<div class="row">
 					<section class="col-lg-8">
@@ -118,15 +122,15 @@
 								<button class="pull-right btn btn-primary" type="submit"><fmt:message key="questionList.form.question.submit"/></button>
 							</div>
 						</form>
-						<c:if test="${! empty sessionScope.closeQuestion}">
+						<c:if test="${! empty closeQuestion}">
 							<form class="well" role="form" name="answer" method="POST" action="<c:url value="/admin/terminate/question" />">
 								<button class="btn btn-primary" type="submit">Terminer la question</button>
 							</form>
 						</c:if>
 					</section>
 					<section class="col-lg-4">
-						<p>Nombre de réponse <c:out value="${fn:length(sessionScope.answersId)}"/></p>
-						<c:forEach var="entry" items="${sessionScope.answersId}">
+						<p>Nombre de réponse <c:out value="${fn:length(answersId)}"/></p>
+						<c:forEach var="entry" items="${answersId}">
 							<div class="row">
 								<p>Answer <c:out value="${entry.key}" /></p>
 								<p>

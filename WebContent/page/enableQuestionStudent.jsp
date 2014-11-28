@@ -3,6 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <c:set var="language" value="${not empty param.language ? param.language : not empty language ? language : pageContext.request.locale}" scope="session" />
+<c:set var="questionActivated" value="${applicationScope.questionActivated}" scope="page" />
 <fmt:setLocale value="${language}" />
 <fmt:setBundle basename="langage.text" />
 <!DOCTYPE html>
@@ -25,13 +26,13 @@
 <body>
 	<div class="container">
 	<header class="page-header hidden-xs">
-		<h3><c:out value="${applicationScope.questionActivated.desc}" /></h3>
+		<h3><c:out value="${questionActivated.desc}" /></h3>
 	</header>
 	<section>
 		<c:choose>
 			<c:when test="${empty sessionScope.isPolled}">
 				<ul class="list-group">
-					<c:forEach var="answer" items="${applicationScope.questionActivated.answers}" varStatus="st">
+					<c:forEach var="answer" items="${questionActivated.answers}" varStatus="st">
 						<a class="list-group-item" href="<c:url value="/student/action/vote"/>?id=${answer.id}" title="Réponse ${st.index}">
 							<h4 class="list-group-item-heading">
 								<c:out value="${st.index}"/>

@@ -12,13 +12,6 @@ function genericCall(type, url, parameters, successCallBack) {
 	});
 }
 
-function getQuestion(url) {
-	genericCall('GET', url, "", function() {
-		console.log("Requête ajax réussie !")
-		console.log("Validation de la question");
-	});
-}
-
 function insertQuestion(url, question) {
 	genericCall('PUT',url, question, function(question) {
 		console.log("Requête ajax réussie !");

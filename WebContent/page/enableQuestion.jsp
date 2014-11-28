@@ -3,6 +3,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <c:set var="language" value="${not empty param.language ? param.language : not empty language ? language : pageContext.request.locale}" scope="session" />
+<c:set var="questionList" value="${applicationScope.questionList}" scope="page"/>
+<c:set var="questionActivated" value="${applicationScope.questionActivated.desc}" scope="page" />
 <fmt:setLocale value="${language}" />
 <fmt:setBundle basename="langage.text" />
 <!DOCTYPE html>
@@ -52,7 +54,7 @@
 		<div id="sidebar-wrapper" class="col-md-2">
 			<aside id="sidebar">
 			    <ul class="nav list-group">
-					<c:forEach var="q" items="${applicationScope.questionList}">
+					<c:forEach var="q" items="${questionList}">
 						<li class="list-group-item">
 							<h4 class="list-group-item-heading" style="overflow: hidden;text-overflow: ellipsis;">
 								<a href="#" title="voir la question" >
@@ -79,14 +81,14 @@
 		<div id="main-wrapper" class="col-md-10 pull-right">
 			<div id="main">
 				<header class="page-header">
-					<h3><strong><c:out value="${applicationScope.questionActivated.desc}" /></strong></h3>
+					<h3><strong><c:out value="${questionActivated.desc}" /></strong></h3>
 				</header>
 				<div class="row">
 					<c:choose>
-						<c:when test="${! empty applicationScope.questionActivated}">
+						<c:when test="${! empty questionActivated}">
 							<section class="col-md-10">
 								<table class="table table-bordered table-striped">
-									<caption><c:out value="${applicationScope.questionActivated}" /></caption>
+									<caption><c:out value="${questionActivated}" /></caption>
 									<thead>
 										<tr>
 											<th>Rang</th>
@@ -94,7 +96,7 @@
 										</tr>
 									</thead>
 									<tbody>
-										<c:forEach var="answer" items="${applicationScope.questionActivated.answers}" varStatus="st">
+										<c:forEach var="answer" items="${questionActivated.answers}" varStatus="st">
 										<tr>
 											<td><c:out value="${st.index}" /></td>
 											<td><c:out value="${answer.desc}" /></td>
@@ -103,7 +105,7 @@
 									</tbody>
 								</table>
 								<p>
-									<a class="btn btn-primary" href="<c:url value="/admin/disable/question"/>?id=${applicationScope.questionActivated.id}">
+									<a class="btn btn-primary" href="<c:url value="/admin/disable/question"/>?id=${questionActivated.id}">
 										Fermer la question
 									</a>
 								</p>

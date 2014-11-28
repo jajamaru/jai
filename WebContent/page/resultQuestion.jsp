@@ -3,6 +3,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <c:set var="language" value="${not empty param.language ? param.language : not empty language ? language : pageContext.request.locale}" scope="session" />
+<c:set var="questionList" value="${applicationScope.questionList}" scope="page"/>
+<c:set var="vote" value="${applicationScope.vote}" scope="page" />
 <fmt:setLocale value="${language}" />
 <fmt:setBundle basename="langage.text" />
 <!DOCTYPE html>
@@ -52,7 +54,7 @@
 		<div id="sidebar-wrapper" class="col-md-2">
 			<aside id="sidebar">
 			    <ul class="nav list-group">
-			        <c:forEach var="q" items="${applicationScope.questionList}">
+			        <c:forEach var="q" items="${questionList}">
 						<li class="list-group-item">
 							<h4 class="list-group-item-heading" style="overflow: hidden;text-overflow: ellipsis;">
 								<a href="#" title="voir la question" >
@@ -82,9 +84,9 @@
 					<h3>Résultat de la question</h3>
 				</header>
 				<section>
-					<c:if test="${! empty applicationScope.vote}">
+					<c:if test="${! empty vote}">
 						<table class="table table-bordered">
-							<caption><c:out value="${applicationScope.vote.question.desc}" /></caption>
+							<caption><c:out value="${vote.question.desc}" /></caption>
 							<thead>
 								<tr>
 									<th></th>
@@ -93,19 +95,19 @@
 								</tr>
 							</thead>
 							<tbody>
-								<c:forEach var="v" items="${applicationScope.vote.votes}" varStatus="st">
+								<c:forEach var="v" items="${vote.votes}" varStatus="st">
 									<c:choose>
-										<c:when test="${applicationScope.vote.question.answers[si.index].correctAnswer}">
+										<c:when test="${vote.question.answers[si.index].correctAnswer}">
 											<tr class="success">
 												<td><c:out value="${st.index}" /></td>
-												<td><c:out value="${applicationScope.vote.question.answers[st.index].desc}" /></td>
+												<td><c:out value="${vote.question.answers[st.index].desc}" /></td>
 												<td><c:out value="${v}" /></td>
 											</tr>
 										</c:when>
 										<c:otherwise>
 											<tr>
 												<td><c:out value="${st.index}" /></td>
-												<td><c:out value="${applicationScope.vote.question.answers[st.index].desc}" /></td>
+												<td><c:out value="${vote.question.answers[st.index].desc}" /></td>
 												<td><c:out value="${v}" /></td>
 											</tr>
 										</c:otherwise>
