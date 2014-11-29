@@ -29,13 +29,9 @@ public class QuestionFormInvalidServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		if(FormTools.deleteReadyQuestion(request)) {
-			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/create/question");
-			dispatcher.forward(request, response);
-		} else {
-			// Un problème est survenue
-			System.out.println("Un problème est survenue lors de l'invalidation de la question !");
-		}
+		FormTools.deleteReadyQuestion(request);
+		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/create/question");
+		dispatcher.forward(request, response);
 	}
 
 	/**

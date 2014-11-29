@@ -37,13 +37,9 @@ public class QuestionFormTerminateServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		if(FormTools.terminateQuestion(request)) {
-			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/create/question");
-			dispatcher.forward(request, response);
-		} else {
-			// Un problème est survenue
-			System.out.println("Un problème est survenue lors de la création d'une question !");
-		}
+		FormTools.terminateQuestion(request);
+		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/create/question");
+		dispatcher.forward(request, response);
 	}
 
 }

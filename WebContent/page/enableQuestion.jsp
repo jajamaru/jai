@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <c:set var="language" value="${not empty param.language ? param.language : not empty language ? language : pageContext.request.locale}" scope="session" />
 <c:set var="questionList" value="${applicationScope.questionList}" scope="page"/>
-<c:set var="questionActivated" value="${applicationScope.questionActivated.desc}" scope="page" />
+<c:set var="questionActivated" value="${applicationScope.questionActivated}" scope="page" />
 <fmt:setLocale value="${language}" />
 <fmt:setBundle basename="langage.text" />
 <!DOCTYPE html>

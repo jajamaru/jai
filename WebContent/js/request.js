@@ -34,7 +34,9 @@ function validQuestion(ev, obj, question) {
 	var nextUrl = $(obj).attr('data-nextLink');
 	//On procède à un insert
 	insertQuestion(url, question);
-	window.location.href = nextUrl;
+	setTimeout(function() {
+		window.location.href = nextUrl;
+	}, 200);
 	return false;
 }
 
@@ -43,6 +45,8 @@ function supprQuestion(ev, obj, id) {
 	var url = $(obj).attr('href');
 	var nextUrl = window.location.href;
 	deleteQuestion(url+'?id='+id);
-	//window.location.href = nextUrl;
+	setTimeout(function() {
+		window.location.href = nextUrl;
+	}, 200);
 	return false;
 }
