@@ -18,7 +18,7 @@ import servlet.form.creation.QuestionActivation;
 public class VoteServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
-	private static final String IS_POLLED = "isPolled";
+	//private static final String IS_POLLED = "isPolled";
        
     /**
      * @see HttpServlet#HttpServlet()

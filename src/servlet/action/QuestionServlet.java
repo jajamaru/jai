@@ -59,12 +59,12 @@ public class QuestionServlet extends HttpServlet {
 					response.sendError(HttpServletResponse.SC_NOT_FOUND);
 				}
 			} catch (NumberFormatException e) {
-				request.getServletContext().log("L'id passer en paramètre n'est pas un entier",e);
+				request.getServletContext().log(e.getMessage(),e);
 				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 				response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				request.getServletContext().log("La question demandée n'existe pas",e);
+				request.getServletContext().log(e.getMessage(),e);
 				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 				response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			}
@@ -98,12 +98,12 @@ public class QuestionServlet extends HttpServlet {
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
-				request.getServletContext().log("La question ne respecte pas le format json défini",e);
+				request.getServletContext().log(e.getMessage(),e);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				request.getServletContext().log("Un problème est survenu lors de la mise à jour de la question",e);
+				request.getServletContext().log(e.getMessage(),e);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			} 
@@ -144,15 +144,15 @@ public class QuestionServlet extends HttpServlet {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} catch(JSONException e) {
-			request.getServletContext().log("Le paramètre donné n'est pas sous format json",e);
+			request.getServletContext().log(e.getMessage(),e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} catch(SQLException e) {
-			request.getServletContext().log("Le json fourni ne correspond pas au format attendu",e);
+			request.getServletContext().log(e.getMessage(),e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} catch(IOException e) {
-			request.getServletContext().log("Problème d'écriture/lecture des flux lors du doPut Question",e);
+			request.getServletContext().log(e.getMessage(),e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} finally {
@@ -172,6 +172,7 @@ public class QuestionServlet extends HttpServlet {
 				QuestionRdg rdg = (QuestionRdg)getServletContext().getAttribute(InitDataBase.RDG_QUESTION);
 				question = rdg.retrieve(id);
 				if(question == null) {
+					request.getServletContext().log("La suppresion ne peut pas se faire car aucune question ne correspond à l'id donné !");
 					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 					response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				} else {
@@ -182,15 +183,15 @@ public class QuestionServlet extends HttpServlet {
 					QuestionActivation.removeQuestionFromContext(request, id);
 				}
 			} catch (JSONException e) {
-				request.getServletContext().log("Un problème est survenu lors du parsing de l'objet",e);
+				request.getServletContext().log(e.getMessage(),e);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			} catch(NumberFormatException e) {
-				request.getServletContext().log("Le paramètre passé n'est pas integer",e);
+				request.getServletContext().log(e.getMessage(),e);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			} catch (SQLException e) {
-				request.getServletContext().log("Un problème est survenu lors de la suppression de la question",e);
+				request.getServletContext().log(e.getMessage(),e);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			} finally {

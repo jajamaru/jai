@@ -7,7 +7,7 @@ function genericCall(type, url, parameters, successCallBack) {
 		contentType: 'application/json;',
 		success: successCallBack,
 		error: function(xhr, textStatus, errorThrown) {
-			console.log("Une erreur est suvenue !");
+			console.log("Une erreur est suvenue !" + errorThrown);
 		}
 	});
 }
@@ -19,10 +19,10 @@ function insertQuestion(url, question) {
 	});
 }
 
-function deleteQuestion(url, id) {
-	genericCall('DELETE', url, id, function(id) {
+function deleteQuestion(url) {
+	genericCall('DELETE', url, "",function(question) {
 		console.log("Requête ajax réussie !");
-		console.log("Suppression de la base de la question "+id);
+		console.log("Suppression de la base de la question "+question);
 	});
 }
 
@@ -42,7 +42,7 @@ function supprQuestion(ev, obj, id) {
 	ev.preventDefault();
 	var url = $(obj).attr('href');
 	var nextUrl = window.location.href;
-	deleteQuestion(url, id);
-	window.location.href = nextUrl;
+	deleteQuestion(url+'?id='+id);
+	//window.location.href = nextUrl;
 	return false;
 }
