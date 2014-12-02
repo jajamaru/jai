@@ -61,6 +61,8 @@ public class InitDataBase implements ServletContextListener {
 			AnswerRdg answerRdg = new AnswerRdg(connection);
 			QuestionRdg questionRdg = new QuestionRdg(connection, answerRdg);
 			
+			DBUtils.resetDatabase(connection);
+			
 			List<Question> questions = questionRdg.retrieveAll();
 			//String json = "{'question':{'id':1,'desc':'Ceci est une question','answers':[{'answer':{'id':1,'desc':'réponse','isTrue':true,'idQuestion':1}},{'answer':{'id':2,'desc':'réponse 2','isTrue':false,'idQuestion':1}}]}}";
 			//questions.add(Question.retrieveObject(new JSONObject(json)));
