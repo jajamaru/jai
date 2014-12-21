@@ -4,8 +4,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Logger;
 
 public class DBUtils {
+	
+	private static Logger LOG = Logger.getLogger(DBUtils.class.getName());
 	
 	private static final String CONNECTION_REQUEST = "jdbc:derby:romain_huret_jai;create=true";
 	private static final String CONNECTION_CLOSING = "jdbc:derby:romain_huret_jai;shutdown=true";
@@ -28,7 +31,9 @@ public class DBUtils {
 	}
 	
 	public static void createDatabase(Connection connection) throws SQLException {
+		LOG.info("Création des tables...");
 		createDatabase(connection, true);
+		LOG.info("Création des tables réussie !");
 	}
 	
 	public static void createDatabase(Connection connection, boolean throwExceptions) throws SQLException {
@@ -36,7 +41,9 @@ public class DBUtils {
 	}
 	
 	public static void destroyDatabase(Connection connection) throws SQLException {
+		LOG.info("Suppression des tables...");
 		destroyDatabase(connection, true);
+		LOG.info("Suppression des tables réussie !");
 	}
 	
 	public static void destroyDatabase(Connection connection, boolean throwExceptions) throws SQLException {
@@ -55,9 +62,21 @@ public class DBUtils {
 				Statement statement = connection.createStatement();
 				statement.executeUpdate(str);
 			} catch(SQLException e) {
-				if(throwException) throw e;
+				if(!tableAlreadyExists(e)) {
+					if(throwException) throw e;
+				}
 			}
 		}
 	}
+	
+	private static boolean tableAlreadyExists(SQLException e) {
+        boolean exists;
+        if(e.getSQLState().equals("X0Y32")) {
+            exists = true;
+        } else {
+            exists = false;
+        }
+        return exists;
+    }
 
 }

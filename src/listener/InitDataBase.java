@@ -61,11 +61,9 @@ public class InitDataBase implements ServletContextListener {
 			AnswerRdg answerRdg = new AnswerRdg(connection);
 			QuestionRdg questionRdg = new QuestionRdg(connection, answerRdg);
 			
-			DBUtils.resetDatabase(connection);
+			DBUtils.createDatabase(connection);
 			
 			List<Question> questions = questionRdg.retrieveAll();
-			//String json = "{'question':{'id':1,'desc':'Ceci est une question','answers':[{'answer':{'id':1,'desc':'réponse','isTrue':true,'idQuestion':1}},{'answer':{'id':2,'desc':'réponse 2','isTrue':false,'idQuestion':1}}]}}";
-			//questions.add(Question.retrieveObject(new JSONObject(json)));
 			
 			arg0.getServletContext().setAttribute(DB_CONNECTION, connection);
 			arg0.getServletContext().setAttribute(RDG_ANSWER, answerRdg);
@@ -75,11 +73,7 @@ public class InitDataBase implements ServletContextListener {
 			arg0.getServletContext().log("Connection DB ok !");
 		} catch (SQLException e) {
 			arg0.getServletContext().log(e.getMessage());
-		} /*catch (MissingJsonArgumentException e) {
-			arg0.getServletContext().log(e.getMessage());
-		} catch (JSONException e) {
-			arg0.getServletContext().log(e.getMessage());
-		}*/
+		}
 	}
 
 }
