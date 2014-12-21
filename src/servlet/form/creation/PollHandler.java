@@ -6,7 +6,7 @@ import entity.Question;
 
 /**
  * Cette classe permet d'afficher toutes les informations concernant le résultat
- * d'une question clôturée. Elle contient la liste des comteurs ainsi que la question posée.
+ * d'une question clôturée. Elle contient la liste des compteurs ainsi que la question posée.
  * @author romain
  *
  */
