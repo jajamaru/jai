@@ -1,3 +1,7 @@
+function quotemeta (str) {
+  return (str + '').replace(/([\.\\\+\*\?\[\^\]\$\(\)])/g, '\\$1');
+}
+
 function genericCall(type, url, parameters, successCallBack) {
 	console.log("Requête ajax en cours ...");
 	$.ajax({
