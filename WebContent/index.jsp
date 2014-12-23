@@ -23,17 +23,17 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta name="Description" content="Site de création et de collecte de sondage dans un but exclusivement scolaire" />
 	<meta name="author" content="Romain huret" />
-	<title><fmt:message key="questionList.title"/></title>
+	<title><fmt:message key="index.head.title"/></title>
 </head>
 <body>
 	<header class="page-header">
-		<h3>Choississez votre camp !</h3>
+		<h3><fmt:message key="index.header"/></h3>
 	</header>
 	<div class="well">
 		<a class="btn btn-primary" href="<c:url value="/admin/create/question" />" 
-			title="Vous êtes enseignant ?">Admin</a>
+			title="<fmt:message key="index.teacher.title"/>"><fmt:message key="index.teacher"/></a>
 		<a class="btn btn-primary" href="<c:url value="/student/display/question" />" 
-			title="Vous êtes étudiant ?">Student</a>
+			title="<fmt:message key="index.student.title"/>"><fmt:message key="index.student"/></a>
 	</div>
 	<!-- Script js -->
 	<script type="text/javascript" src="<c:url value="/js/jquery-1.11.1.min.js" />"></script>
