@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import servlet.form.creation.QuestionActivation;
+import context.QuestionActivation;
 
 /**
  * Servlet implementation class QuestionDisableServlet

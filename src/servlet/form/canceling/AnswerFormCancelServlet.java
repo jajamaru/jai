@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import servlet.form.creation.FormTools;
+import context.FormTools;
 
 /**
  * Servlet implementation class AnswerFormCancelServlet

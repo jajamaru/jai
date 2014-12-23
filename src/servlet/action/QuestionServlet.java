@@ -18,8 +18,8 @@ import listener.InitDataBase;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import context.QuestionActivation;
 import rdg.QuestionRdg;
-import servlet.form.creation.QuestionActivation;
 import entity.MissingJsonArgumentException;
 import entity.Question;
 
@@ -81,6 +81,8 @@ public class QuestionServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		Question question = null;
+		PrintWriter writer = null;
+		System.out.println("Question " + request.getParameter("question"));
 		if(request.getParameter("question") != null) {
 			try {
 				Integer id = null;
@@ -89,9 +91,14 @@ public class QuestionServlet extends HttpServlet {
 				rdg.update(question);
 				id = question.getId();
 				question = rdg.retrieve(id);
-				request.setAttribute("question", question);
-				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/display-list/question");
-				dispatcher.forward(request, response);
+				
+				writer = response.getWriter();
+				writer.write(question.stringify());
+				writer.flush();
+				
+				System.out.println("Mise à jour effectuée !");
+				
+				QuestionActivation.updateQuestionToContext(request, question);
 			} catch(MissingJsonArgumentException e) {
 				request.getServletContext().log(e.getMessage(),e);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -106,7 +113,9 @@ public class QuestionServlet extends HttpServlet {
 				request.getServletContext().log(e.getMessage(),e);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			} 
+			} finally {
+				close(writer, request);
+			}
 		} else {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);

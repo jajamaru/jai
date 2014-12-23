@@ -63,13 +63,13 @@
 							</h4>
 							<div class="btn-group">
 								<a class="btn btn-danger" href="<c:url value="/admin/action/question" />" title="supprimer"
-									onclick='return supprQuestion(event, this, ${q.id});'>
+									onclick='return deleteQuestion(event, this, ${q.id});'>
 								<span class="glyphicon glyphicon-remove"></span>
 								</a>
 								<a class="btn btn-primary" href="<c:url value="/admin/enable/question" />?id=${q.id}" title="activer">
 									<span class="glyphicon glyphicon-share"></span>
 								</a>
-								<a class="btn btn-success" href="#" title="modifier">
+								<a class="btn btn-success" href="<c:url value="/admin/update/question" />?id=${q.id}" title="modifier">
 									<span class="glyphicon glyphicon-edit"></span>
 								</a>
 							</div>
@@ -96,7 +96,7 @@
 						<p>
 							<a class="btn btn-primary" href="<c:url value="/admin/action/question" />" title="valider"
 								data-nextLink="<c:url value="/admin/valid/question" />"
-								onclick='return validQuestion(event, this, ${readyQuestion.stringify()});'>
+								onclick='return putQuestion(event, this, ${readyQuestion.stringify()});'>
 								Valider la question
 							</a>
 							<a class="btn btn-primary" href="<c:url value="/admin/invalid/question"/>" title="invalider">
