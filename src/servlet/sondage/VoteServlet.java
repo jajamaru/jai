@@ -1,4 +1,4 @@
-package servlet.action;
+package servlet.sondage;
 
 import java.io.IOException;
 

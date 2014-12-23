@@ -103,6 +103,13 @@ public class UpdateQuestion {
 		return false;
 	}
 	
+	/**
+	 * Cette méthode démarre une mise à jour. A partir de maintenant, une copie 
+	 * de la question est faites. tous les modifications portée sur la question
+	 * ne seront pas répercutées sur elle sauf cas où la validation réussie.
+	 * @param request HttpServletRequest courant
+	 * @param refQuestion Question de référence (question orginale).
+	 */
 	public static void startUpdate(HttpServletRequest request, Question refQuestion) {
 		System.out.println("Début de la mise à jour de la question... !");
 		Question question = getQuestion(request);
@@ -113,6 +120,11 @@ public class UpdateQuestion {
 		setReferenceQuestion(refQuestion);
 	}
 	
+	/**
+	 * Vérifie si les modifications apportées à la question peuvent être validées.
+	 * @param request HttpServletRequest courant
+	 * @return True si la validation est possible, False sinon.
+	 */
 	public static boolean checkUpdate(HttpServletRequest request) {
 		Question question = getQuestion(request);
 		if(question.getAnswers().size() > 1) {
@@ -122,6 +134,11 @@ public class UpdateQuestion {
 		return false;
 	}
 	
+	/**
+	 * Stop la mise à jour. Toutes les variables de contexte sont effacées.
+	 * La sauvegarde en base de donénes doit être faite avant d'appeler cette méthode.
+	 * @param request HttpServletRequest courant
+	 */
 	public static void endUpdate(HttpServletRequest request) {
 		session = request.getSession(true);
 		session.removeAttribute(UPDATE_HANDLER);

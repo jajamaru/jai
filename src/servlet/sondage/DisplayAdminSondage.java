@@ -9,19 +9,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import context.QuestionActivation;
-
 /**
- * Servlet implementation class SondageAdminServlet
+ * Servlet implementation class DisplayAdminSondage
  */
-@WebServlet("/admin/sondage/question")
-public class SondageAdminServlet extends HttpServlet {
+@WebServlet("/admin/display/sondage")
+public class DisplayAdminSondage extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public SondageAdminServlet() {
+    public DisplayAdminSondage() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -31,13 +29,8 @@ public class SondageAdminServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		if(QuestionActivation.isEnable(request)) {
-			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/display/sondage");
-			dispatcher.forward(request, response);
-		} else {
-			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/create/question");
-			dispatcher.forward(request, response);
-		}
+		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/page/enableQuestion.jsp");
+		dispatcher.forward(request, response);
 	}
 
 	/**
@@ -45,7 +38,7 @@ public class SondageAdminServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		doGet(request, response);
+		doPost(request, response);
 	}
 
 }
