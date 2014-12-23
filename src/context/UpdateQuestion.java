@@ -103,17 +103,6 @@ public class UpdateQuestion {
 		return false;
 	}
 	
-	/**
-	 * Cette méthode permet l'obtention de la question référence.
-	 * @return Question de référence sinon null.
-	 */
-	private static Question getReferenceQuestion() {
-		if(session!= null) {
-			return (Question)session.getAttribute(REFERENCE_QUESTION);
-		}
-		return null;
-	}
-	
 	public static void startUpdate(HttpServletRequest request, Question refQuestion) {
 		System.out.println("Début de la mise à jour de la question... !");
 		Question question = getQuestion(request);
