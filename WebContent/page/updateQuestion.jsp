@@ -134,33 +134,6 @@
 										</div>
 									</div>
 									<div class="row">
-										<label class="col-lg-2 control-label" for="vraie">Valeur de vérité de <c:out value="${st.index}" /></label>
-										<div class="col-lg-10">
-											<div class="radio">
-												<c:if test="${answer.correctAnswer}">
-													<label for="vraie">
-														<input type="radio" name="answerIsTrue${st.index}" value="vraie" checked="checked"/>
-														Oui
-													</label>
-													<label for="fausse">
-														<input type="radio" name="answerIsTrue${st.index}" value="fausse" />
-														Non
-													</label>
-												</c:if>
-												<c:if test="${!answer.correctAnswer}">
-													<label for="vraie">
-														<input type="radio" name="answerIsTrue${st.index}" value="vraie"/>
-														Oui
-													</label>
-													<label for="fausse">
-														<input type="radio" name="answerIsTrue${st.index}" value="fausse"  checked="checked"/>
-														Non
-													</label>
-												</c:if>
-											</div>
-										</div>
-									</div>
-									<div class="row">
 										<div class="checkbox">
 											<label>
 												<input type="checkbox" name="answerDelete${st.index}"> Supprimer

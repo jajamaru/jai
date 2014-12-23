@@ -30,6 +30,14 @@ function _putQuestion(url, question) {
 	});
 }
 
+function _putResult(url, result) {
+	genericCall('PUT',url, result, function(result) {
+		console.log("Requête ajax réussie !");
+		console.log("Insertion dans la base de la question "+result);
+		showMessage(getSuccesMessage("Création du résultat réussie !"));
+	});
+}
+
 function _deleteQuestion(url) {
 	genericCall('DELETE', url, "",function(question) {
 		console.log("Requête ajax réussie !");
@@ -86,6 +94,17 @@ function updateQuestion(ev, obj, question, deletedAnswers) {
 		_deleteAnswer(supprUrl+'?id='+deletedAnswers[i]);
 	}
 	_updateQuestion(url+'?question='+JSON.stringify(question));
+	setTimeout(function() {
+		window.location.href = nextUrl;
+	}, TIMEOUT);
+	return false;
+}
+
+function putResult(ev, obj, result) {
+	ev.preventDefault();
+	var url = $(obj).attr('href');
+	var nextUrl = window.location.href;
+	_putResult(url, JSON.stringify(result));
 	setTimeout(function() {
 		window.location.href = nextUrl;
 	}, TIMEOUT);

@@ -5,6 +5,7 @@
 <c:set var="language" value="${not empty param.language ? param.language : not empty language ? language : pageContext.request.locale}" scope="session" />
 <c:set var="questionList" value="${applicationScope.questionList}" scope="page"/>
 <c:set var="vote" value="${applicationScope.vote}" scope="page" />
+<c:set var="result" value="${applicationScope.result}" scope="page" />
 <fmt:setLocale value="${language}" />
 <fmt:setBundle basename="langage.text" />
 <!DOCTYPE html>
@@ -115,6 +116,9 @@
 								</c:forEach>
 							</tbody>
 						</table>
+						<a class="btn btn-primary" href="<c:url value="/admin/action/result" />"
+							onclick='return putResult(event, this, ${result.stringify()});'
+							title="Enregistrer le résultat">Enregistrer</a>
 					</c:if>
 				</section>
 			</div>

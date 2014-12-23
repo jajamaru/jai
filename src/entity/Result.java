@@ -14,22 +14,18 @@ public class Result implements Jsonable {
 	public final static String KEY_ID_QUESTION = "questionId";
 	public final static String KEY_DATE = "date";
 	public final static String KEY_NB_PARTICIPANTS = "nbParticipants";
-	public final static String KEY_SUCCESS_RATE = "successRate";
 	
 	private Integer id;
 	private Integer questionId;
 	private Date date;
 	private int nbParticipants;
-	private double successRate;
 	
 	public Result() {}
 	
-	public Result(Integer id, Date date, int nbParticipants,
-			float successRate) {
+	public Result(Integer id, Date date, int nbParticipants) {
 		this.id = id;
 		this.date = date;
 		this.nbParticipants = nbParticipants;
-		this.successRate = successRate;
 	}
 	
 	public Integer getId() {
@@ -56,14 +52,6 @@ public class Result implements Jsonable {
 		this.nbParticipants = nbParticipants;
 	}
 
-	public double getSuccessRate() {
-		return successRate;
-	}
-
-	public void setSuccessRate(double successRate) {
-		this.successRate = successRate;
-	}
-
 	public Integer getQuestionId() {
 		return questionId;
 	}
@@ -82,7 +70,6 @@ public class Result implements Jsonable {
 		if(getDate() != null)
 			result.put(KEY_DATE, getDate().getTime());
 		result.put(KEY_NB_PARTICIPANTS, getNbParticipants());
-		result.put(KEY_SUCCESS_RATE, getSuccessRate());
 		json.put(KEY_OBJECT, result);
 		return json;
 	}
@@ -104,7 +91,6 @@ public class Result implements Jsonable {
 		if(getDate() == null && a.getDate() == null) isDate=true;
 		else isDate = getDate().equals(a.getDate());
 		return isDate && getId() == a.getId() && getQuestionId() == a.getQuestionId() &&
-				getSuccessRate() == a.getSuccessRate() && 
 				getNbParticipants() == a.getNbParticipants();
 	}
 	
@@ -112,8 +98,7 @@ public class Result implements Jsonable {
 		if(!(obj instanceof Result)) return false;
 		Result a = (Result)obj;
 		if(obj == this) return true;
-		return getSuccessRate() == a.getSuccessRate() && 
-				getNbParticipants() == a.getNbParticipants();
+		return getNbParticipants() == a.getNbParticipants();
 	}
 
 	public static Result retrieveObject(JSONObject json) throws MissingJsonArgumentException {
@@ -128,10 +113,6 @@ public class Result implements Jsonable {
 			if(jsonResult.isNull(Result.KEY_NB_PARTICIPANTS))
 				throw new MissingJsonArgumentException("Le nombre de participant est inexistant");
 			result.setNbParticipants(jsonResult.getInt(Result.KEY_NB_PARTICIPANTS));
-			
-			if(jsonResult.isNull(Result.KEY_SUCCESS_RATE))
-				throw new MissingJsonArgumentException("Le taux de réussite est inexistant");
-			result.setSuccessRate(jsonResult.getDouble(Result.KEY_SUCCESS_RATE));
 			
 			if(!jsonResult.isNull(Result.KEY_ID_QUESTION))
 				result.setQuestionId(jsonResult.getInt(Result.KEY_ID_QUESTION));

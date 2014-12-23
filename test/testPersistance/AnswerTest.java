@@ -49,7 +49,6 @@ public class AnswerTest {
 		
 		answer = new Answer();
 		answer.setDesc("La réponse A !");
-		answer.setTrue(true);
 		answer.setIdQuestion(question.getId());
 	}
 	
@@ -69,7 +68,6 @@ public class AnswerTest {
 		Integer id = answer.getId();
 		answer = answerRdg.retrieve(id);
 		assertNotNull(answer);
-		assertEquals(true, answer.isCorrectAnswer());
 		assertEquals("La réponse A !", answer.getDesc());
 	}
 	
@@ -82,9 +80,9 @@ public class AnswerTest {
 	@Test
 	public void testUpdate() throws SQLException {
 		answerRdg.persist(answer);
-		answer.setTrue(false);
+		answer.setDesc("B");
 		answerRdg.update(answer);
-		assertEquals(false, answerRdg.retrieve(answer.getId()).isCorrectAnswer());
+		assertEquals("B", answerRdg.retrieve(answer.getId()).getDesc());
 	}
 	
 	@Test
@@ -108,10 +106,10 @@ public class AnswerTest {
 	
 	@Test
 	public void testJson2() throws JSONException, MissingJsonArgumentException {
-		Answer.retrieveObject(new JSONObject("{'answer':{'desc':'une réponse','isTrue':false}}"));
-		Answer.retrieveObject(new JSONObject("{'answer':{'id':1,'desc':'une réponse','isTrue':false}}"));
-		Answer.retrieveObject(new JSONObject("{'answer':{'idQuestion':1,'desc':'une réponse','isTrue':false}}"));
-		Answer.retrieveObject(new JSONObject("{'answer':{'id':1,'idQuestion':1,'desc':'une réponse','isTrue':false}}"));
+		Answer.retrieveObject(new JSONObject("{'answer':{'desc':'une réponse'}}"));
+		Answer.retrieveObject(new JSONObject("{'answer':{'id':1,'desc':'une réponse'}}"));
+		Answer.retrieveObject(new JSONObject("{'answer':{'idQuestion':1,'desc':'une réponse'}}"));
+		Answer.retrieveObject(new JSONObject("{'answer':{'id':1,'idQuestion':1,'desc':'une réponse'}}"));
 	}
 	
 	@Test(expected=MissingJsonArgumentException.class)
@@ -126,18 +124,8 @@ public class AnswerTest {
 	}
 	
 	@Test(expected=MissingJsonArgumentException.class)
-	public void testJsonWithMissingParameter3() throws JSONException, MissingJsonArgumentException {
-		Answer.retrieveObject(new JSONObject("{'answer':{'desc':'une réponse'}}"));
-	}
-	
-	@Test(expected=MissingJsonArgumentException.class)
-	public void testJsonWithMissingParameter4() throws JSONException, MissingJsonArgumentException {
-		Answer.retrieveObject(new JSONObject("{'answer':{'isTrue':true}}"));
-	}
-	
-	@Test(expected=MissingJsonArgumentException.class)
 	public void testJsonWithMissingParameter5() throws JSONException, MissingJsonArgumentException {
-		Answer.retrieveObject(new JSONObject("{'question':{'desc':'une réponse','isTrue':false}}"));
+		Answer.retrieveObject(new JSONObject("{'question':{'desc':'une réponse'}}"));
 	}
 
 }

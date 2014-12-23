@@ -49,10 +49,8 @@ public class QuestionTest {
 		Answer answer1, answer2;
 		answer1 = new Answer();
 		answer1.setDesc("A");
-		answer1.setTrue(false);
 		answer2 = new Answer();
 		answer2.setDesc("B");
-		answer2.setTrue(true);
 		answers.add(answer1);
 		answers.add(answer2);
 		
@@ -158,8 +156,8 @@ public class QuestionTest {
 	
 	@Test
 	public void testJson2() throws JSONException, MissingJsonArgumentException {
-		Question.retrieveObject(new JSONObject("{'question':{'desc':'Ceci est une question','answers':[{'answer':{'desc':'réponse','isTrue':true}}]}}"));
-		Question.retrieveObject(new JSONObject("{'question':{'id':1,'desc':'Ceci est une question','answers':[{'answer':{'desc':'réponse','isTrue':true}}]}}"));
+		Question.retrieveObject(new JSONObject("{'question':{'desc':'Ceci est une question','answers':[{'answer':{'desc':'réponse'}}]}}"));
+		Question.retrieveObject(new JSONObject("{'question':{'id':1,'desc':'Ceci est une question','answers':[{'answer':{'desc':'réponse'}}]}}"));
 	}
 	
 	@Test(expected=MissingJsonArgumentException.class)
@@ -179,12 +177,12 @@ public class QuestionTest {
 	
 	@Test(expected=MissingJsonArgumentException.class)
 	public void testJsonWithMissingParameter4() throws JSONException, MissingJsonArgumentException {
-		Question.retrieveObject(new JSONObject("{'question':{'answers':[{'answer':{'desc':'réponse','isTrue':true}}]}}"));
+		Question.retrieveObject(new JSONObject("{'question':{'answers':[{'answer':{'desc':'réponse'}}]}}"));
 	}
 	
 	@Test(expected=MissingJsonArgumentException.class)
 	public void testJsonWithMissingParameter5() throws JSONException, MissingJsonArgumentException {
-		Question.retrieveObject(new JSONObject("{'answer':{'desc':'Ceci est une question','answers':[{'answer':{'desc':'réponse','isTrue':true}}]}}"));
+		Question.retrieveObject(new JSONObject("{'answer':{'desc':'Ceci est une question','answers':[{'answer':{'desc':'réponse'}}]}}"));
 	}
 
 }

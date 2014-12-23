@@ -27,7 +27,6 @@ public class UpdateQuestionServlet extends HttpServlet {
 	
 	private static final String KEY_ANSWER_ID = "answerId";
 	private static final String KEY_ANSWER_DESC = "answerDesc";
-	private static final String KEY_ANSWER_TRUTH = "answerIsTrue";
 	private static final String KEY_ANSWER_DELETE = "answerDelete";
 	
 	private static final String NB_ANSWERS = "nbAnswers";
@@ -127,10 +126,6 @@ public class UpdateQuestionServlet extends HttpServlet {
 			if(request.getParameter(KEY_ANSWER_ID+i) != null) {
 				Integer id = Integer.valueOf(request.getParameter(KEY_ANSWER_ID+i));
 				answer.setId(id);
-			}
-			if(request.getParameter(KEY_ANSWER_TRUTH+i) != null) {
-				String truth = request.getParameter(KEY_ANSWER_TRUTH+i);
-				answer.setTrue(truth.equalsIgnoreCase("vraie"));
 			}
 			if(request.getParameter(KEY_ANSWER_DESC+i) != null) {
 				String desc = request.getParameter(KEY_ANSWER_DESC+i);

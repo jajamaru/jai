@@ -50,7 +50,6 @@ public class ResultTest {
 		
 		result = new Result();
 		result.setNbParticipants(20);
-		result.setSuccessRate(80.0);
 		result.setQuestionId(question.getId());
 	}
 	
@@ -70,7 +69,6 @@ public class ResultTest {
 		Integer id = result.getId();
 		result = resultRdg.retrieve(id);
 		assertNotNull(result);
-		assertEquals(Double.doubleToLongBits(80.0), Double.doubleToLongBits(result.getSuccessRate()));
 		assertEquals(20, result.getNbParticipants());
 	}
 	
@@ -105,9 +103,9 @@ public class ResultTest {
 	@Test
 	public void testJson2() throws JSONException, MissingJsonArgumentException {
 		Result.retrieveObject(new JSONObject("{'result':{'successRate':80,'nbParticipants':23}}"));
-		Result.retrieveObject(new JSONObject("{'result':{'questionId':1,'successRate':80,'nbParticipants':23}}"));
-		Result.retrieveObject(new JSONObject("{'result':{'questionId':1,'successRate':80,'nbParticipants':23,'date':1416677298605}}"));
-		Result.retrieveObject(new JSONObject("{'result':{'id':1,'questionId':1,'successRate':80,'nbParticipants':23,'date':1416677298605}}"));
+		Result.retrieveObject(new JSONObject("{'result':{'questionId':1,'nbParticipants':23}}"));
+		Result.retrieveObject(new JSONObject("{'result':{'questionId':1,'nbParticipants':23,'date':1416677298605}}"));
+		Result.retrieveObject(new JSONObject("{'result':{'id':1,'questionId':1,'nbParticipants':23,'date':1416677298605}}"));
 	}
 	
 	@Test(expected=MissingJsonArgumentException.class)
@@ -119,20 +117,11 @@ public class ResultTest {
 	public void testJsonWithMissingParameter2() throws JSONException, MissingJsonArgumentException {
 		Result.retrieveObject(new JSONObject("{'result':{}}"));
 	}
-	
-	@Test(expected=MissingJsonArgumentException.class)
-	public void testJsonWithMissingParameter3() throws JSONException, MissingJsonArgumentException {
-		Result.retrieveObject(new JSONObject("{'result':{'succesRate':80}}"));
-	}
-	
-	@Test(expected=MissingJsonArgumentException.class)
-	public void testJsonWithMissingParameter4() throws JSONException, MissingJsonArgumentException {
-		Result.retrieveObject(new JSONObject("{'result':{'nbParticipants':23}}"));
-	}
+
 	
 	@Test(expected=MissingJsonArgumentException.class)
 	public void testJsonWithMissingParameter5() throws JSONException, MissingJsonArgumentException {
-		Result.retrieveObject(new JSONObject("{'answer':{'questionId':1,'succesRate':80,'nbParticipants':23}}"));
+		Result.retrieveObject(new JSONObject("{'answer':{'questionId':1,'nbParticipants':23}}"));
 	}
 
 }
