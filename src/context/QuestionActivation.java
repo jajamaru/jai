@@ -1,6 +1,5 @@
 package context;
 
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,8 +10,14 @@ import javax.servlet.http.HttpSession;
 
 import listener.InitDataBase;
 import entity.Question;
-import entity.Result;
 
+/**
+ * QuestionActivation permet l'activation/désactivation de question.
+ * Activer une question permet aux autres utilisateurs de pouvoir y voter.
+ * Le résultat d'un vote est mis un objet ResultApplication.
+ * @author romain
+ *
+ */
 public class QuestionActivation {
 	
 	/**
@@ -159,6 +164,11 @@ public class QuestionActivation {
 		
 	}
 	
+	/**
+	 * Indique si un vote est en cours ou non
+	 * @param request HttpServletRequest courant
+	 * @return True si un vote est en cours, False sinon.
+	 */
 	public static boolean isVote(HttpServletRequest request) {
 		return request.getServletContext().getAttribute(VOTES) != null;
 	}
@@ -218,7 +228,7 @@ public class QuestionActivation {
 	
 	/**
 	 * Cette méthode ajoute une question au contexte de l'application.
-	 * @param request
+	 * @param request HttpServletRequest courant
 	 * @param question Question ajoutée.
 	 */
 	public static boolean addQuestionToContext(HttpServletRequest request, Question question) {
@@ -248,7 +258,7 @@ public class QuestionActivation {
 	
 	/**
 	 * Cette méthode supprime du contexte une question.
-	 * @param request
+	 * @param request HttpServletRequest courant
 	 * @param id Identifiant de la question.
 	 * @return True si la question est supprimée, False sinon.
 	 */
@@ -273,7 +283,8 @@ public class QuestionActivation {
 	
 	/**
 	 * Cette méthode met à jour une question par rapport à une autre ayant le même id.
-	 * @param request
+	 * Elle agît sur le context de l'application (mise à ajour de la question et de l'interface).
+	 * @param request HttpServletRequest courant
 	 * @param question Question servant de référant
 	 * @return True si la question voulant être mise à jour est trouvée et mise à jour, False sinon.
 	 */

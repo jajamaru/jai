@@ -86,7 +86,7 @@ public class UpdateQuestion {
 	 */
 	public static void addDeletedAnswer(HttpServletRequest request, Integer id) {
 		UpdateHandler handler = getUpdateHandler(request);
-		handler.getDeletedAnswers().add(id);
+		handler.addDeleteAnswer(id);
 		setUpdateHandler(handler);
 	}
 	
