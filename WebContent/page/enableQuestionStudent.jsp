@@ -37,11 +37,8 @@
 							<c:forEach var="answer" items="${questionActivated.answers}" varStatus="st">
 								<a class="list-group-item" href="<c:url value="/student/action/vote"/>?id=${answer.id}" title="Réponse ${st.index}">
 									<h4 class="list-group-item-heading">
-										<c:out value="${st.index}"/>
+										<c:out value="${st.index}"/> <c:out value="${answer.desc}" />
 									</h4>
-									<p class="list-group-item-text hidden-xs">
-										<c:out value="${answer.desc}" />
-									</p>
 								</a>
 							</c:forEach>
 						</ul>
