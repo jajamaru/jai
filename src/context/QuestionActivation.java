@@ -65,6 +65,8 @@ public class QuestionActivation {
 	public static boolean enable(HttpServletRequest request, int id) {
 		System.out.println("Récupération de la question en vue de son activation en cours ...");
 		List<Question> questions = getQuestionsCanBeActivated(request);
+		questionsActivated.clear();
+		libSession();
 		for(Question q : questions) {
 			if(q.getId() == id) {
 				System.out.println("Récupération de la question réussie !");

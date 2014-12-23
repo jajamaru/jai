@@ -14,9 +14,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
-<head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link href="<c:url value="/css/bootstrap.css" />" rel="stylesheet">
@@ -30,7 +27,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta name="Description" content="Site de création et de collecte de sondage dans un but exclusivement scolaire" />
 	<meta name="author" content="Romain huret" />
-	<title><fmt:message key="questionList.title"/></title>
+	<title><fmt:message key="updateQuestion.head.title"/></title>
 </head>
 <body>
 	<perso:header />
@@ -41,47 +38,51 @@
 		<div id="main-wrapper" class="col-md-10 pull-right">
 			<div id="main">
 				<header class="page-header">
-					<h3>Modifier votre Question</h3>
+					<h3><fmt:message key="updateQuestion.header"/></h3>
 				</header>
 				<c:if test="${! empty updateQuestion}">
 					<section>
 						<form class="well" role="form" name="question" method="POST" action="<c:url value="/admin/update/question" />">
 							<div class="form-group">
-								<label for="desc">Initulé de la question</label>
+								<label for="desc"><fmt:message key="updateQuestion.form.desc"/></label>
 								<textarea class="form-control" name="desc" rows="2"><c:out value="${updateQuestion.desc}" /></textarea>
-								<p class="help-block">Vous pouvez agrandir la fenêtre</p>
+								<p class="help-block"><fmt:message key="updateQuestion.form.textarea.helper"/></p>
 							</div>
 							<c:if test="${! empty error.question_err_desc}" >
 								<span class="help-block">
-									<fmt:message key="questionList.error.err_desc"/>
+									<fmt:message key="updateQuestion.error.err_desc"/>
 								</span>
 							</c:if>
-							<button class="btn btn-primary" type="submit">Modifier</button>
+							<button class="btn btn-primary" type="submit"><fmt:message key="updateQuestion.form.action.submit"/></button>
 							<a class="btn btn-primary" href="<c:url value="/admin/invalidUpdate/question" />" 
-								title="Annuler les modifications">Annuler</a>
+								title="<fmt:message key="updateQuestion.action.cancel.title"/>"><fmt:message key="updateQuestion.action.cancel"/></a>
 							<c:if test="${! empty endUpdate}">
-								<a class="btn btn-primary" href="<c:url value="/admin/action/question" />" title="valider"
+								<a class="btn btn-primary" href="<c:url value="/admin/action/question" />" title="<fmt:message key="updateQuestion.action.update.title"/>"
 									data-nextLink="<c:url value="/admin/validUpdate/question" />"
 									data-supprLink="<c:url value="/admin/action/answer" />"
-									onclick='return updateQuestion(event, this, ${updateQuestion.stringify()}, ${deletedAnswers});'>Mettre à jour</a>
+									onclick='return updateQuestion(event, this, ${updateQuestion.stringify()}, ${deletedAnswers});'>
+									<fmt:message key="updateQuestion.action.update"/>
+								</a>
 							</c:if>
-							<p>Elément supprimés<p>
+							<p><fmt:message key="updateQuestion.info.deletedAnswer"/><p>
 							<c:forEach var="a" items="${deletedAnswers}" >
 								<c:out value="${a} " />
 							</c:forEach>
 							<p>-----------------<p>
 							<c:forEach var="answer" items="${updateQuestion.answers}" varStatus="st">
 								<div class="well" style="background-color: #ccc;">
-									<p><c:out value="${answer.id}" /></p>
+									<p class="help-block pull-right">Id <c:out value="${answer.id}" /></p>
 									<div class="row">
 										<div class="form-group">
-											<label class="col-lg-2 control-label" for="answerDesc${st.index}">Réponse <c:out value="${st.index}" /></label>
+											<label class="col-lg-2 control-label" for="answerDesc${st.index}">
+												<fmt:message key="updateQuestion.list.answer.desc"/> <c:out value="${st.index}" />
+											</label>
 											<div class="col-lg-10">
 												<textarea class="form-control" id="desc" name="answerDesc${st.index}" rows="2" ><c:out value="${answer.desc}" /></textarea>
-												<p class="help-block">Vous pouvez agrandir la fenêtre</p>
+												<p class="help-block"><fmt:message key="updateQuestion.form.textarea.helper"/></p>
 												<c:if test="${! empty error.answer_err_desc}" >
 													<span class="help-block has-error">
-														<fmt:message key="questionList.error.err_desc"/>
+														<fmt:message key="updateQuestion.error.err_desc"/>
 													</span>
 												</c:if>
 											</div>
@@ -90,7 +91,7 @@
 									<div class="row">
 										<div class="checkbox">
 											<label>
-												<input type="checkbox" name="answerDelete${st.index}"> Supprimer
+												<input type="checkbox" name="answerDelete${st.index}"> <fmt:message key="updateQuestion.list.answer.delete"/>
 											</label>
 										</div>
 									</div>
@@ -100,12 +101,14 @@
 								</div>
 							</c:forEach>
 							<input type="hidden" name="nbAnswers" value="${fn:length(updateQuestion.answers)}" />
-							<a href="<c:url value="/admin/update/addAnswer" />" title="Ajouter une réponse">Add</a>
+							<a href="<c:url value="/admin/update/addAnswer" />" title="<fmt:message key="updateQuestion.form.action.addAnswer.title"/>">
+								<fmt:message key="updateQuestion.form.action.addAnswer"/>
+							</a>
 						</form>
 					</section>
 				</c:if>
 				<c:if test="${empty updateQuestion}">
-					<p>Aucune question mise à jour</p>
+					<p><fmt:message key="updateQuestion.info.nothing"/></p>
 				</c:if>
 			</div>
 		</div>

@@ -25,7 +25,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta name="Description" content="Site de création et de collecte de sondage dans un but exclusivement scolaire" />
 	<meta name="author" content="Romain huret" />
-	<title><fmt:message key="questionList.title"/></title>
+	<title><fmt:message key="resultQuestion.head.title"/></title>
 </head>
 <body>
 	<perso:header />
@@ -36,7 +36,7 @@
 		<div id="main-wrapper" class="col-md-10 pull-right">
 			<div id="main">
 				<header class="page-header">
-					<h3>Résultat de la question</h3>
+					<h3><fmt:message key="resultQuestion.header"/></h3>
 				</header>
 				<section>
 					<c:if test="${! empty vote}">
@@ -45,8 +45,8 @@
 							<thead>
 								<tr>
 									<th></th>
-									<th>Réponse</th>
-									<th>Nombre de votes</th>
+									<th><fmt:message key="resultQuestion.table.th.answerDesc"/></th>
+									<th><fmt:message key="resultQuestion.table.th.nbPoll"/></th>
 								</tr>
 							</thead>
 							<tbody>
@@ -70,9 +70,11 @@
 								</c:forEach>
 							</tbody>
 						</table>
-						<a class="btn btn-primary" href="<c:url value="/admin/action/result" />"
+						<a class="btn btn-primary disabled" href="<c:url value="/admin/action/result" />"
 							onclick='return putResult(event, this, ${result.stringify()});'
-							title="Enregistrer le résultat">Enregistrer</a>
+							title="<fmt:message key="resultQuestion.action.save.title"/>">
+								<fmt:message key="resultQuestion.action.save"/>
+						</a>
 					</c:if>
 				</section>
 			</div>

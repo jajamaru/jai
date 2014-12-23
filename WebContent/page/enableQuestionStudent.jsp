@@ -22,7 +22,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta name="Description" content="Site de création et de collecte de sondage dans un but exclusivement scolaire" />
 	<meta name="author" content="Romain huret" />
-	<title><fmt:message key="questionList.title"/></title>
+	<title><fmt:message key="enableQuestionStudent.head.title"/></title>
 </head>
 <body>
 	<div class="container">
@@ -35,7 +35,7 @@
 					<c:when test="${empty isPolled}">
 						<ul class="list-group">
 							<c:forEach var="answer" items="${questionActivated.answers}" varStatus="st">
-								<a class="list-group-item" href="<c:url value="/student/action/vote"/>?id=${answer.id}" title="Réponse ${st.index}">
+								<a class="list-group-item" href="<c:url value="/student/action/vote"/>?id=${answer.id}" title="<fmt:message key="enableQuestionStudent.action.poll.title"/> ${st.index}">
 									<h4 class="list-group-item-heading">
 										<c:out value="${st.index}"/> <c:out value="${answer.desc}" />
 									</h4>
@@ -45,9 +45,11 @@
 					</c:when>
 					<c:otherwise>
 						<p class="well">
-							Merci d'avoir voté !
+							<fmt:message key="enableQuestionStudent.info.thanks"/>
 							<a class="btn btn-primary" href="<c:url value="/student/display/question" />" 
-								title="Rafraichir">Rafraichir</a>
+								title="<fmt:message key="enableQuestionStudent.action.refresh.title"/>">
+								<fmt:message key="enableQuestionStudent.action.refresh"/>
+							</a>
 						</p>
 					</c:otherwise>
 				</c:choose>
@@ -55,12 +57,13 @@
 		</c:if>
 		<c:if test="${empty questionActivated}">
 			<header class="page-header hidden-xs">
-				<h3>Oups pas de sondage !</h3>
+				<h3><fmt:message key="enableQuestionStudent.info.header"/></h3>
 			</header>
 			<h3>
-				Pas de sondage pour le moment
+				<fmt:message key="enableQuestionStudent.info.nothing"/>
 				<a class="btn btn-primary" href="<c:url value="/student/display/question" />" 
-					title="Rafraichir">Rafraichir</a>
+					title="Rafraichir"><fmt:message key="enableQuestionStudent.action.refresh"/>
+				</a>
 			</h3>
 		</c:if>
 	</div>

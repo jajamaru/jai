@@ -24,7 +24,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta name="Description" content="Site de création et de collecte de sondage dans un but exclusivement scolaire" />
 	<meta name="author" content="Romain huret" />
-	<title><fmt:message key="questionList.title"/></title>
+	<title><fmt:message key="enableQuestion.head.title"/></title>
 </head>
 <body>
 	<perso:header />
@@ -35,18 +35,18 @@
 		<div id="main-wrapper" class="col-md-10 pull-right">
 			<div id="main">
 				<header class="page-header">
-					<h3><strong><c:out value="${questionActivated.desc}" /></strong></h3>
+					<h3><fmt:message key="enableQuestion.header"/></h3>
 				</header>
 				<div class="row">
 					<c:choose>
 						<c:when test="${! empty questionActivated}">
 							<section class="col-md-10">
 								<table class="table table-bordered table-striped">
-									<caption><c:out value="${questionActivated}" /></caption>
+									<caption><c:out value="${questionActivated.desc}" /></caption>
 									<thead>
 										<tr>
-											<th>Rang</th>
-											<th>Réponse</th>
+											<th><fmt:message key="enableQuestion.table.th.order"/></th>
+											<th><fmt:message key="enableQuestion.table.th.answer"/></th>
 										</tr>
 									</thead>
 									<tbody>
@@ -60,14 +60,14 @@
 								</table>
 								<p>
 									<a class="btn btn-primary" href="<c:url value="/admin/disable/question"/>?id=${questionActivated.id}">
-										Fermer la question
+										<fmt:message key="enableQuestion.action.terminate"/>
 									</a>
 								</p>
 							</section>
 						</c:when>
 						<c:otherwise>
 							<p class="well">
-								Aucune question proposée pour le moment.
+								<fmt:message key="enableQuestion.info.nothing"/>
 							</p>
 						</c:otherwise>
 					</c:choose>

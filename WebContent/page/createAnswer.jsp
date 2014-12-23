@@ -27,7 +27,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta name="Description" content="Site de création et de collecte de sondage dans un but exclusivement scolaire" />
 	<meta name="author" content="Romain huret" />
-	<title><fmt:message key="questionList.title"/></title>
+	<title><fmt:message key="createAnswer.head.title"/></title>
 </head>
 <body>
 	<perso:header />
@@ -38,42 +38,43 @@
 		<div id="main-wrapper" class="col-md-10 pull-right">
 			<div id="main">
 				<header class="page-header">
-					<h3>Créer des réponses pour la question <strong><c:out value="${createdQuestion.desc}" /></strong></h3>
+					<h3><fmt:message key="createAnswer.header"/> <strong><c:out value="${createdQuestion.desc}" /></strong></h3>
 				</header>
 				<div class="row">
 					<section class="col-lg-8">
 						<form class="well form-horizontal" role="form" name="answer" method="POST" action="<c:url value="/admin/validation/answer" />">
 							<div class="row">
 								<div class="form-group">
-									<label class="col-lg-2 control-label" for="desc">Quelle est la réponse ?</label>
+									<label class="col-lg-2 control-label" for="desc"><fmt:message key="createAnswer.form.answer"/> </label>
 									<div class="col-lg-10">
 										<textarea class="form-control" id="desc" name="desc" rows="2" ></textarea>
-										<p class="help-block">Vous pouvez agrandir la fenêtre</p>
+										<p class="help-block"><fmt:message key="createAnswer.form.textarea.helper"/></p>
 										<c:if test="${! empty error.answer_err_desc}" >
 											<span class="help-block has-error">
-												<fmt:message key="questionList.error.err_desc"/>
+												<fmt:message key="createAnswer.error.err_desc"/>
 											</span>
 										</c:if>
 									</div>
 								</div>
 							</div>
 							<div class="form-group">
-								<button class="pull-right btn btn-primary" type="submit"><fmt:message key="questionList.form.question.submit"/></button>
+								<button class="pull-right btn btn-primary" type="submit"><fmt:message key="createAnswer.form.action.validate"/></button>
 							</div>
 						</form>
 						<c:if test="${! empty closeQuestion}">
 							<form class="well" role="form" name="answer" method="POST" action="<c:url value="/admin/terminate/question" />">
-								<button class="btn btn-primary" type="submit">Terminer la question</button>
+								<button class="btn btn-primary" type="submit"><fmt:message key="createAnswer.action.terminate"/></button>
 							</form>
 						</c:if>
 					</section>
 					<section class="col-lg-4">
-						<p>Nombre de réponse <c:out value="${fn:length(answersId)}"/></p>
+						<p><fmt:message key="createAnswer.list.nbCreated"/> <c:out value="${fn:length(answersId)}"/></p>
 						<c:forEach var="entry" items="${answersId}">
 							<div class="row">
-								<p>Answer <c:out value="${entry.key}" /></p>
+								<p><fmt:message key="createAnswer.list.answer"/> <c:out value="${entry.key}" /></p>
 								<p>
-									Desc -- <c:out value="${entry.value.desc}" /> <a href="<c:url value="/admin/cancel/answer?id=${entry.key}" />">Supprimer</a>
+									<fmt:message key="createAnswer.list.answer.desc"/> -- <c:out value="${entry.value.desc}" />
+										<a href="<c:url value="/admin/cancel/answer?id=${entry.key}" />"><fmt:message key="createAnswer.list.answer.delete"/></a>
 								</p>
 							</div>
 						</c:forEach>
