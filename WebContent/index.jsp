@@ -26,14 +26,19 @@
 	<title><fmt:message key="index.head.title"/></title>
 </head>
 <body>
-	<header class="page-header">
-		<h3><fmt:message key="index.header"/></h3>
-	</header>
-	<div class="well">
-		<a class="btn btn-primary" href="<c:url value="/admin/create/question" />" 
-			title="<fmt:message key="index.teacher.title"/>"><fmt:message key="index.teacher"/></a>
-		<a class="btn btn-primary" href="<c:url value="/student/display/question" />" 
-			title="<fmt:message key="index.student.title"/>"><fmt:message key="index.student"/></a>
+	<div class="container">
+		<div class="jumbotron">
+			<div class="container">
+				<h1><fmt:message key="index.header"/></h1>
+				<p></p>
+				<p>
+					<a class="btn btn-primary" href="<c:url value="/admin/create/question" />" role="button"
+						title="<fmt:message key="index.teacher.title"/>"><fmt:message key="index.teacher"/></a>
+					<a class="btn btn-primary" href="<c:url value="/student/display/question" />" role="button"
+						title="<fmt:message key="index.student.title"/>"><fmt:message key="index.student"/></a>
+				</p>
+			</div>
+		</div>
 	</div>
 	<!-- Script js -->
 	<script type="text/javascript" src="<c:url value="/js/jquery-1.11.1.min.js" />"></script>
