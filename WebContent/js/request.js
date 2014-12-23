@@ -5,6 +5,8 @@ function quotemeta (str) {
 //////////////////////////////////////////////////////////////////
 // Fonction d'appel asynchrone (ajax)
 //////////////////////////////////////////////////////////////////
+var TIMEOUT = 2000;
+
 function genericCall(type, url, parameters, successCallBack) {
 	console.log("Requête ajax en cours ...");
 	$.ajax({
@@ -53,16 +55,13 @@ function _deleteAnswer(url, id) {
 }
 
 function putQuestion(ev, obj, question) {
-	//On stoppe la propagation du click
 	ev.preventDefault();
-	//On récupère les liens qui nous intéresse
 	var url = $(obj).attr('href');
 	var nextUrl = $(obj).attr('data-nextLink');
-	//On procède à un insert
 	_putQuestion(url, JSON.stringify(question));
 	setTimeout(function() {
 		window.location.href = nextUrl;
-	}, 300);
+	}, TIMEOUT);
 	return false;
 }
 
@@ -73,7 +72,7 @@ function deleteQuestion(ev, obj, id) {
 	_deleteQuestion(url+'?id='+id);
 	setTimeout(function() {
 		window.location.href = nextUrl;
-	}, 300);
+	}, TIMEOUT);
 	return false;
 }
 
@@ -89,9 +88,10 @@ function updateQuestion(ev, obj, question, deletedAnswers) {
 	_updateQuestion(url+'?question='+JSON.stringify(question));
 	setTimeout(function() {
 		window.location.href = nextUrl;
-	}, 300);
+	}, TIMEOUT);
 	return false;
 }
+
 //////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////
 
@@ -101,14 +101,14 @@ function updateQuestion(ev, obj, question, deletedAnswers) {
 function getErrorMessage(message) {
 	return '<div id="infoRequest" class="alert alert-danger alert-error">\
         <a href="#" class="close" data-dismiss="alert">&times;</a>\
-        <strong>Error!</strong>'+ message +'\
+        <strong>Error!</strong>'+ message +' timeout '+TIMEOUT+' ms\
     </div>';
 }
 
 function getSuccesMessage(message) {
 	return '<div id="infoRequest" class="alert alert-success">\
 	    <a href="#" class="close" data-dismiss="alert">&times;</a>\
-	    <strong>Success!</strong>'+ message +'\
+	    <strong>Success!</strong> '+ message +' timeout '+TIMEOUT+' ms\
 	</div>';
 }
 
