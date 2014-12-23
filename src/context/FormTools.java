@@ -1,4 +1,4 @@
-package servlet.form.creation;
+package context;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -53,6 +53,12 @@ public class FormTools {
 	 */
 	public static void setQuestion(HttpServletRequest request, Question question) {
 		HttpSession session = request.getSession(true);
+		if(question.getId() != null) {
+			for(Answer a : question.getAnswers()) {
+				FormTools.addAnswer(request, a);
+			}
+			question.cleanAnswers();
+		}
 		session.setAttribute(CREATED_QUESTION, question);
 	}
 	
@@ -135,7 +141,6 @@ public class FormTools {
 		Question question = (Question)session.getAttribute(READY_QUESTION);
 		if(question != null) {
 			session.removeAttribute(READY_QUESTION);
-			//QuestionActivation.addQuestionToContext(request, question);
 			return true;
 		}
 		return false;

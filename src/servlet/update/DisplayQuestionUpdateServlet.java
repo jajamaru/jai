@@ -1,4 +1,4 @@
-package servlet.form.creation;
+package servlet.update;
 
 import java.io.IOException;
 
@@ -9,19 +9,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import context.FormTools;
-
 /**
- * Servlet implementation class QuestionFormBuildServlet
+ * Servlet implementation class QuestionUpdateDisplayServlet
  */
-@WebServlet("/admin/terminate/question")
-public class QuestionFormTerminateServlet extends HttpServlet {
+@WebServlet("/admin/display/update")
+public class DisplayQuestionUpdateServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public QuestionFormTerminateServlet() {
+    public DisplayQuestionUpdateServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -31,7 +29,8 @@ public class QuestionFormTerminateServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		doPost(request, response);
+		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/page/updateQuestion.jsp");
+		dispatcher.forward(request, response);
 	}
 
 	/**
@@ -39,9 +38,7 @@ public class QuestionFormTerminateServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		FormTools.terminateQuestion(request);
-		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/create/question");
-		dispatcher.forward(request, response);
+		doGet(request, response);
 	}
 
 }

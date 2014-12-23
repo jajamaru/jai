@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import servlet.form.creation.FormTools;
+import context.FormTools;
 
 /**
  * Servlet implementation class QuestionFormCancelServlet
@@ -31,6 +31,7 @@ public class QuestionFormCancelServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		doPost(request, response);
 	}
 
 	/**
@@ -40,7 +41,7 @@ public class QuestionFormCancelServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		FormTools.removeQuestion(request);
 		getServletContext().log("Annulation de la question ...");
-		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/display-list/question");
+		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/create/question");
 		dispatcher.forward(request, response);
 	}
 

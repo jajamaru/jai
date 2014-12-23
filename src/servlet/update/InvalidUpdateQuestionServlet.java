@@ -9,17 +9,19 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import context.UpdateQuestion;
+
 /**
- * Servlet implementation class UpdateAnswerServlet
+ * Servlet implementation class InvalidUpdateQuestionServlet
  */
-@WebServlet("/admin/update/answer")
-public class UpdateAnswerServlet extends HttpServlet {
+@WebServlet("/admin/invalidUpdate/question")
+public class InvalidUpdateQuestionServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public UpdateAnswerServlet() {
+    public InvalidUpdateQuestionServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -28,8 +30,8 @@ public class UpdateAnswerServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/page/updateAnswer.jsp");
-		dispatcher.forward(request, response);
+		// TODO Auto-generated method stub
+		doPost(request, response);
 	}
 
 	/**
@@ -37,7 +39,9 @@ public class UpdateAnswerServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		doGet(request, response);
+		UpdateQuestion.endUpdate(request);
+		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/create/question");
+		dispatcher.forward(request, response);
 	}
 
 }

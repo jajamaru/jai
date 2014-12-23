@@ -10,7 +10,7 @@ import org.json.JSONObject;
 
 import tools.Jsonable;
 
-public class Question implements Jsonable,Serializable {
+public class Question implements Jsonable,Serializable,Cloneable {
 	
 	/**
 	 * 
@@ -67,10 +67,14 @@ public class Question implements Jsonable,Serializable {
 	}
 	
 	public void setAnswers(List<Answer> answers) {
-		this.answers.clear();
+		cleanAnswers();
 		for(Answer a : answers) {
 			addAnswer(a);
 		}
+	}
+	
+	public void cleanAnswers() {
+		this.answers.clear();
 	}
 
 	public Integer getId() {
@@ -122,6 +126,18 @@ public class Question implements Jsonable,Serializable {
 			good = getAnswer(i).equals(a.getAnswer(i));
 		}
 		return good && getDesc() == a.getDesc() && getId() == a.getId();
+	}
+	
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		// TODO Auto-generated method stub
+		Question question = (Question)super.clone();
+		List<Answer> newAnswerList = new ArrayList<Answer>();
+		for(Answer a : this.getAnswers()) {
+			newAnswerList.add((Answer)a.clone());
+		}
+		question.setAnswers(newAnswerList);
+		return super.clone();
 	}
 	
 	public boolean equalsBeforePersist(Object obj) {

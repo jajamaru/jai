@@ -8,7 +8,7 @@ import org.json.JSONObject;
 import tools.Jsonable;
 
 
-public class Answer implements Jsonable, Serializable{
+public class Answer implements Jsonable, Serializable, Cloneable{
 	
 	/**
 	 * 
@@ -99,6 +99,12 @@ public class Answer implements Jsonable, Serializable{
 		Answer a = (Answer)obj;
 		if(obj == this) return true;
 		return isCorrectAnswer() == a.isCorrectAnswer() && getDesc() == a.getDesc();
+	}
+	
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		// TODO Auto-generated method stub
+		return (Answer)super.clone();
 	}
 
 	public static Answer retrieveObject(JSONObject json) throws MissingJsonArgumentException {

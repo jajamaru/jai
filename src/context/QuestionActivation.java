@@ -1,4 +1,4 @@
-package servlet.form.creation;
+package context;
 
 import java.util.HashMap;
 import java.util.List;
@@ -175,7 +175,19 @@ public class QuestionActivation {
 		System.out.println("Ajout d'une question en contexte en cours ...");
 		List<Question> questions = getQuestionsCanBeActivated(request);
 		if(questions != null) {
-			questions.add(question);
+			int pos = questions.size();
+			if(question.getId() != null) {
+				for(int i=0; pos == questions.size() && i<questions.size(); ++i) {
+					Question q = questions.get(i);
+					if(q.getId() != null && q.getId() == question.getId()) {
+						pos = i;
+					}
+				}
+				if(pos!=questions.size()) {
+					questions.remove(pos);
+				}
+			}
+			questions.add(pos, question);
 			setQuestionCanBeActivated(request, questions);
 			System.out.println("Ajout de la question en contexte réussie !");
 			return true;
@@ -206,6 +218,28 @@ public class QuestionActivation {
 			return true;
 		}
 		System.out.println("Suppression d'une question en contexte échec !");
+		return false;
+	}
+	
+	/**
+	 * Cette méthode met à jour une question par rapport à une autre ayant le même id.
+	 * @param request
+	 * @param question Question servant de référant
+	 * @return True si la question voulant être mise à jour est trouvée et mise à jour, False sinon.
+	 */
+	public static boolean updateQuestionToContext(HttpServletRequest request, Question question) {
+		System.out.println("Mise à jour d'une question dans le contexte...");
+		List<Question> questions = getQuestionsCanBeActivated(request);
+		for(int i=0; i<questions.size(); ++i) { 
+			Question q = questions.get(i);
+			if(q.getId() != null && q.getId() == question.getId()) {
+				q.setDesc(question.getDesc());
+				q.setAnswers(question.getAnswers());
+				System.out.println("Mise à jour d'une question dans le contexte réussie !");
+				return true;
+			}
+		}
+		System.out.println("Mise à jour d'une question dans le contexte échec !");
 		return false;
 	}
 
