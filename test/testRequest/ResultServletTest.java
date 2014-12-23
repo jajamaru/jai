@@ -58,7 +58,6 @@ public class ResultServletTest {
 		
 		Answer answer = new Answer();
 		answer.setDesc("Réponse");
-		answer.setTrue(true);
 
 		Question question = new Question();
 		question.setDesc("Ceci est une question !");

@@ -11,9 +11,9 @@ import entity.Answer;
 
 public class AnswerRdg implements IPersistableWithId<Answer>{
 
-	public static final String REQUEST_PERSIST = "insert into Answer(description, isTrue, idQuestion) values(?,?,?)";
+	public static final String REQUEST_PERSIST = "insert into Answer(description, idQuestion) values(?,?)";
 	public static final String REQUEST_RETRIEVE = "select * from Answer where Answer.id = ?";
-	public static final String REQUEST_UPDATE = "update Answer set description = ?, isTrue = ? where Answer.id = ?";
+	public static final String REQUEST_UPDATE = "update Answer set description = ? where Answer.id = ?";
 	public static final String REQUEST_DELETE = "delete from Answer where Answer.id = ?";
 	
 	private Connection connection;
@@ -33,8 +33,7 @@ public class AnswerRdg implements IPersistableWithId<Answer>{
 		try {
 			PreparedStatement statement = this.connection.prepareStatement(REQUEST_PERSIST, Statement.RETURN_GENERATED_KEYS);
 			statement.setString(1, obj.getDesc());
-			statement.setBoolean(2, obj.isCorrectAnswer());
-			statement.setInt(3, obj.getIdQuestion());
+			statement.setInt(2, obj.getIdQuestion());
 			statement.executeUpdate();
 			checkGeneratedKey(statement, obj);
 			this.connection.setAutoCommit(true);
@@ -56,8 +55,7 @@ public class AnswerRdg implements IPersistableWithId<Answer>{
 		try {
 			PreparedStatement statement = this.connection.prepareStatement(REQUEST_UPDATE);
 			statement.setString(1, obj.getDesc());
-			statement.setBoolean(2, obj.isCorrectAnswer());
-			statement.setInt(3, obj.getId());
+			statement.setInt(2, obj.getId());
 			statement.executeUpdate();
 			this.connection.setAutoCommit(true);
 		} catch(SQLException e) {
@@ -95,7 +93,6 @@ public class AnswerRdg implements IPersistableWithId<Answer>{
 			Answer answer = new Answer();
 			answer.setId(id);
 			answer.setDesc(set.getString(2));
-			answer.setTrue(set.getBoolean(3));
 			this.connection.setAutoCommit(true);
 			return answer;	
 		} catch(SQLException e) {

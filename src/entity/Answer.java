@@ -17,20 +17,17 @@ public class Answer implements Jsonable, Serializable, Cloneable{
 	public final static String KEY_OBJECT = "answer";
 	public final static String KEY_ID = "id";
 	public final static String KEY_DESCRIPTION = "desc";
-	public final static String KEY_IS_TRUE = "isTrue";
 	public final static String KEY_ID_QUESTION = "idQuestion";
 	
 	private Integer id;
 	private String desc;
-	private boolean isTrue = false;
 	private Integer idQuestion;
 	
 	public Answer() {}
 	
-	public Answer(Integer id, String desc, boolean isTrue) {
+	public Answer(Integer id, String desc) {
 		this.id = id;
 		this.desc = desc;
-		this.isTrue = isTrue;
 	}
 
 	public Integer getId() {
@@ -49,14 +46,6 @@ public class Answer implements Jsonable, Serializable, Cloneable{
 		this.desc = desc;
 	}
 
-	public boolean isCorrectAnswer() {
-		return isTrue;
-	}
-
-	public void setTrue(boolean isTrue) {
-		this.isTrue = isTrue;
-	}
-
 	public Integer getIdQuestion() {
 		return idQuestion;
 	}
@@ -72,7 +61,6 @@ public class Answer implements Jsonable, Serializable, Cloneable{
 		JSONObject answer = new JSONObject();
 		answer.put(KEY_ID, getId());
 		answer.put(KEY_DESCRIPTION, getDesc());
-		answer.put(KEY_IS_TRUE, isCorrectAnswer());
 		answer.put(KEY_ID_QUESTION, getIdQuestion());
 		json.put(KEY_OBJECT, answer);
 		return json;
@@ -90,7 +78,7 @@ public class Answer implements Jsonable, Serializable, Cloneable{
 		if(!(obj instanceof Answer)) return false;
 		Answer a = (Answer)obj;
 		if(obj == this) return true;
-		return isCorrectAnswer() == a.isCorrectAnswer() && getDesc() == a.getDesc() &&
+		return getDesc() == a.getDesc() &&
 				getId() == a.getId() && getIdQuestion() == a.getIdQuestion();
 	}
 	
@@ -98,7 +86,7 @@ public class Answer implements Jsonable, Serializable, Cloneable{
 		if(!(obj instanceof Answer)) return false;
 		Answer a = (Answer)obj;
 		if(obj == this) return true;
-		return isCorrectAnswer() == a.isCorrectAnswer() && getDesc() == a.getDesc();
+		return getDesc() == a.getDesc();
 	}
 	
 	@Override
@@ -119,10 +107,6 @@ public class Answer implements Jsonable, Serializable, Cloneable{
 			if(jsonAnswer.isNull(Answer.KEY_DESCRIPTION))
 				throw new MissingJsonArgumentException("La réponse ne possède pas de description !");
 			answer.setDesc(jsonAnswer.getString(Answer.KEY_DESCRIPTION));
-			
-			if(jsonAnswer.isNull(Answer.KEY_IS_TRUE))
-				throw new MissingJsonArgumentException("La question ne possède pas de valeur de vérité !");
-			answer.setTrue(jsonAnswer.getBoolean(Answer.KEY_IS_TRUE));
 			
 			if(!jsonAnswer.isNull(Answer.KEY_ID_QUESTION))
 				answer.setIdQuestion(jsonAnswer.getInt(Answer.KEY_ID_QUESTION));

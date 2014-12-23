@@ -15,8 +15,8 @@ public class DBUtils {
 	
 	private static final String[] CREATE_TABLE_STATEMENTS = new String[] {
 		"create table Question (id int not null generated always as identity (start with 1, increment by 1), description VARCHAR(2048) not null, primary key(id))",
-		"create table Answer (id int not null generated always as identity (start with 1, increment by 1), description VARCHAR(1024), isTrue boolean default false, idQuestion integer, primary key(id), foreign key(idQuestion) references Question(id))",
-		"create table Result (id int not null generated always as identity (start with 1, increment by 1), questionId integer not null, date double not null, nbParticipants integer not null, successRate decimal(4,2) not null, primary key(id), foreign key(questionId) references Question(id))"
+		"create table Answer (id int not null generated always as identity (start with 1, increment by 1), description VARCHAR(1024), idQuestion integer, primary key(id), foreign key(idQuestion) references Question(id))",
+		"create table Result (id int not null generated always as identity (start with 1, increment by 1), questionId integer not null, date double not null, nbParticipants integer not null, primary key(id), foreign key(questionId) references Question(id))"
 		};
 	
 	private static final String[] DROP_TABLE_STATEMENTS = new String[] {

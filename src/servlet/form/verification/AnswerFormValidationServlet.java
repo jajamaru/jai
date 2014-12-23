@@ -58,8 +58,6 @@ public class AnswerFormValidationServlet extends HttpServlet {
 	private Answer createAnswer(HttpServletRequest request) {
 		Answer answer = new Answer();
 		answer.setDesc(request.getParameter("desc"));
-		boolean isTrue = request.getParameter("isTrue").equals("vraie");
-		answer.setTrue(isTrue);
 		return answer;
 	}
 

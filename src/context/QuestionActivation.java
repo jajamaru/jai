@@ -1,5 +1,6 @@
 package context;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpSession;
 
 import listener.InitDataBase;
 import entity.Question;
+import entity.Result;
 
 public class QuestionActivation {
 	
@@ -123,7 +125,7 @@ public class QuestionActivation {
 	private static void activate(HttpServletRequest request, Question question) {
 		System.out.println("Activation de la question en cours ...");
 		request.getServletContext().setAttribute(QUESTION_ACTIVATED, question);
-		votes = new ResultApplication(question.getAnswers());
+		votes = new ResultApplication(question, question.getAnswers());
 		System.out.println("Activation réussie !");
 	}
 	
@@ -161,6 +163,7 @@ public class QuestionActivation {
 		return request.getServletContext().getAttribute(VOTES) != null;
 	}
 	
+	
 	/**
 	 * Cette méthode ajoute un vote à l'une des réponses de la question
 	 * présente dans le contexte de l'application. Le vote incrémente la
@@ -171,7 +174,7 @@ public class QuestionActivation {
 	public static boolean addVote(int id, HttpSession session) {
 		System.out.println("Vote en cours ...");
 		if(votes != null) {
-			System.out.println("Liste des votes trouvée !");
+			System.out.println("Liste des votes trouvés !");
 			System.out.println("Vote terminé !");
 			if(addSession(session)) {
 				return votes.addVote(id);

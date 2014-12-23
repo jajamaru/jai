@@ -103,21 +103,6 @@
 									</div>
 								</div>
 							</div>
-							<div class="row">
-								<label class="col-lg-2 control-label" for="vraie">Est-ce la bonne réponse ?</label>
-								<div class="col-lg-10">
-									<div class="radio">
-										<label for="vraie">
-											<input type="radio" id="vraie" name="isTrue" value="vraie" checked="checked"/>
-											Oui
-										</label>
-										<label for="fausse">
-											<input type="radio" id="fausse" name="isTrue" value="fausse" />
-											Non
-										</label>
-									</div>
-								</div>
-							</div>
 							<div class="form-group">
 								<button class="pull-right btn btn-primary" type="submit"><fmt:message key="questionList.form.question.submit"/></button>
 							</div>

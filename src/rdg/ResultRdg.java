@@ -12,9 +12,9 @@ import entity.Result;
 
 public class ResultRdg implements IPersistableWithId<Result>{
 	
-	public static final String REQUEST_PERSIST = "insert into Result(date, nbParticipants, successRate, questionId) values(?,?,?,?)";
+	public static final String REQUEST_PERSIST = "insert into Result(date, nbParticipants, questionId) values(?,?,?)";
 	public static final String REQUEST_RETRIEVE = "select * from Result where Result.id = ?";
-	public static final String REQUEST_UPDATE = "update Result set date = ?, nbParticpants = ?, successRate = ?  where Result.id = ?";
+	public static final String REQUEST_UPDATE = "update Result set date = ?, nbParticpants = ? where Result.id = ?";
 	public static final String REQUEST_DELETE = "delete from Result where Result.id = ?";
 	
 	private final Connection connection;
@@ -33,8 +33,7 @@ public class ResultRdg implements IPersistableWithId<Result>{
 			PreparedStatement statement = this.connection.prepareStatement(REQUEST_PERSIST, Statement.RETURN_GENERATED_KEYS);
 			statement.setDouble(1, new Date(System.currentTimeMillis()).getTime());
 			statement.setInt(2, obj.getNbParticipants());
-			statement.setDouble(3, obj.getSuccessRate());
-			statement.setInt(4, obj.getQuestionId());
+			statement.setInt(3, obj.getQuestionId());
 			statement.executeUpdate();
 			checkGeneratedKey(statement, obj);
 		} catch(IllegalStateException e) {
@@ -51,8 +50,7 @@ public class ResultRdg implements IPersistableWithId<Result>{
 		PreparedStatement statement = this.connection.prepareStatement(REQUEST_UPDATE);
 		statement.setDouble(1, obj.getDate().getTime());
 		statement.setInt(2, obj.getNbParticipants());
-		statement.setDouble(3, obj.getSuccessRate());
-		statement.setInt(4, obj.getId());
+		statement.setInt(3, obj.getId());
 		statement.executeUpdate();
 	}
 
@@ -75,7 +73,6 @@ public class ResultRdg implements IPersistableWithId<Result>{
 			result.setQuestionId(set.getInt(2));
 			result.setDate(new Date((long)set.getDouble(3)));
 			result.setNbParticipants(set.getInt(4));
-			result.setSuccessRate(set.getFloat(5));
 		}
 		return result;
 	}
