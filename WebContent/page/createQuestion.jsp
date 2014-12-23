@@ -9,7 +9,7 @@
 <fmt:setLocale value="${language}" />
 <fmt:setBundle basename="langage.text" />
 <!DOCTYPE html>
-<html>
+<html lang="${language}">
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -24,7 +24,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta name="Description" content="Site de création et de collecte de sondage dans un but exclusivement scolaire" />
 	<meta name="author" content="Romain huret" />
-	<title><fmt:message key="questionList.title"/></title>
+	<title><fmt:message key="createQuestion.head.title"/></title>
 </head>
 <body>
 	<perso:header />
@@ -35,26 +35,26 @@
 		<div id="main-wrapper" class="col-md-10 pull-right">
 			<div id="main">
 				<header class="page-header">
-					<h3>Créer une Question</h3>
+					<h3><fmt:message key="createQuestion.header"/></h3>
 				</header>
 				<c:if test="${! empty readyQuestion}">
 					<section>
 						<p>
-							Question terminée -- <c:out value="${readyQuestion.desc}" />
+							<fmt:message key="createQuestion.terminate.question"/> -- <c:out value="${readyQuestion.desc}" />
 							<c:forEach var="answer" items="${readyQuestion.answers}">
 								<p>
-									Answer -- <c:out value="${answer.desc}" />
+									<fmt:message key="createQuestion.terminate.answer"/> -- <c:out value="${answer.desc}" />
 								</p>
 							</c:forEach>
 						</p>
 						<p>
-							<a class="btn btn-primary" href="<c:url value="/admin/action/question" />" title="valider"
+							<a class="btn btn-primary" href="<c:url value="/admin/action/question" />" title="<fmt:message key="createQuestion.action.validate.title"/>"
 								data-nextLink="<c:url value="/admin/valid/question" />"
 								onclick='return putQuestion(event, this, ${readyQuestion.stringify()});'>
-								Valider la question
+								<fmt:message key="createQuestion.action.validate"/>
 							</a>
-							<a class="btn btn-primary" href="<c:url value="/admin/invalid/question"/>" title="invalider">
-								Invalider la question
+							<a class="btn btn-primary" href="<c:url value="/admin/invalid/question"/>" title="<fmt:message key="createQuestion.action.invalidate.title"/>">
+								<fmt:message key="createQuestion.action.invalidate"/>
 							</a>
 						</p>
 					</section>
@@ -62,16 +62,16 @@
 				<section>
 					<form class="well" role="form" name="question" method="POST" action="<c:url value="/admin/validation/question" />">
 						<div class="form-group">
-							<label for="desc">Quelle est la question ?</label>
+							<label for="desc"><fmt:message key="createQuestion.form.question"/></label>
 							<textarea class="form-control" name="desc" rows="2"></textarea>
-							<p class="help-block">Vous pouvez agrandir la fenêtre</p>
+							<p class="help-block"><fmt:message key="createQuestion.form.textarea.helper"/></p>
 						</div>
 						<c:if test="${! empty error.question_err_desc}" >
 						<span class="help-block">
-							<fmt:message key="questionList.error.err_desc"/>
+							<fmt:message key="createQuestion.error.err_desc"/>
 						</span>
 						</c:if>
-						<button class="btn btn-primary" type="submit"><fmt:message key="questionList.form.question.submit"/></button>
+						<button class="btn btn-primary" type="submit"><fmt:message key="createQuestion.form.action.submit"/></button>
 					</form>
 				</section>
 			</div>
