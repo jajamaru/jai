@@ -24,7 +24,11 @@
 </head>
 <body>
 	<header class="page-header">
-		<h3>Pas de sondage pour le moment</h3>
+		<h3>
+			Pas de sondage pour le moment
+			<a class="btn btn-primary" href="<c:url value="/student/display/question" />" 
+				title="Rafraichir">Rafraichir</a>
+		</h3>
 	</header>
 </body>
 </html>
