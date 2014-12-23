@@ -1,10 +1,12 @@
 package context;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import listener.InitDataBase;
 import entity.Question;
@@ -27,10 +29,20 @@ public class QuestionActivation {
 	private static final String VOTES = "vote";
 	
 	/**
+	 * Identifiant bloquant l'utilisateur de voter à nouveau.
+	 */
+	private static final String IS_POLLED = "isPolled";
+	
+	/**
 	 * Map contenant toutes les questions en vues d'être activée.
 	 * Elles sont identifiées par leur id (id de persistance).
 	 */
 	private static Map<Integer, Question> questionsActivated = new HashMap<Integer, Question>();
+	
+	/**
+	 * Contient toutes les sessions ayant voté à la question en cours.
+	 */
+	private static List<HttpSession> polledSessions = new ArrayList<HttpSession>();
 	
 	/**
 	 * Objet contenant les résultats des votes.
@@ -72,6 +84,7 @@ public class QuestionActivation {
 			questionsActivated.remove(id);
 			disactivate(request);
 			setResultVote(request, question);
+			libSession();
 			return true;
 		}
 		System.out.println("Récupération de la question en vue d'une désactivation échec !");
@@ -155,15 +168,49 @@ public class QuestionActivation {
 	 * @param id Id de la réponse.
 	 * @return True si l'id est valide et si une question est activée, False sinon.
 	 */
-	public static boolean addVote(int id) {
+	public static boolean addVote(int id, HttpSession session) {
 		System.out.println("Vote en cours ...");
 		if(votes != null) {
 			System.out.println("Liste des votes trouvée !");
 			System.out.println("Vote terminé !");
-			return votes.addVote(id);
+			if(addSession(session)) {
+				return votes.addVote(id);
+			}
+			return false;
 		}
 		System.out.println("Vote échoué !");
 		return false;
+	}
+	
+	/**
+	 * Cette méthode ajoute une session à la liste des sessions ayant votées.
+	 * @param session Session de ayant votée.
+	 */
+	private static boolean addSession(HttpSession session) {
+		boolean isIn = false;
+		for(HttpSession s : polledSessions) {
+			if(s.getId() == session.getId()) {
+				isIn = true;
+			}
+		}
+		if(!isIn) {
+			session.setAttribute(IS_POLLED, true);
+			System.out.println("Utilisateur n°"+session.getId()+" a voté !");
+			polledSessions.add(session);
+			System.out.println("Nb polled users " + polledSessions.size());
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Cette méthode débloque toutes les sessions ayant votées.
+	 */
+	private static void libSession() {
+		for(HttpSession session: polledSessions) {
+			session.removeAttribute(IS_POLLED);
+		}
+		polledSessions.clear();
 	}
 	
 	/**

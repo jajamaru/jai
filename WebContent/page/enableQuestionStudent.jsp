@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <c:set var="language" value="${not empty param.language ? param.language : not empty language ? language : pageContext.request.locale}" scope="session" />
 <c:set var="questionActivated" value="${applicationScope.questionActivated}" scope="page" />
+<c:set var="isPolled" value="${sessionScope.isPolled}" scope="page" />
 <fmt:setLocale value="${language}" />
 <fmt:setBundle basename="langage.text" />
 <!DOCTYPE html>
@@ -25,30 +26,46 @@
 </head>
 <body>
 	<div class="container">
-	<header class="page-header hidden-xs">
-		<h3><c:out value="${questionActivated.desc}" /></h3>
-	</header>
-	<section>
-		<c:choose>
-			<c:when test="${empty sessionScope.isPolled}">
-				<ul class="list-group">
-					<c:forEach var="answer" items="${questionActivated.answers}" varStatus="st">
-						<a class="list-group-item" href="<c:url value="/student/action/vote"/>?id=${answer.id}" title="Réponse ${st.index}">
-							<h4 class="list-group-item-heading">
-								<c:out value="${st.index}"/>
-							</h4>
-							<p class="list-group-item-text hidden-xs">
-								<c:out value="${answer.desc}" />
-							</p>
-						</a>
-					</c:forEach>
-				</ul>
-			</c:when>
-			<c:otherwise>
-				<p class="well">Merci d'avoir voté !</p>
-			</c:otherwise>
-		</c:choose>
-	</section>
+		<c:if test="${! empty questionActivated}">
+			<header class="page-header hidden-xs">
+				<h3><c:out value="${questionActivated.desc}" /></h3>
+			</header>
+			<section>
+				<c:choose>
+					<c:when test="${empty isPolled}">
+						<ul class="list-group">
+							<c:forEach var="answer" items="${questionActivated.answers}" varStatus="st">
+								<a class="list-group-item" href="<c:url value="/student/action/vote"/>?id=${answer.id}" title="Réponse ${st.index}">
+									<h4 class="list-group-item-heading">
+										<c:out value="${st.index}"/>
+									</h4>
+									<p class="list-group-item-text hidden-xs">
+										<c:out value="${answer.desc}" />
+									</p>
+								</a>
+							</c:forEach>
+						</ul>
+					</c:when>
+					<c:otherwise>
+						<p class="well">
+							Merci d'avoir voté !
+							<a class="btn btn-primary" href="<c:url value="/student/display/question" />" 
+								title="Rafraichir">Rafraichir</a>
+						</p>
+					</c:otherwise>
+				</c:choose>
+			</section>
+		</c:if>
+		<c:if test="${empty questionActivated}">
+			<header class="page-header hidden-xs">
+				<h3>Oups pas de sondage !</h3>
+			</header>
+			<h3>
+				Pas de sondage pour le moment
+				<a class="btn btn-primary" href="<c:url value="/student/display/question" />" 
+					title="Rafraichir">Rafraichir</a>
+			</h3>
+		</c:if>
 	</div>
 </body>
 </html>

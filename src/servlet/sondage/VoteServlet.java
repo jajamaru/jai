@@ -1,4 +1,4 @@
-package servlet.action;
+package servlet.sondage;
 
 import java.io.IOException;
 
@@ -17,8 +17,6 @@ import context.QuestionActivation;
 @WebServlet("/student/action/vote")
 public class VoteServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	
-	//private static final String IS_POLLED = "isPolled";
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -34,8 +32,7 @@ public class VoteServlet extends HttpServlet {
 		if(request.getParameter("id") != null) {
 			try {
 				Integer id = Integer.valueOf(request.getParameter("id"));
-				if(QuestionActivation.addVote(id)) {
-					//request.getSession(true).setAttribute(IS_POLLED, true);
+				if(QuestionActivation.addVote(id, request.getSession(true))) {
 					RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/student/display/question");
 					dispatcher.forward(request, response);
 				} else {
@@ -48,7 +45,8 @@ public class VoteServlet extends HttpServlet {
 				response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			}
 		} else {
-			
+			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/student/display/question");
+			dispatcher.forward(request, response);
 		}
 	}
 

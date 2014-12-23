@@ -32,10 +32,10 @@ public class SondageAdminServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		if(QuestionActivation.isEnable(request)) {
-			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/page/enableQuestion.jsp");
+			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/display/sondage");
 			dispatcher.forward(request, response);
 		} else {
-			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/display/question");
+			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/create/question");
 			dispatcher.forward(request, response);
 		}
 	}

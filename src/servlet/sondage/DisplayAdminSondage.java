@@ -10,16 +10,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class SondageStudentServlet
+ * Servlet implementation class DisplayAdminSondage
  */
-@WebServlet("/student/display/question")
-public class SondageStudentServlet extends HttpServlet {
+@WebServlet("/admin/display/sondage")
+public class DisplayAdminSondage extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public SondageStudentServlet() {
+    public DisplayAdminSondage() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -29,7 +29,7 @@ public class SondageStudentServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/page/enableQuestionStudent.jsp");
+		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/page/enableQuestion.jsp");
 		dispatcher.forward(request, response);
 	}
 
@@ -38,7 +38,7 @@ public class SondageStudentServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		doGet(request, response);
+		doPost(request, response);
 	}
 
 }
