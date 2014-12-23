@@ -38,7 +38,7 @@ public class QuestionEnableServlet extends HttpServlet {
 					RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/sondage/question");
 					dispatcher.forward(request, response);
 				} else {
-					RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/display/question");
+					RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/create/question");
 					dispatcher.forward(request, response);
 				}
 			} catch(NumberFormatException e) {
@@ -47,8 +47,8 @@ public class QuestionEnableServlet extends HttpServlet {
 				response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			}
 		} else {
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/create/question");
+			dispatcher.forward(request, response);
 		}
 	}
 

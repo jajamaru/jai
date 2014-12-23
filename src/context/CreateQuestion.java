@@ -64,6 +64,7 @@ public class CreateQuestion {
 	 */
 	public static void setQuestion(HttpServletRequest request, Question question) {
 		HttpSession session = request.getSession(true);
+		cleanAnswer(request);
 		if(question.getId() != null) {
 			for(Answer a : question.getAnswers()) {
 				CreateQuestion.addAnswer(request, a);
