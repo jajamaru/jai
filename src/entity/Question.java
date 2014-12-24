@@ -103,7 +103,7 @@ public class Question implements Jsonable,Serializable,Cloneable {
 			answers.put(a.getJson());
 		}
 		question.put(KEY_ID, getId());
-		question.put(KEY_DESCRIPTION, getDesc());
+		question.put(KEY_DESCRIPTION, StringTools.quotemeta(getDesc()));
 		question.put(KEY_ANSWERS, answers);
 		json.put(KEY_OBJECT, question);
 		return json;

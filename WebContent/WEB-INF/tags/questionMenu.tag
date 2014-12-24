@@ -25,7 +25,8 @@
     <c:if test="${fn:length(questionList) != 0}">
         <c:forEach var="q" items="${questionList}">
 			<li class="list-group-item">
-				<h4 class="list-group-item-heading" style="overflow: hidden;text-overflow: ellipsis;">
+				<h4 class="list-group-item-heading" style="overflow: hidden;text-overflow: ellipsis;"
+					title="${q.desc}">
 					<c:out value="${q.desc}" />
 				</h4>
 				<p class="btn-group">

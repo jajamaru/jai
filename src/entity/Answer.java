@@ -60,11 +60,13 @@ public class Answer implements Jsonable, Serializable, Cloneable{
 		JSONObject json = new JSONObject();
 		JSONObject answer = new JSONObject();
 		answer.put(KEY_ID, getId());
-		answer.put(KEY_DESCRIPTION, getDesc());
+		answer.put(KEY_DESCRIPTION, StringTools.quotemeta(getDesc()));
 		answer.put(KEY_ID_QUESTION, getIdQuestion());
 		json.put(KEY_OBJECT, answer);
 		return json;
 	}
+	
+	
 
 	@Override
 	public String stringify() throws JSONException{
