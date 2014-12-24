@@ -33,7 +33,7 @@
 		<div id="sidebar-wrapper" class="col-md-2">
 			<perso:questionMenu questionList="${questionList}" />
 		</div>
-		<div id="main-wrapper" class="col-md-10 pull-right">
+		<div id="main-wrapper" class="col-md-10">
 			<div id="main">
 				<header class="page-header">
 					<h3><fmt:message key="resultQuestion.header"/></h3>

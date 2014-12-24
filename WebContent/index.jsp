@@ -2,6 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://www.romain_huret_jai.com/server" prefix="server"%>
 <c:set var="language" value="${not empty param.language ? param.language : not empty language ? language : pageContext.request.locale}" scope="session" />
 <c:set var="readyQuestion" value="${sessionScope.readyQuestion}" scope="page"/>
 <c:set var="questionList" value="${applicationScope.questionList}" scope="page"/>
@@ -36,6 +37,9 @@
 						title="<fmt:message key="index.teacher.title"/>"><fmt:message key="index.teacher"/></a>
 					<a class="btn btn-primary" href="<c:url value="/student/display/question" />" role="button"
 						title="<fmt:message key="index.student.title"/>"><fmt:message key="index.student"/></a>
+				</p>
+				<p>
+					<server:adress/>
 				</p>
 			</div>
 		</div>

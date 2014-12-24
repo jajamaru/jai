@@ -32,48 +32,62 @@
 		<div id="sidebar-wrapper" class="col-md-2">
 			<perso:questionMenu questionList="${questionList}" />
 		</div>
-		<div id="main-wrapper" class="col-md-10 pull-right">
+		<div id="main-wrapper" class="col-md-10">
 			<div id="main">
 				<header class="page-header">
 					<h3><fmt:message key="createQuestion.header"/></h3>
 				</header>
 				<c:if test="${! empty readyQuestion}">
 					<section>
-						<p>
-							<fmt:message key="createQuestion.terminate.question"/> -- <c:out value="${readyQuestion.desc}" />
-							<c:forEach var="answer" items="${readyQuestion.answers}">
+						<div class="row">
+							<div class="container">
+								<p><fmt:message key="createQuestion.terminate.question"/> -- <c:out value="${readyQuestion.desc}" /></p>
+								<ul>
+								<c:forEach var="answer" items="${readyQuestion.answers}">
+									<li>
+										<fmt:message key="createQuestion.terminate.answer"/> -- <c:out value="${answer.desc}" />
+									</li>
+								</c:forEach>
+								</ul>
+							</div>
+						</div>
+						<div class="row">
+							<div class="container">
 								<p>
-									<fmt:message key="createQuestion.terminate.answer"/> -- <c:out value="${answer.desc}" />
+									<a class="btn btn-success" href="<c:url value="/admin/action/question" />" role="button"
+										title="<fmt:message key="createQuestion.action.validate.title"/>"
+										data-nextLink="<c:url value="/admin/valid/question" />"
+										onclick='return putQuestion(event, this, ${readyQuestion.stringify()});'>
+										<fmt:message key="createQuestion.action.validate"/>
+									</a>
+									<a class="btn btn-danger" href="<c:url value="/admin/invalid/question"/>" role="button"
+										title="<fmt:message key="createQuestion.action.invalidate.title"/>">
+										<fmt:message key="createQuestion.action.invalidate"/>
+									</a>
 								</p>
-							</c:forEach>
-						</p>
-						<p>
-							<a class="btn btn-primary" href="<c:url value="/admin/action/question" />" title="<fmt:message key="createQuestion.action.validate.title"/>"
-								data-nextLink="<c:url value="/admin/valid/question" />"
-								onclick='return putQuestion(event, this, ${readyQuestion.stringify()});'>
-								<fmt:message key="createQuestion.action.validate"/>
-							</a>
-							<a class="btn btn-primary" href="<c:url value="/admin/invalid/question"/>" title="<fmt:message key="createQuestion.action.invalidate.title"/>">
-								<fmt:message key="createQuestion.action.invalidate"/>
-							</a>
-						</p>
+							</div>
+						</div>
 					</section>
 				</c:if>
-				<section>
-					<form class="well" role="form" name="question" method="POST" action="<c:url value="/admin/validation/question" />">
-						<div class="form-group">
-							<label for="desc"><fmt:message key="createQuestion.form.question"/></label>
-							<textarea class="form-control" name="desc" rows="2"></textarea>
-							<p class="help-block"><fmt:message key="createQuestion.form.textarea.helper"/></p>
+				<c:if test="${empty readyQuestion}">			
+					<section class="row">
+						<div class="container">
+							<form class="well" role="form" name="question" method="POST" action="<c:url value="/admin/validation/question" />">
+								<div class="form-group">
+									<label for="desc"><fmt:message key="createQuestion.form.question"/></label>
+									<textarea class="form-control" name="desc" rows="2"></textarea>
+									<p class="help-block"><fmt:message key="createQuestion.form.textarea.helper"/></p>
+								</div>
+								<c:if test="${! empty error.question_err_desc}" >
+								<span class="help-block">
+									<fmt:message key="createQuestion.error.err_desc"/>
+								</span>
+								</c:if>
+								<button class="btn btn-primary" type="submit"><fmt:message key="createQuestion.form.action.submit"/></button>
+							</form>
 						</div>
-						<c:if test="${! empty error.question_err_desc}" >
-						<span class="help-block">
-							<fmt:message key="createQuestion.error.err_desc"/>
-						</span>
-						</c:if>
-						<button class="btn btn-primary" type="submit"><fmt:message key="createQuestion.form.action.submit"/></button>
-					</form>
-				</section>
+					</section>
+				</c:if>
 			</div>
 		</div>
 	</div>

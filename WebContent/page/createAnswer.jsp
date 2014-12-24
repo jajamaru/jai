@@ -35,10 +35,10 @@
 		<div id="sidebar-wrapper" class="col-md-2">
 			<perso:questionMenu questionList="${questionList}" />
 		</div>
-		<div id="main-wrapper" class="col-md-10 pull-right">
+		<div id="main-wrapper" class="col-md-10">
 			<div id="main">
 				<header class="page-header">
-					<h3><fmt:message key="createAnswer.header"/> <strong><c:out value="${createdQuestion.desc}" /></strong></h3>
+					<h3><fmt:message key="createAnswer.header"/> <span style="font-size: 0.7em; font-weight: bold;"><c:out value="${createdQuestion.desc}" /></span></h3>
 				</header>
 				<div class="row">
 					<section class="col-lg-8">
@@ -58,12 +58,12 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<button class="pull-right btn btn-primary" type="submit"><fmt:message key="createAnswer.form.action.validate"/></button>
+								<button class="pull-right btn btn-primary" role="button" type="submit"><fmt:message key="createAnswer.form.action.validate"/></button>
 							</div>
 						</form>
 						<c:if test="${! empty closeQuestion}">
 							<form class="well" role="form" name="answer" method="POST" action="<c:url value="/admin/terminate/question" />">
-								<button class="btn btn-primary" type="submit"><fmt:message key="createAnswer.action.terminate"/></button>
+								<button class="btn btn-success" role="submit" type="submit"><fmt:message key="createAnswer.action.terminate"/></button>
 							</form>
 						</c:if>
 					</section>

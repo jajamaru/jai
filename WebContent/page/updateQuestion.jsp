@@ -35,7 +35,7 @@
 		<div id="sidebar-wrapper" class="col-md-2">
 			<perso:questionMenu questionList="${questionList}" />
 		</div>
-		<div id="main-wrapper" class="col-md-10 pull-right">
+		<div id="main-wrapper" class="col-md-10">
 			<div id="main">
 				<header class="page-header">
 					<h3><fmt:message key="updateQuestion.header"/></h3>
@@ -54,23 +54,26 @@
 								</span>
 							</c:if>
 							<button class="btn btn-primary" type="submit"><fmt:message key="updateQuestion.form.action.submit"/></button>
-							<a class="btn btn-primary" href="<c:url value="/admin/invalidUpdate/question" />" 
+							<a class="btn btn-danger" href="<c:url value="/admin/invalidUpdate/question" />" role="button"
 								title="<fmt:message key="updateQuestion.action.cancel.title"/>"><fmt:message key="updateQuestion.action.cancel"/></a>
 							<c:if test="${! empty endUpdate}">
-								<a class="btn btn-primary" href="<c:url value="/admin/action/question" />" title="<fmt:message key="updateQuestion.action.update.title"/>"
+								<a class="btn btn-success" href="<c:url value="/admin/action/question" />" role="button"
+									title="<fmt:message key="updateQuestion.action.update.title"/>"
 									data-nextLink="<c:url value="/admin/validUpdate/question" />"
 									data-supprLink="<c:url value="/admin/action/answer" />"
 									onclick='return updateQuestion(event, this, ${updateQuestion.stringify()}, ${deletedAnswers});'>
 									<fmt:message key="updateQuestion.action.update"/>
 								</a>
 							</c:if>
-							<p><fmt:message key="updateQuestion.info.deletedAnswer"/><p>
-							<c:forEach var="a" items="${deletedAnswers}" >
-								<c:out value="${a} " />
-							</c:forEach>
-							<p>-----------------<p>
+							<p><fmt:message key="updateQuestion.info.deletedAnswer"/></p>
+							<p>
+								<c:forEach var="a" items="${deletedAnswers}" >
+									<c:out value="${a} " />
+								</c:forEach>
+							</p>
+							<p>-----------------</p>
 							<c:forEach var="answer" items="${updateQuestion.answers}" varStatus="st">
-								<div class="well" style="background-color: #ccc;">
+								<div class="row well" style="background-color: #ccc;">
 									<p class="help-block pull-right">Id <c:out value="${answer.id}" /></p>
 									<div class="row">
 										<div class="form-group">
@@ -108,7 +111,9 @@
 					</section>
 				</c:if>
 				<c:if test="${empty updateQuestion}">
+				<div class="row">
 					<p><fmt:message key="updateQuestion.info.nothing"/></p>
+				</div>
 				</c:if>
 			</div>
 		</div>

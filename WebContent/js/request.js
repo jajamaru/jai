@@ -67,6 +67,7 @@ function putQuestion(ev, obj, question) {
 	var url = $(obj).attr('href');
 	var nextUrl = $(obj).attr('data-nextLink');
 	_putQuestion(url, JSON.stringify(question));
+	disableAllButton();
 	setTimeout(function() {
 		window.location.href = nextUrl;
 	}, TIMEOUT);
@@ -78,6 +79,7 @@ function deleteQuestion(ev, obj, id) {
 	var url = $(obj).attr('href');
 	var nextUrl = window.location.href;
 	_deleteQuestion(url+'?id='+id);
+	disableAllButton();
 	setTimeout(function() {
 		window.location.href = nextUrl;
 	}, TIMEOUT);
@@ -94,6 +96,7 @@ function updateQuestion(ev, obj, question, deletedAnswers) {
 		_deleteAnswer(supprUrl+'?id='+deletedAnswers[i]);
 	}
 	_updateQuestion(url+'?question='+JSON.stringify(question));
+	disableAllButton();
 	setTimeout(function() {
 		window.location.href = nextUrl;
 	}, TIMEOUT);
@@ -105,6 +108,7 @@ function putResult(ev, obj, result) {
 	var url = $(obj).attr('href');
 	var nextUrl = window.location.href;
 	_putResult(url, JSON.stringify(result));
+	disableAllButton();
 	setTimeout(function() {
 		window.location.href = nextUrl;
 	}, TIMEOUT);
@@ -134,6 +138,10 @@ function getSuccesMessage(message) {
 function showMessage(functionMessage) {
 	$('div#infoRequest').hide();
 	$(functionMessage).appendTo('#main>header');
+}
+
+function disableAllButton() {
+	$('.btn').addClass("disabled");
 }
 //////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////
