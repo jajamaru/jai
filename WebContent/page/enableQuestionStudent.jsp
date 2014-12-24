@@ -22,50 +22,47 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta name="Description" content="Site de création et de collecte de sondage dans un but exclusivement scolaire" />
 	<meta name="author" content="Romain huret" />
-	<title><fmt:message key="questionList.title"/></title>
+	<title><fmt:message key="enableQuestionStudent.head.title"/></title>
 </head>
-<body>
-	<div class="container">
-		<c:if test="${! empty questionActivated}">
-			<header class="page-header hidden-xs">
-				<h3><c:out value="${questionActivated.desc}" /></h3>
-			</header>
-			<section>
-				<c:choose>
-					<c:when test="${empty isPolled}">
-						<ul class="list-group">
-							<c:forEach var="answer" items="${questionActivated.answers}" varStatus="st">
-								<a class="list-group-item" href="<c:url value="/student/action/vote"/>?id=${answer.id}" title="Réponse ${st.index}">
-									<h4 class="list-group-item-heading">
-										<c:out value="${st.index}"/>
-									</h4>
-									<p class="list-group-item-text hidden-xs">
-										<c:out value="${answer.desc}" />
-									</p>
+<body style="padding-top: 0px;">
+	<div class="jumbotron" style="background-color: #fff;">
+		<div class="container">
+			<c:if test="${! empty questionActivated}">
+				<h1 class="hidden-xs"><c:out value="${questionActivated.desc}" /></h1>
+				<section>
+					<c:choose>
+						<c:when test="${empty isPolled}">
+							<ul class="list-group">
+								<c:forEach var="answer" items="${questionActivated.answers}" varStatus="st">
+									<a class="list-group-item" href="<c:url value="/student/action/vote"/>?id=${answer.id}" 
+										title="<fmt:message key="enableQuestionStudent.action.poll.title"/> ${st.index}">
+										<c:out value="${st.index}"/><span class="hidden-xs"> -- <c:out value="${answer.desc}" /></span>
+									</a>
+								</c:forEach>
+							</ul>
+						</c:when>
+						<c:otherwise>
+							<p class="well">
+								<fmt:message key="enableQuestionStudent.info.thanks"/>
+								<a class="btn btn-primary" href="<c:url value="/student/display/question" />" 
+									title="<fmt:message key="enableQuestionStudent.action.refresh.title"/>">
+									<fmt:message key="enableQuestionStudent.action.refresh"/>
 								</a>
-							</c:forEach>
-						</ul>
-					</c:when>
-					<c:otherwise>
-						<p class="well">
-							Merci d'avoir voté !
-							<a class="btn btn-primary" href="<c:url value="/student/display/question" />" 
-								title="Rafraichir">Rafraichir</a>
-						</p>
-					</c:otherwise>
-				</c:choose>
-			</section>
-		</c:if>
-		<c:if test="${empty questionActivated}">
-			<header class="page-header hidden-xs">
-				<h3>Oups pas de sondage !</h3>
-			</header>
-			<h3>
-				Pas de sondage pour le moment
-				<a class="btn btn-primary" href="<c:url value="/student/display/question" />" 
-					title="Rafraichir">Rafraichir</a>
-			</h3>
-		</c:if>
+							</p>
+						</c:otherwise>
+					</c:choose>
+				</section>
+			</c:if>
+			<c:if test="${empty questionActivated}">
+				<h1 class="hidden-xs"><fmt:message key="enableQuestionStudent.info.header"/></h1>
+				<p>
+					<fmt:message key="enableQuestionStudent.info.nothing"/>
+					<a class="btn btn-primary" href="<c:url value="/student/display/question" />" 
+						title="Rafraichir"><fmt:message key="enableQuestionStudent.action.refresh"/>
+					</a>
+				</p>
+			</c:if>
+		</div>
 	</div>
 </body>
 </html>

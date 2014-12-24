@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import context.FormTools;
+import context.CreateQuestion;
 import entity.Question;
 
 /**
@@ -45,9 +45,9 @@ public class QuestionFormValidationServlet extends HttpServlet {
 		Map<String, Boolean> errors = new HashMap<String, Boolean>();
 		errors.clear();
 		if(request.getParameter("desc") != null && !"".equals(request.getParameter("desc"))) {
-			Question question = FormTools.getQuestion(request);
+			Question question = CreateQuestion.getQuestion(request);
 			question.setDesc(request.getParameter("desc"));
-			FormTools.setQuestion(request, question);
+			CreateQuestion.setQuestion(request, question);
 		} else {
 			errors.put("question_err_desc", true);
 			request.setAttribute("error", errors);

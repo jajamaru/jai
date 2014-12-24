@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import context.FormTools;
+import context.CreateQuestion;
 import entity.Answer;
 
 /**
@@ -46,7 +46,7 @@ public class AnswerFormValidationServlet extends HttpServlet {
 		errors.clear();
 		if(request.getParameter("desc") != null && !"".equals(request.getParameter("desc"))) {
 			Answer answer = createAnswer(request);
-			FormTools.addAnswer(request, answer);
+			CreateQuestion.addAnswer(request, answer);
 		} else {
 			errors.put("answer_err_desc", true);
 			request.setAttribute("error", errors);

@@ -37,7 +37,7 @@ public class QuestionDisableServlet extends HttpServlet {
 					RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/sondage/result");
 					dispatcher.forward(request, response);
 				} else {
-					RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/display/question");
+					RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/create/question");
 					dispatcher.forward(request, response);
 				}
 			} catch(NumberFormatException e) {
@@ -46,8 +46,8 @@ public class QuestionDisableServlet extends HttpServlet {
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			}
 		} else {
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/create/question");
+			dispatcher.forward(request, response);
 		}
 	}
 

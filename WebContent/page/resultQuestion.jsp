@@ -2,6 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="perso" %>
 <c:set var="language" value="${not empty param.language ? param.language : not empty language ? language : pageContext.request.locale}" scope="session" />
 <c:set var="questionList" value="${applicationScope.questionList}" scope="page"/>
 <c:set var="vote" value="${applicationScope.vote}" scope="page" />
@@ -24,65 +25,18 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta name="Description" content="Site de création et de collecte de sondage dans un but exclusivement scolaire" />
 	<meta name="author" content="Romain huret" />
-	<title><fmt:message key="questionList.title"/></title>
+	<title><fmt:message key="resultQuestion.head.title"/></title>
 </head>
 <body>
-	<header id="header" class="navbar navbar-default navbar-fixed-top">
-		<div class="navbar-header">
-		    <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target=".navbar-collapse">
-		        <i class="icon-reorder"></i>
-		    </button>
-		    <a class="navbar-brand" href="#">
-		        SondageLand
-		    </a>
-		</div>
-		<nav class="collapse navbar-collapse" role="navigation">
-			<ul class="nav navbar-nav">
-				<li>
-					<a href="#">Ajouter une question <i class="glyphicon glyphicon-plus"></i></a>
-				</li>
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown">Statistique<b class="caret"></b></a>
-					<ul class="dropdown-menu">
-						<li><a href="#">Question</a></li>
-						<li><a href="#">Réponse</a></li>
-					</ul>
-				</li>
-			</ul>
-		</nav>
-	</header>
+	<perso:header />
 	<div id="wrapper">
 		<div id="sidebar-wrapper" class="col-md-2">
-			<aside id="sidebar">
-			    <ul class="nav list-group">
-			        <c:forEach var="q" items="${questionList}">
-						<li class="list-group-item">
-							<h4 class="list-group-item-heading" style="overflow: hidden;text-overflow: ellipsis;">
-								<a href="#" title="voir la question" >
-									<c:out value="${q.desc}" />
-								</a>
-							</h4>
-							<div class="btn-group">
-								<a class="btn btn-danger" href="<c:url value="/admin/action/question" />" title="supprimer"
-									onclick='return supprQuestion(event, this, ${q.id});'>
-								<span class="glyphicon glyphicon-remove"></span>
-								</a>
-								<a class="btn btn-primary" href="<c:url value="/admin/enable/question" />?id=${q.id}" title="activer">
-									<span class="glyphicon glyphicon-share"></span>
-								</a>
-								<a class="btn btn-success" href="#" title="modifier">
-									<span class="glyphicon glyphicon-edit"></span>
-								</a>
-							</div>
-						</li>
-					</c:forEach>
-			    </ul>
-			</aside>
+			<perso:questionMenu questionList="${questionList}" />
 		</div>
-		<div id="main-wrapper" class="col-md-10 pull-right">
+		<div id="main-wrapper" class="col-md-10">
 			<div id="main">
 				<header class="page-header">
-					<h3>Résultat de la question</h3>
+					<h3><fmt:message key="resultQuestion.header"/></h3>
 				</header>
 				<section>
 					<c:if test="${! empty vote}">
@@ -91,8 +45,8 @@
 							<thead>
 								<tr>
 									<th></th>
-									<th>Réponse</th>
-									<th>Nombre de votes</th>
+									<th><fmt:message key="resultQuestion.table.th.answerDesc"/></th>
+									<th><fmt:message key="resultQuestion.table.th.nbPoll"/></th>
 								</tr>
 							</thead>
 							<tbody>
@@ -116,9 +70,11 @@
 								</c:forEach>
 							</tbody>
 						</table>
-						<a class="btn btn-primary" href="<c:url value="/admin/action/result" />"
+						<a class="btn btn-primary disabled" href="<c:url value="/admin/action/result" />"
 							onclick='return putResult(event, this, ${result.stringify()});'
-							title="Enregistrer le résultat">Enregistrer</a>
+							title="<fmt:message key="resultQuestion.action.save.title"/>">
+								<fmt:message key="resultQuestion.action.save"/>
+						</a>
 					</c:if>
 				</section>
 			</div>

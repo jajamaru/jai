@@ -11,7 +11,18 @@ import javax.servlet.http.HttpSession;
 import entity.Answer;
 import entity.Question;
 
-public class FormTools {
+/**
+ * CreateQuestion gére tout le processus de création d'une question.
+ * Une question passe par plusieurs états :
+ * <ul>
+ * 	<li><strong>createdQuestion</strong> La question est en cours de création</li>
+ * 	<li><strong>closeQuestion</strong> La question est vérifiée et est autorisée à poursuivre</li>
+ * 	<li><strong>readyQuestion</strong> La question est vérifiée et peut être crée</li>
+ * </ul>
+ * @author romain
+ *
+ */
+public class CreateQuestion {
 	
 	private static final String CREATED_QUESTION = "createdQuestion";
 	private static final String ANSWERS_ID = "answersId";
@@ -53,9 +64,10 @@ public class FormTools {
 	 */
 	public static void setQuestion(HttpServletRequest request, Question question) {
 		HttpSession session = request.getSession(true);
+		cleanAnswer(request);
 		if(question.getId() != null) {
 			for(Answer a : question.getAnswers()) {
-				FormTools.addAnswer(request, a);
+				CreateQuestion.addAnswer(request, a);
 			}
 			question.cleanAnswers();
 		}
@@ -123,9 +135,9 @@ public class FormTools {
 			for(Iterator<Answer> it = answers.iterator(); it.hasNext();) {
 				question.addAnswer(it.next());
 			}
-			FormTools.cleanAnswer(request);
-			FormTools.cleanQuestion(request);
-			FormTools.setReadyQuestion(request, question);
+			CreateQuestion.cleanAnswer(request);
+			CreateQuestion.cleanQuestion(request);
+			CreateQuestion.setReadyQuestion(request, question);
 			return true;
 		}
 		return false;
@@ -153,7 +165,7 @@ public class FormTools {
 	 */
 	private static void questionIsTerminted(HttpServletRequest request) {
 		HttpSession session = request.getSession(true);
-		if(FormTools.getAnswers(request).size() >= LIMIT_TO_TERMINATE_QUESTION)
+		if(CreateQuestion.getAnswers(request).size() >= LIMIT_TO_TERMINATE_QUESTION)
 			session.setAttribute(CLOSE_QUESTION, true);
 		else
 			session.removeAttribute(CLOSE_QUESTION);

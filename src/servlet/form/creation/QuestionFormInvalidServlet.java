@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import context.FormTools;
+import context.CreateQuestion;
 
 /**
  * Servlet implementation class QuestionFormInvalidServlet
@@ -31,7 +31,7 @@ public class QuestionFormInvalidServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		FormTools.deleteReadyQuestion(request);
+		CreateQuestion.deleteReadyQuestion(request);
 		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/create/question");
 		dispatcher.forward(request, response);
 	}

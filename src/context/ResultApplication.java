@@ -10,6 +10,12 @@ import entity.Answer;
 import entity.Question;
 import entity.Result;
 
+/**
+ * ResultApplication permet le calcul des votes pour une question posée.
+ * Une fois le calcul fait, l'affichage se fait par l'intermédiaire de l'objet PollHandler.
+ * @author romain
+ *
+ */
 public class ResultApplication {
 	
 	private Question question;

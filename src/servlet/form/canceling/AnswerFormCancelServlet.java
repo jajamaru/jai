@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import context.FormTools;
+import context.CreateQuestion;
 
 /**
  * Servlet implementation class AnswerFormCancelServlet
@@ -41,7 +41,7 @@ public class AnswerFormCancelServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		if(request.getParameter("id") != null) {
 			Integer id = Integer.valueOf(request.getParameter("id"));
-			FormTools.removeAnswer(request, id);
+			CreateQuestion.removeAnswer(request, id);
 		}
 		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/admin/create/answer");
 		dispatcher.forward(request, response);
