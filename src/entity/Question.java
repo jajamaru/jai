@@ -96,6 +96,7 @@ public class Question implements Jsonable,Serializable,Cloneable {
 	@Override
 	public JSONObject getJson() throws JSONException{
 		// TODO Auto-generated method stub
+		if(getDesc()!=null) setDesc(StringTools.quotemeta(getDesc()));
 		JSONObject json = new JSONObject();
 		JSONObject question = new JSONObject();
 		JSONArray answers = new JSONArray();
@@ -103,7 +104,7 @@ public class Question implements Jsonable,Serializable,Cloneable {
 			answers.put(a.getJson());
 		}
 		question.put(KEY_ID, getId());
-		question.put(KEY_DESCRIPTION, StringTools.quotemeta(getDesc()));
+		question.put(KEY_DESCRIPTION, getDesc());
 		question.put(KEY_ANSWERS, answers);
 		json.put(KEY_OBJECT, question);
 		return json;

@@ -80,7 +80,7 @@
 												<fmt:message key="updateQuestion.list.answer.desc"/> <c:out value="${st.index}" />
 											</label>
 											<div class="col-lg-10">
-												<textarea class="form-control" id="desc" name="answerDesc${st.index}" rows="2" ><c:out value="${answer.desc}" /></textarea>
+												<textarea class="form-control" id="desc" name="answerDesc${st.index}" rows="2" ><c:if test="${! empty answer.desc}"><c:out value="${answer.desc}" /></c:if></textarea>
 												<p class="help-block"><fmt:message key="updateQuestion.form.textarea.helper"/></p>
 												<c:if test="${! empty error.answer_err_desc}" >
 													<span class="help-block has-error">

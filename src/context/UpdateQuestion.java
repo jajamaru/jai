@@ -3,6 +3,7 @@ package context;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import entity.Answer;
 import entity.Question;
 
 /**
@@ -127,11 +128,18 @@ public class UpdateQuestion {
 	 */
 	public static boolean checkUpdate(HttpServletRequest request) {
 		Question question = getQuestion(request);
-		if(question.getAnswers().size() > 1) {
+		int bAllow = 0;
+		for(Answer a : question.getAnswers()) {
+			if(a.getDesc()!=null && !"".equals(a.getDesc()))
+					bAllow++;
+		}
+		if(bAllow > 1) {
 			session.setAttribute(ALLOW_END_OF_UPDATE, true);
 			return true;
+		} else {
+			session.removeAttribute(ALLOW_END_OF_UPDATE);
+			return false;
 		}
-		return false;
 	}
 	
 	/**

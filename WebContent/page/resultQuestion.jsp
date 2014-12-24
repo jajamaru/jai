@@ -49,27 +49,32 @@
 								</tr>
 							</thead>
 							<tbody>
-								<c:forEach var="v" items="${vote.votes}" varStatus="st">
-									<c:choose>
-										<c:when test="${vote.question.answers[si.index].correctAnswer}">
-											<tr class="success">
-												<td><c:out value="${st.index}" /></td>
-												<td><c:out value="${vote.question.answers[st.index].desc}" /></td>
-												<td><c:out value="${v}" /></td>
-											</tr>
-										</c:when>
-										<c:otherwise>
-											<tr>
-												<td><c:out value="${st.index}" /></td>
-												<td><c:out value="${vote.question.answers[st.index].desc}" /></td>
-												<td><c:out value="${v}" /></td>
-											</tr>
-										</c:otherwise>
-									</c:choose>
+								<c:set var="max" value="0" />
+								<c:forEach var="v" items="${vote.votes}">
+									<c:if test="${v >= max}">
+										<c:set var="max" value="${v}" />
+									</c:if>
 								</c:forEach>
+								<c:forEach var="v" items="${vote.votes}" varStatus="st">
+									<c:if test="${v == max}">
+										<tr class="bg-success">
+											<td><c:out value="${st.index}" /></td>
+											<td><c:out value="${vote.question.answers[st.index].desc}" /></td>
+											<td><c:out value="${v}" /></td>
+										</tr>
+									</c:if>
+									<c:if test="${v != max}">
+										<tr>
+											<td><c:out value="${st.index}" /></td>
+											<td><c:out value="${vote.question.answers[st.index].desc}" /></td>
+											<td><c:out value="${v}" /></td>
+										</tr>
+									</c:if>
+								</c:forEach>
+								<c:remove var="max" />
 							</tbody>
 						</table>
-						<a class="btn btn-primary disabled" href="<c:url value="/admin/action/result" />"
+						<a class="btn btn-success disabled" href="<c:url value="/admin/action/result" />"
 							onclick='return putResult(event, this, ${result.stringify()});'
 							title="<fmt:message key="resultQuestion.action.save.title"/>">
 								<fmt:message key="resultQuestion.action.save"/>

@@ -57,10 +57,11 @@ public class Answer implements Jsonable, Serializable, Cloneable{
 	@Override
 	public JSONObject getJson() throws JSONException{
 		// TODO Auto-generated method stub
+		if(getDesc()!=null) setDesc(StringTools.quotemeta(getDesc()));
 		JSONObject json = new JSONObject();
 		JSONObject answer = new JSONObject();
 		answer.put(KEY_ID, getId());
-		answer.put(KEY_DESCRIPTION, StringTools.quotemeta(getDesc()));
+		answer.put(KEY_DESCRIPTION, getDesc());
 		answer.put(KEY_ID_QUESTION, getIdQuestion());
 		json.put(KEY_OBJECT, answer);
 		return json;

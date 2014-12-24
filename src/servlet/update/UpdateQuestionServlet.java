@@ -129,13 +129,15 @@ public class UpdateQuestionServlet extends HttpServlet {
 			}
 			if(request.getParameter(KEY_ANSWER_DESC+i) != null) {
 				String desc = request.getParameter(KEY_ANSWER_DESC+i);
-				if("".equals(desc)) {
+				if("".equals(answer.getDesc())) {
 					throw new IllegalArgumentException("answer_err_desc");
 				}
 				answer.setDesc(desc);
 			}
-			answer.setIdQuestion(idQuestion);
-			answersList.add(answer);
+			if(answer.getDesc() != null && !"".equals(answer.getDesc())) {
+				answer.setIdQuestion(idQuestion);
+				answersList.add(answer);
+			}
 		}
 		return answersList;
 	}
